@@ -1,7 +1,7 @@
 // app.js
 const express = require('express');
 const app = express();
-const config = require('./config/config');
+const config = require('./config/appConfig');
 const db = require('./models');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -13,8 +13,20 @@ const logger = require('./utils/logger');
 const { swaggerUi, swaggerSpec } = require('./swagger');
 const morgan = require('morgan');
 
+
 // Middleware
 app.use(express.json());
+
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    // Если возникла ошибка парсинга JSON
+    console.error('Ошибка парсинга JSON:', err.message);
+    return res.status(400).json({
+      error: 'Некорректный JSON в запросе',
+    });
+  }
+  next();
+});
 
 // Логирование HTTP-запросов
 app.use(morgan('combined'));
@@ -47,6 +59,7 @@ db.sequelize.sync({ force: false }).then(async () => {
         programmingLanguage: 'N/A',
         password: hashedPassword,
         role: 'admin',
+        hireDate: '2020-04-04',
       });
       console.log('Администратор по умолчанию создан: admin@example.com / adminpassword');
     }
@@ -54,8 +67,9 @@ db.sequelize.sync({ force: false }).then(async () => {
     // Запуск планировщика уведомлений
     scheduleNotifications();
 
-    app.listen(config.port, () => {
+    app.listen(config.port, () => {http://localhost:3000/api-docs
       console.log(`Сервер запущен на порту ${config.port}`);
+      console.log(`OpenAPI по ссылке http://localhost:${config.port}/api-docs`);
     });
   } catch (err) {
     logger.error('Не удалось запустить приложение:', err);

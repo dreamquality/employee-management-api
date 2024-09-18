@@ -1,6 +1,8 @@
 // models/user.js
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
+  const User = sequelize.define(
+    "User",
+    {
       firstName: { type: DataTypes.STRING, allowNull: false },
       lastName: { type: DataTypes.STRING, allowNull: false },
       middleName: { type: DataTypes.STRING, allowNull: false },
@@ -16,12 +18,19 @@ module.exports = (sequelize, DataTypes) => {
       country: { type: DataTypes.STRING },
       bankCard: { type: DataTypes.STRING },
       password: { type: DataTypes.STRING, allowNull: false },
-      role: { type: DataTypes.ENUM('employee', 'admin'), defaultValue: 'employee' },
+      role: {
+        type: DataTypes.ENUM("employee", "admin"),
+        allowNull: false,
+        defaultValue: 'employee',
+      },
       registrationDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       lastLoginDate: { type: DataTypes.DATE },
       // Поля только для администратора
       salary: { type: DataTypes.FLOAT, defaultValue: 400 },
-      lastSalaryIncreaseDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+      lastSalaryIncreaseDate: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
       position: { type: DataTypes.STRING },
       mentorName: { type: DataTypes.STRING },
       vacationDates: { type: DataTypes.ARRAY(DataTypes.DATEONLY) },
@@ -30,8 +39,20 @@ module.exports = (sequelize, DataTypes) => {
       adminNote: { type: DataTypes.TEXT },
       currentProject: { type: DataTypes.STRING },
       englishLevel: { type: DataTypes.STRING },
-    });
-  
-    return User;
-  };
-  
+      workingHoursPerWeek: {
+        type: DataTypes.INTEGER,
+        allowNull: true, // Можно установить значение по умолчанию
+      },
+      hireDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+    },
+    {
+      schema: "user_schema",
+    }
+  );
+
+  return User;
+};

@@ -22,6 +22,7 @@ describe('Auth API', () => {
           birthDate: '1990-01-01',
           phone: '+123456789',
           programmingLanguage: 'JavaScript',
+          secretWord: process.env.SECRET_WORD
         });
 
       expect(res.status).to.equal(201);
@@ -40,7 +41,7 @@ describe('Auth API', () => {
           birthDate: '1980-01-01',
           phone: '+987654321',
           programmingLanguage: 'N/A',
-          role: 'admin',
+          role: 'admin'
         });
 
       expect(res.status).to.equal(403);
@@ -66,7 +67,7 @@ describe('Auth API', () => {
         .post('/login')
         .send({
           email: 'employee@example.com',
-          password: 'wrongpassword',
+          password: 'wrongpassword'
         });
 
       expect(res.status).to.equal(400);

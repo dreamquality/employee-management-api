@@ -2,7 +2,7 @@
 const db = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const config = require('../config/config');
+const config = require('../config/appConfig');
 
 exports.register = async (req, res, next) => {
   try {

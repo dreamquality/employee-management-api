@@ -1,15 +1,29 @@
 // models/notification.js
 module.exports = (sequelize, DataTypes) => {
-    const Notification = sequelize.define('Notification', {
+  const Notification = sequelize.define(
+    "Notification",
+    {
       message: { type: DataTypes.STRING, allowNull: false },
       userId: { type: DataTypes.INTEGER, allowNull: false },
       isRead: { type: DataTypes.BOOLEAN, defaultValue: false },
-    });
-  
-    Notification.associate = (models) => {
-      Notification.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
-    };
-  
-    return Notification;
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "general",
+      },
+      eventDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+    },
+    {
+      schema: "user_schema",
+    }
+  );
+
+  Notification.associate = (models) => {
+    Notification.belongsTo(models.User, { foreignKey: "userId", as: "user" });
   };
-  
+
+  return Notification;
+};

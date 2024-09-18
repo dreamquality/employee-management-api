@@ -1,6 +1,6 @@
 // middleware/authenticateToken.js
 const jwt = require('jsonwebtoken');
-const config = require('../config/config');
+const config = require('../config/appConfig');
 const db = require('../models');
 
 module.exports = async function authenticateToken(req, res, next) {

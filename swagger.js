@@ -63,6 +63,7 @@ const options = {
               mentorName: { type: 'string' },
               englishLevel: { type: 'string' },
               registrationDate: { type: 'string', format: 'date-time' },
+              registrationDate: { type: 'string', format: 'date-time' },
               // Добавьте другие поля по необходимости
           }
         },
@@ -78,6 +79,38 @@ const options = {
               programmingLanguage: { type: 'string' },
               country: { type: 'string' },
               bankCard: { type: 'string' },
+            },
+          },
+          Notification: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'integer',
+                description: 'Уникальный идентификатор уведомления',
+              },
+              message: {
+                type: 'string',
+                description: 'Текст уведомления',
+              },
+              userId: {
+                type: 'integer',
+                description: 'ID пользователя, которому предназначено уведомление',
+              },
+              isRead: {
+                type: 'boolean',
+                description: 'Статус прочтения уведомления',
+                default: false,
+              },
+              createdAt: {
+                type: 'string',
+                format: 'date-time',
+                description: 'Дата и время создания уведомления',
+              },
+              updatedAt: {
+                type: 'string',
+                format: 'date-time',
+                description: 'Дата и время последнего обновления уведомления',
+              },
             },
           },
         },

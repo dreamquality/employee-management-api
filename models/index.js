@@ -1,12 +1,19 @@
 // models/index.js
-const { Sequelize, DataTypes } = require('sequelize');
-const config = require('../config/config');
+'use strict';
 
-const sequelize = new Sequelize(config.db.database, config.db.username, config.db.password, {
-  host: config.db.host,
-  port: config.db.port,
-  dialect: config.db.dialect,
-  logging: config.db.logging,
+const fs = require('fs');
+const path = require('path');
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || 'development';
+const { Sequelize, DataTypes } = require('sequelize');
+const config = require('../config/config')[env]; // Получаем конфигурацию для текущего окружения
+
+const sequelize = new Sequelize(config.database, config.username, config.password, {
+  host: config.host,
+  port: config.port,
+  dialect: config.dialect,
+  schema: config.schema, // Используем схему из конфигурации
+  logging: config.logging,
 });
 
 const db = {};

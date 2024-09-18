@@ -4,8 +4,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const authenticateToken = require('../middleware/authenticateToken');
 const validateInput = require('../middleware/validateInput');
-const { userUpdateValidation } = require('../validations/userValidation');
-const { userListValidation } = require('../middleware/validateQuery');
+const { userUpdateValidation, userCreateValidation, userListValidation } = require('../validations/userValidation');
 
 /**
  * @swagger
@@ -13,6 +12,59 @@ const { userListValidation } = require('../middleware/validateQuery');
  *   name: Users
  *   description: Маршруты пользователей
  */
+
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Создать нового сотрудника (только для администратора)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserCreate'
+ *     responses:
+ *       201:
+ *         description: Сотрудник успешно создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Некорректные данные или пользователь уже существует
+ *       403:
+ *         description: Доступ запрещен
+ */
+router.post('/users', authenticateToken, userCreateValidation, validateInput, userController.createEmployee);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Удалить сотрудника (только для администратора)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID сотрудника
+ *     responses:
+ *       200:
+ *         description: Сотрудник успешно удален
+ *       403:
+ *         description: Доступ запрещен
+ *       404:
+ *         description: Сотрудник не найден
+ */
+router.delete('/users/:id', authenticateToken, userController.deleteEmployee);
 
 /**
  * @swagger

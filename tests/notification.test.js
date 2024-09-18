@@ -23,14 +23,14 @@ describe('Notification API', () => {
         phone: '+987654321',
         programmingLanguage: 'N/A',
         role: 'admin',
-        secretWord: process.env.SECRET_WORD,
+        secretWord: process.env.SECRET_WORD
       });
 
     const res = await request(app)
       .post('/login')
       .send({
         email: 'admin@example.com',
-        password: 'adminpassword',
+        password: 'adminpassword'
       });
 
     adminToken = res.body.token;
@@ -38,7 +38,7 @@ describe('Notification API', () => {
     // Создаем уведомление
     await db.Notification.create({
       message: 'Test notification',
-      userId: 1,
+      userId: 1
     });
   });
 
@@ -54,10 +54,10 @@ describe('Notification API', () => {
     });
   });
 
-  describe('POST /notifications/:id/read', () => {
+  describe('PATCH /notifications/:id/mark-as-read', () => {
     it('should mark notification as read', async () => {
       const res = await request(app)
-        .post('/notifications/1/read')
+        .patch('/notifications/1/mark-as-read')
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(res.status).to.equal(200);
