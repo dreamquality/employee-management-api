@@ -48,7 +48,7 @@ const options = {
               password: { type: 'string', format: 'password' },
             },
           },
-          User: {
+          User:{
             type: 'object',
             properties: {
               id: { type: 'integer' },
@@ -59,9 +59,13 @@ const options = {
               phone: { type: 'string' },
               email: { type: 'string', format: 'email' },
               programmingLanguage: { type: 'string' },
-              // Добавьте остальные поля по необходимости
-            },
-          },
+              country: { type: 'string' },
+              mentorName: { type: 'string' },
+              englishLevel: { type: 'string' },
+              registrationDate: { type: 'string', format: 'date-time' },
+              // Добавьте другие поля по необходимости
+          }
+        },
           UserUpdate: {
             type: 'object',
             properties: {

@@ -2,24 +2,60 @@
 const db = require('../models');
 
 exports.getEmployees = async (req, res, next) => {
-  try {
-    const attributes = req.user.role === 'admin' ? null : [
-      'firstName',
-      'lastName',
-      'middleName',
-      'birthDate',
-      'phone',
-      'email',
-      'programmingLanguage',
-      'position',
-    ];
-
-    const users = await db.User.findAll({ attributes });
-    res.json(users);
-  } catch (err) {
-    next(err);
-  }
-};
+    try {
+      // Получение параметров запроса
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const { firstName, lastName, sortBy, order } = req.query;
+  
+      const offset = (page - 1) * limit;
+  
+      // Фильтрация по имени и фамилии
+      const where = {};
+      if (firstName) {
+        where.firstName = { [Op.iLike]: `%${firstName}%` };
+      }
+      if (lastName) {
+        where.lastName = { [Op.iLike]: `%${lastName}%` };
+      }
+  
+      // Сортировка
+      const validSortFields = ['registrationDate', 'programmingLanguage', 'country', 'mentorName', 'englishLevel'];
+      const sortField = validSortFields.includes(sortBy) ? sortBy : 'registrationDate';
+      const sortOrder = order === 'DESC' ? 'DESC' : 'ASC';
+  
+      // Выбор полей для отображения
+      const attributes = req.user.role === 'admin' ? null : [
+        'firstName',
+        'lastName',
+        'middleName',
+        'birthDate',
+        'phone',
+        'email',
+        'programmingLanguage',
+        'position',
+        // Добавьте другие поля, которые сотрудник может видеть
+      ];
+  
+      // Получение данных из базы данных
+      const { count, rows } = await db.User.findAndCountAll({
+        where,
+        attributes,
+        order: [[sortField, sortOrder]],
+        limit,
+        offset,
+      });
+  
+      res.json({
+        users: rows,
+        total: count,
+        page,
+        totalPages: Math.ceil(count / limit),
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 
 exports.updateProfile = async (req, res, next) => {
   try {
