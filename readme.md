@@ -70,7 +70,6 @@ DB_NAME=employee_db
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 SECRET_WORD=your_secret_word_for_admin_registration
-NODE_ENV=development
 ```
 
 ## Запуск приложения

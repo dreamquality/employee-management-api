@@ -59,55 +59,95 @@ exports.getEmployees = async (req, res, next) => {
     }
   };
 
-exports.updateProfile = async (req, res, next) => {
-  try {
-    const userId = req.params.id;
-
-    if (req.user.userId !== parseInt(userId)) {
-      return res.status(403).json({ error: 'Доступ запрещен' });
-    }
-
-    const allowedFields = [
-      'firstName',
-      'lastName',
-      'middleName',
-      'birthDate',
-      'phone',
-      'email',
-      'programmingLanguage',
-      'country',
-      'bankCard',
-      'workingHoursPerWeek'
-    ];
-
-    const updateData = {};
-    allowedFields.forEach((field) => {
-      if (req.body[field] !== undefined) {
-        updateData[field] = req.body[field];
+  exports.updateProfile = async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+  
+      // Проверяем, что пользователь имеет права для редактирования (если это не администратор, он может редактировать только себя)
+      if (req.user.userId !== parseInt(userId) && req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Доступ запрещен' });
       }
-    });
-
-    const user = await db.User.findByPk(userId);
-    await user.update(updateData);
-
-    // Создаем уведомление для администратора
-    if (req.user.role !== 'admin') {
-      const admins = await db.User.findAll({ where: { role: 'admin' } });
-      for (const admin of admins) {
-        await db.Notification.create({
-          message: `Сотрудник ${user.firstName} ${user.lastName} обновил свои данные: ${Object.keys(updateData).join(', ')}`,
-          userId: admin.id,
-          type: 'user_update', // Добавляем поле type
+  
+      const allowedFields = [
+        'firstName',
+        'lastName',
+        'middleName',
+        'birthDate',
+        'phone',
+        'email',
+        'programmingLanguage',
+        'country',
+        'bankCard',
+        'linkedinLink',
+        'githubLink',
+      ];
+  
+      const updateData = {};
+      allowedFields.forEach((field) => {
+        if (req.body[field] !== undefined) {
+          updateData[field] = req.body[field];
+        }
+      });
+  
+      // Поля, которые могут быть обновлены только администратором
+      const adminOnlyFields = [
+        'hireDate',
+        'adminNote',
+        'currentProject',
+        'englishLevel',
+        'linkedinLink',
+        'githubLink',
+        'vacationDates',
+        'mentorName',
+        'position',
+        'salary',
+        'role',
+        'password',
+        'workingHoursPerWeek'
+      ];
+  
+      adminOnlyFields.forEach((field) => {
+        if (req.user.role === 'admin' && req.body[field] !== undefined) {
+          updateData[field] = req.body[field];
+        } else if (req.user.role !== 'admin' && req.body[field] !== undefined) {
+          return res.status(403).json({ error: `Только администратор может обновлять поле ${field}` });
+        }
+      });
+  
+      // Проверка на наличие другого пользователя с таким же email
+      if (updateData.email) {
+        const existingUser = await db.User.findOne({
+          where: { email: updateData.email, id: { [db.Sequelize.Op.ne]: userId } }
         });
+  
+        if (existingUser) {
+          return res.status(400).json({ error: 'Пользователь с таким email уже существует' });
+        }
       }
+  
+      // Обновление данных пользователя
+      const user = await db.User.findByPk(userId);
+      await user.update(updateData);
+  
+      // Создаем уведомление для администратора, если данные обновляет не администратор
+      if (req.user.role !== 'admin') {
+        const admins = await db.User.findAll({ where: { role: 'admin' } });
+        for (const admin of admins) {
+          await db.Notification.create({
+            message: `Сотрудник ${user.firstName} ${user.lastName} обновил свои данные: ${Object.keys(updateData).join(', ')}`,
+            userId: admin.id,
+            type: 'user_update', // Добавляем поле type
+          });
+        }
+      }
+  
+      res.json({ message: 'Данные обновлены', user });
+    } catch (err) {
+      next(err);
     }
-
-    res.json({ message: 'Данные обновлены', user });
-  } catch (err) {
-    next(err);
-  }
-};
-
+  };
+  
+  
 // Метод для администратора по созданию сотрудника
 exports.createEmployee = async (req, res, next) => {
   try {

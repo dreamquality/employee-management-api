@@ -1,4 +1,3 @@
-// routes/notificationRoutes.js
 const express = require('express');
 const router = express.Router();
 const notificationController = require('../controllers/notificationController');
@@ -15,10 +14,40 @@ const authenticateToken = require('../middleware/authenticateToken');
  * @swagger
  * /notifications:
  *   get:
- *     summary: Получить список уведомлений текущего пользователя
+ *     summary: Получить список уведомлений текущего пользователя с пагинацией
  *     tags: [Notifications]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *         description: Тип уведомления для фильтрации
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [createdAt, type]
+ *         description: Поле для сортировки уведомлений
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [ASC, DESC]
+ *         description: Порядок сортировки (ASC для возрастания, DESC для убывания)
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Номер страницы для пагинации
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Количество уведомлений на странице
  *     responses:
  *       200:
  *         description: Список уведомлений
@@ -31,8 +60,16 @@ const authenticateToken = require('../middleware/authenticateToken');
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Notification'
+ *                 total:
+ *                   type: integer
+ *                 page:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
  *       401:
  *         description: Необходима авторизация
+ *       403:
+ *         description: Доступ запрещен
  */
 router.get('/notifications', authenticateToken, notificationController.getNotifications);
 
@@ -60,6 +97,8 @@ router.get('/notifications', authenticateToken, notificationController.getNotifi
  *               $ref: '#/components/schemas/Notification'
  *       401:
  *         description: Необходима авторизация
+ *       403:
+ *         description: Доступ запрещен
  *       404:
  *         description: Уведомление не найдено
  */

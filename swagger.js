@@ -81,6 +81,20 @@ const options = {
               bankCard: { type: 'string' },
             },
           },
+          UserCreate: {
+            type: 'object',
+            properties: {
+              firstName: { type: 'string' },
+              lastName: { type: 'string' },
+              middleName: { type: 'string' },
+              birthDate: { type: 'string', format: 'date' },
+              phone: { type: 'string' },
+              email: { type: 'string', format: 'email' },
+              programmingLanguage: { type: 'string' },
+              country: { type: 'string' },
+              bankCard: { type: 'string' },
+            },
+          },
           Notification: {
             type: 'object',
             properties: {
@@ -95,6 +109,10 @@ const options = {
               userId: {
                 type: 'integer',
                 description: 'ID пользователя, которому предназначено уведомление',
+              },
+              relatedUserId: {
+                type: 'integer',
+                description: 'ID пользователя, про которого уведомление',
               },
               isRead: {
                 type: 'boolean',

@@ -1,4 +1,3 @@
-// controllers/notificationController.js
 const db = require('../models');
 
 exports.getNotifications = async (req, res, next) => {
@@ -7,12 +6,33 @@ exports.getNotifications = async (req, res, next) => {
       return res.status(403).json({ error: 'Доступ запрещен' });
     }
 
-    const notifications = await db.Notification.findAll({
-      where: { userId: req.user.userId },
-      order: [['createdAt', 'DESC']],
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { type, sortBy, order } = req.query;
+    
+    const sortField = sortBy === 'type' ? 'type' : 'createdAt';
+    const sortOrder = order === 'ASC' ? 'ASC' : 'DESC';
+
+    const where = {};
+    if (type) {
+      where.type = type;
+    }
+
+    const { count, rows } = await db.Notification.findAndCountAll({
+      where: { userId: req.user.userId, ...where },
+      order: [[sortField, sortOrder]],
+      limit,
+      offset,
     });
 
-    res.json(notifications);
+    res.json({
+      notifications: rows,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+    });
   } catch (err) {
     next(err);
   }

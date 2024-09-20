@@ -8,10 +8,15 @@ const { scheduleNotifications } = require('../services/notificationService');
 describe('Notification Service', () => {
   let sandbox;
 
-  beforeEach(() => {
+
+  beforeEach(async () => {
     sandbox = sinon.createSandbox();
 
-    // Мокаем методы создания уведомлений, но не пользователей, так как база уже заполнена
+    // Синхронизация таблицы Users
+    await db.User.sync({ force: true }); // Создаем или обновляем таблицу Users
+    await db.Notification.sync({ force: true }); // Создаем или обновляем таблицу Notifications
+
+    // Мокаем методы создания уведомлений
     sandbox.stub(db.Notification, 'findOne').resolves(null);
     sandbox.stub(db.Notification, 'create').resolves();
   });
@@ -27,7 +32,6 @@ describe('Notification Service', () => {
     expect(scheduleJobStub.calledOnce).to.be.true;
     expect(scheduleJobStub.firstCall.args[0]).to.equal('0 0 * * *');
   });
-
   it('should send birthday reminder notifications for users with birthdays in 30 days', async () => {
     // Дата "сегодня"
     const today = new Date();

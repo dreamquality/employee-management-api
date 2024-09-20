@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       message: { type: DataTypes.STRING, allowNull: false },
       userId: { type: DataTypes.INTEGER, allowNull: false },
+      relatedUserId: { type: DataTypes.INTEGER, allowNull: false },
       isRead: { type: DataTypes.BOOLEAN, defaultValue: false },
       type: {
         type: DataTypes.STRING,
@@ -21,8 +22,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Notification.associate = (models) => {
-    Notification.belongsTo(models.User, { foreignKey: "userId", as: "user" });
+  // Ассоциация с пользователем
+  Notification.associate = function(models) {
+    Notification.belongsTo(models.User, {
+      foreignKey: 'userId',
+    });
   };
 
   return Notification;

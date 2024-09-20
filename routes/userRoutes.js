@@ -1,4 +1,3 @@
-// routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
@@ -130,6 +129,10 @@ router.delete('/users/:id', authenticateToken, userController.deleteEmployee);
  *                   type: integer
  *                 totalPages:
  *                   type: integer
+ *       401:
+ *         description: Необходима авторизация
+ *       403:
+ *         description: Доступ запрещен
  */
 router.get('/users', authenticateToken, userListValidation, userController.getEmployees);
 
@@ -157,6 +160,8 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  *     responses:
  *       200:
  *         description: Профиль обновлен
+ *       403:
+ *         description: Доступ запрещен
  */
 router.put('/users/:id', authenticateToken, userUpdateValidation, validateInput, userController.updateProfile);
 
