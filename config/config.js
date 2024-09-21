@@ -12,7 +12,10 @@ module.exports = {
     dialect: 'postgres',
     schema: 'user_schema', // Если вы используете схему
     dialectOptions: {
-      // Опции для SSL и т.д.
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // В некоторых случаях это помогает устранить ошибки сертификата
+      }
     },
   },
   test: {
@@ -33,7 +36,10 @@ module.exports = {
     dialect: 'postgres',
     schema: 'user_schema',
     dialectOptions: {
-      // Опции для SSL и т.д.
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
     },
   },
 };
