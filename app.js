@@ -1,4 +1,3 @@
-// app.js
 const express = require('express');
 const app = express();
 const config = require('./config/appConfig');
@@ -13,9 +12,10 @@ const logger = require('./utils/logger');
 const { swaggerUi, swaggerSpec } = require('./swagger');
 const morgan = require('morgan');
 
-console.log(`Сервер будет запущен на порту ${config.port}`);
-
 // Middleware
+
+console.log('Сервер будет запущен на порту ${config.port}');
+
 app.use(express.json());
 
 app.use((err, req, res, next) => {
@@ -46,9 +46,13 @@ app.use(errorHandler);
 // Синхронизация базы данных и запуск сервера
 db.sequelize.sync({ force: false }).then(async () => {
   try {
+    // Проверяем базу данных
+    console.log('Подключение к базе данных успешно.');
+
     // Создание администратора по умолчанию, если его нет
     const existingAdmin = await db.User.findOne({ where: { role: 'admin' } });
     if (!existingAdmin) {
+      console.log('Администратор не найден. Создаем администратора по умолчанию...');
       const hashedPassword = await bcrypt.hash('adminpassword', 10);
       await db.User.create({
         firstName: 'Default',
@@ -63,19 +67,26 @@ db.sequelize.sync({ force: false }).then(async () => {
         hireDate: '2020-04-04',
       });
       console.log('Администратор по умолчанию создан: admin@example.com / adminpassword');
+    } else {
+      console.log('Администратор уже существует.');
     }
 
     // Запуск планировщика уведомлений
+    console.log('Запуск планировщика уведомлений...');
     scheduleNotifications();
+    console.log('Планировщик уведомлений успешно запущен.');
 
-    app.listen(config.port, () => {http://localhost:3000/api-docs
+    // Запуск сервера
+    app.listen(config.port, () => {
       console.log(`Сервер запущен на порту ${config.port}`);
-      console.log(`OpenAPI по ссылке http://localhost:${config.port}/api-docs`);
+      console.log(`OpenAPI доступна по адресу http://localhost:${config.port}/api-docs`);
     });
   } catch (err) {
+    console.error('Ошибка при запуске приложения:', err);
     logger.error('Не удалось запустить приложение:', err);
   }
 }).catch((err) => {
+  console.error('Ошибка синхронизации базы данных:', err);
   logger.error('Ошибка синхронизации базы данных:', err);
 });
 
