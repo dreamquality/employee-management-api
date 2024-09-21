@@ -13,6 +13,7 @@ const logger = require('./utils/logger');
 const { swaggerUi, swaggerSpec } = require('./swagger');
 const morgan = require('morgan');
 
+console.log(`Сервер будет запущен на порту ${config.port}`);
 
 // Middleware
 app.use(express.json());
