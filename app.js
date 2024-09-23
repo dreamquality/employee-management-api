@@ -1,7 +1,7 @@
 // app.js
 const express = require('express');
 const app = express();
-const config = require('./config/appConfig');
+const config = require('./config/config');
 const db = require('./models');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -43,7 +43,7 @@ app.use(errorHandler);
 
 // Логирование текущего окружения и порта
 console.log(`Текущее окружение: ${process.env.NODE_ENV}`);
-console.log(`Используемый порт: ${config.port}`);
+console.log(`Используемый порт: ${process.env.PORT || 3000}`);
 
 // Синхронизация базы данных и запуск сервера
 db.sequelize.sync({ force: false }).then(async () => {
@@ -78,9 +78,10 @@ db.sequelize.sync({ force: false }).then(async () => {
     console.log('Планировщик уведомлений успешно запущен.');
 
     // Запуск сервера
-    app.listen(config.port, () => {
-      console.log(`Сервер запущен на порту ${config.port}`);
-      console.log(`OpenAPI доступна по адресу http://localhost:${config.port}/api-docs`);
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`Сервер запущен на порту ${port}`);
+      console.log(`OpenAPI доступна по адресу http://localhost:${port}/api-docs`);
     });
   } catch (err) {
     console.error('Ошибка при запуске приложения:', err);

@@ -50,3 +50,25 @@
   "parameters": {},
   "stack": "Error\n    at Query.run (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\dialects\\postgres\\query.js:50:25)\n    at C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\sequelize.js:315:28\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\n    at async PostgresQueryInterface.createTable (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\dialects\\abstract\\query-interface.js:98:12)\n    at async Function.sync (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\model.js:942:7)\n    at async Sequelize.sync (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\sequelize.js:377:9)"
 }
+2024-09-23 12:57:30 [ERROR]: Ошибка синхронизации базы данных: ������������ "your_local_db_user" �� ������ �������� ����������� (�� ������) {
+  "name": "SequelizeConnectionError",
+  "parent": {
+    "length": 130,
+    "name": "error",
+    "severity": "�����",
+    "code": "28P01",
+    "file": "auth.c",
+    "line": "326",
+    "routine": "auth_failed"
+  },
+  "original": {
+    "length": 130,
+    "name": "error",
+    "severity": "�����",
+    "code": "28P01",
+    "file": "auth.c",
+    "line": "326",
+    "routine": "auth_failed"
+  },
+  "stack": "SequelizeConnectionError: ������������ \"your_local_db_user\" �� ������ �������� ����������� (�� ������)\n    at Client._connectionCallback (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\dialects\\postgres\\connection-manager.js:145:24)\n    at Client._handleErrorWhileConnecting (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\pg\\lib\\client.js:326:19)\n    at Client._handleErrorMessage (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\pg\\lib\\client.js:346:19)\n    at Connection.emit (node:events:513:28)\n    at C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\pg\\lib\\connection.js:116:12\n    at Parser.parse (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\pg-protocol\\dist\\parser.js:36:17)\n    at Socket.<anonymous> (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\pg-protocol\\dist\\index.js:11:42)\n    at Socket.emit (node:events:513:28)\n    at addChunk (node:internal/streams/readable:315:12)\n    at readableAddChunk (node:internal/streams/readable:289:9)"
+}
