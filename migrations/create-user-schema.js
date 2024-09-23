@@ -4,9 +4,9 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createSchema('user_schema');
+    await queryInterface.createSchema('public');
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropSchema('user_schema');
+    await queryInterface.dropSchema('public');
   },
 };
