@@ -34,7 +34,7 @@ const config = {
     host: process.env.DB_HOST || '127.0.0.1',
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
-    schema: 'user_schema', // Если вы используете схему
+    schema: 'public', // Если вы используете схему
     dialectOptions: {
       ssl: false, // В локальной разработке SSL не требуется
     },
@@ -46,7 +46,7 @@ const config = {
     host: process.env.DB_HOST || '127.0.0.1',
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
-    schema: 'user_schema',
+    schema: 'public',
     dialectOptions: {
       ssl: false,
     },

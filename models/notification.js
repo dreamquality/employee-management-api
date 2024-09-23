@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      schema: "user_schema",
+      schema: "public",
     }
   );
 
