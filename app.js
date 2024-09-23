@@ -1,4 +1,3 @@
-// app.js
 const express = require('express');
 const app = express();
 const config = require('./config/config');
@@ -12,9 +11,23 @@ const bcrypt = require('bcryptjs');
 const logger = require('./utils/logger');
 const { swaggerUi, swaggerSpec } = require('./swagger');
 const morgan = require('morgan');
+const helmet = require('helmet'); // Добавляем helmet
+const cors = require('cors'); // Добавляем CORS
 
 // Middleware
 app.use(express.json());
+
+// Безопасность заголовков с helmet
+app.use(helmet());
+
+// Настройка CORS
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || '*', // Разрешаем все домены (можно настроить на конкретные)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions)); // Используем CORS middleware
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
@@ -78,7 +91,7 @@ db.sequelize.sync({ force: false }).then(async () => {
     console.log('Планировщик уведомлений успешно запущен.');
 
     // Запуск сервера
-    const port = process.env.PORT || 3000;
+    const port = process.env.PORT || 10000;
     app.listen(port, () => {
       console.log(`Сервер запущен на порту ${port}`);
       console.log(`OpenAPI доступна по адресу http://localhost:${port}/api-docs`);
