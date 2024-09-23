@@ -23,7 +23,7 @@ app.use(helmet());
 // Настройка CORS
 const corsOptions = {
   origin: process.env.CORS_ORIGIN || '*', // Разрешаем все домены (можно настроить на конкретные)
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
