@@ -9,9 +9,9 @@
     "start": "cross-env NODE_ENV=production node app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",
     "test": "mocha tests/**/*.test.js --exit",
-    "seed-db": "npx sequelize-cli db:seed:all",
-    "clear-db": "npx sequelize-cli db:seed:undo:all",
-    "migrate": "npx sequelize db:migrate"
+    "seed-db": "cross-env NODE_ENV=production npx sequelize-cli db:seed:all",
+    "clear-db": "cross-env NODE_ENV=production npx sequelize-cli db:seed:undo:all",
+    "migrate": "cross-env NODE_ENV=production npx sequelize db:migrate"
   },
   "keywords": [
     "express",

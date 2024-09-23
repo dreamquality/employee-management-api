@@ -57,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
   // Ассоциация с моделью Notification с каскадным удалением
   User.associate = function(models) {
     User.hasMany(models.Notification, {
+      as:'notifications',
       foreignKey: 'userId',
       onDelete: 'CASCADE', // Удаление уведомлений при удалении пользователя
       hooks: true, // Включает каскадные действия для удаления
