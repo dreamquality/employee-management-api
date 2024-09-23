@@ -1,6 +1,7 @@
 // swagger.js
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const publicUrl = process.env.PUBLIC_URL || 'http://localhost:3000';
 
 const options = {
   definition: {
@@ -12,7 +13,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: `${publicUrl}`,
       },
     ],
     components: {

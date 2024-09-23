@@ -58,6 +58,10 @@ app.use(errorHandler);
 console.log(`Текущее окружение: ${process.env.NODE_ENV}`);
 console.log(`Используемый порт: ${process.env.PORT || 3000}`);
 
+// Получение публичного URL из переменной окружения или использование localhost как резервный вариант
+const publicUrl = process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || 10000}`;
+
+
 // Синхронизация базы данных и запуск сервера
 db.sequelize.sync({ force: false }).then(async () => {
   try {
@@ -94,7 +98,7 @@ db.sequelize.sync({ force: false }).then(async () => {
     const port = process.env.PORT || 10000;
     app.listen(port, () => {
       console.log(`Сервер запущен на порту ${port}`);
-      console.log(`OpenAPI доступна по адресу http://localhost:${port}/api-docs`);
+      console.log(`OpenAPI доступна по адресу ${publicUrl}/api-docs`);
     });
   } catch (err) {
     console.error('Ошибка при запуске приложения:', err);
