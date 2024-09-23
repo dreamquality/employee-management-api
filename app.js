@@ -1,3 +1,4 @@
+// app.js
 const express = require('express');
 const app = express();
 const config = require('./config/appConfig');
@@ -13,9 +14,6 @@ const { swaggerUi, swaggerSpec } = require('./swagger');
 const morgan = require('morgan');
 
 // Middleware
-
-console.log('Сервер будет запущен на порту ${config.port}');
-
 app.use(express.json());
 
 app.use((err, req, res, next) => {
@@ -43,16 +41,19 @@ app.use(notificationRoutes);
 // Обработчик ошибок
 app.use(errorHandler);
 
+// Логирование текущего окружения и порта
+console.log(`Текущее окружение: ${process.env.NODE_ENV}`);
+console.log(`Используемый порт: ${config.port}`);
+
 // Синхронизация базы данных и запуск сервера
 db.sequelize.sync({ force: false }).then(async () => {
   try {
-    // Проверяем базу данных
     console.log('Подключение к базе данных успешно.');
 
     // Создание администратора по умолчанию, если его нет
     const existingAdmin = await db.User.findOne({ where: { role: 'admin' } });
     if (!existingAdmin) {
-      console.log('Администратор не найден. Создаем администратора по умолчанию...');
+      console.log('Администратор не найден. Создаём администратора по умолчанию...');
       const hashedPassword = await bcrypt.hash('adminpassword', 10);
       await db.User.create({
         firstName: 'Default',
