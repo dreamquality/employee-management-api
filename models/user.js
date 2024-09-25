@@ -33,7 +33,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       position: { type: DataTypes.STRING },
       mentorName: { type: DataTypes.STRING },
-      vacationDates: { type: DataTypes.ARRAY(DataTypes.DATEONLY) },
+      vacationDates: {
+        type: DataTypes.ARRAY(DataTypes.DATE),
+        allowNull: true,
+      },
       githubLink: { type: DataTypes.STRING },
       linkedinLink: { type: DataTypes.STRING },
       adminNote: { type: DataTypes.TEXT },
