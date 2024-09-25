@@ -4,7 +4,7 @@
   "description": "API для управления информацией о сотрудниках компании",
   "main": "app.js",
   "scripts": {
-    "build-prod": "npm ci && npm run migrate:prod && npm run seed:prod",
+    "build-prod": "npm ci && npm run clear-db:prod && npm run migrate:prod && npm run seed:prod",
     "build-dev": "npm ci && npm run migrate:dev && npm run seed:dev",
     "start": "cross-env NODE_ENV=production node app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",

@@ -20,7 +20,7 @@ module.exports = {
         references: {
           model: {
             tableName: 'Users',
-            schema: 'user_schema'
+            schema: 'public'
           },
           key: 'id'
         },
@@ -33,7 +33,7 @@ module.exports = {
         references: {
           model: {
             tableName: 'Users',
-            schema: 'user_schema'
+            schema: 'public'
           },
           key: 'id'
         },
@@ -64,11 +64,11 @@ module.exports = {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     }, {
-      schema: 'user_schema' // Указываем схему
+      schema: 'public' // Указываем схему
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Notifications', { schema: 'user_schema' });
+    await queryInterface.dropTable('Notifications', { schema: 'public' });
   }
 };

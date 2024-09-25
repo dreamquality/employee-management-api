@@ -4,10 +4,10 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createSchema('user_schema', { ifNotExists: true });
+    await queryInterface.createSchema('public', { ifNotExists: true });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropSchema('user_schema', { cascade: true });
+    await queryInterface.dropSchema('public', { cascade: true });
   }
 };

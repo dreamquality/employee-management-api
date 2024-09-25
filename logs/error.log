@@ -1,4 +1,4 @@
-2024-09-20 02:51:24 [ERROR]: Ошибка синхронизации базы данных: отношение "user_schema.Users" не существует {
+2024-09-20 02:51:24 [ERROR]: Ошибка синхронизации базы данных: отношение "public.Users" не существует {
   "name": "SequelizeDatabaseError",
   "parent": {
     "length": 143,
@@ -8,7 +8,7 @@
     "file": "namespace.c",
     "line": "432",
     "routine": "RangeVarGetRelidExtended",
-    "sql": "CREATE TABLE IF NOT EXISTS \"user_schema\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"user_schema\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
+    "sql": "CREATE TABLE IF NOT EXISTS \"public\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"public\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
   },
   "original": {
     "length": 143,
@@ -18,13 +18,13 @@
     "file": "namespace.c",
     "line": "432",
     "routine": "RangeVarGetRelidExtended",
-    "sql": "CREATE TABLE IF NOT EXISTS \"user_schema\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"user_schema\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
+    "sql": "CREATE TABLE IF NOT EXISTS \"public\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"public\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
   },
-  "sql": "CREATE TABLE IF NOT EXISTS \"user_schema\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"user_schema\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));",
+  "sql": "CREATE TABLE IF NOT EXISTS \"public\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"public\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));",
   "parameters": {},
   "stack": "Error\n    at Query.run (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\dialects\\postgres\\query.js:50:25)\n    at C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\sequelize.js:315:28\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\n    at async PostgresQueryInterface.createTable (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\dialects\\abstract\\query-interface.js:98:12)\n    at async Function.sync (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\model.js:942:7)\n    at async Sequelize.sync (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\sequelize.js:377:9)"
 }
-2024-09-20 02:56:51 [ERROR]: Ошибка синхронизации базы данных: отношение "user_schema.Users" не существует {
+2024-09-20 02:56:51 [ERROR]: Ошибка синхронизации базы данных: отношение "public.Users" не существует {
   "name": "SequelizeDatabaseError",
   "parent": {
     "length": 143,
@@ -34,7 +34,7 @@
     "file": "namespace.c",
     "line": "432",
     "routine": "RangeVarGetRelidExtended",
-    "sql": "CREATE TABLE IF NOT EXISTS \"user_schema\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"user_schema\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
+    "sql": "CREATE TABLE IF NOT EXISTS \"public\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"public\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
   },
   "original": {
     "length": 143,
@@ -44,9 +44,9 @@
     "file": "namespace.c",
     "line": "432",
     "routine": "RangeVarGetRelidExtended",
-    "sql": "CREATE TABLE IF NOT EXISTS \"user_schema\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"user_schema\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
+    "sql": "CREATE TABLE IF NOT EXISTS \"public\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"public\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));"
   },
-  "sql": "CREATE TABLE IF NOT EXISTS \"user_schema\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"user_schema\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));",
+  "sql": "CREATE TABLE IF NOT EXISTS \"public\".\"Notifications\" (\"id\"   SERIAL , \"message\" VARCHAR(255) NOT NULL, \"userId\" INTEGER NOT NULL REFERENCES \"public\".\"Users\" (\"id\") ON DELETE CASCADE ON UPDATE CASCADE, \"relatedUserId\" INTEGER NOT NULL, \"isRead\" BOOLEAN DEFAULT false, \"type\" VARCHAR(255) NOT NULL DEFAULT 'general', \"eventDate\" TIMESTAMP WITH TIME ZONE, \"createdAt\" TIMESTAMP WITH TIME ZONE NOT NULL, \"updatedAt\" TIMESTAMP WITH TIME ZONE NOT NULL, PRIMARY KEY (\"id\"));",
   "parameters": {},
   "stack": "Error\n    at Query.run (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\dialects\\postgres\\query.js:50:25)\n    at C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\sequelize.js:315:28\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\n    at async PostgresQueryInterface.createTable (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\dialects\\abstract\\query-interface.js:98:12)\n    at async Function.sync (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\model.js:942:7)\n    at async Sequelize.sync (C:\\Users\\alexx\\Documents\\Test Squad\\employee-management-api\\node_modules\\sequelize\\lib\\sequelize.js:377:9)"
 }

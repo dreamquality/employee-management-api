@@ -11,7 +11,7 @@ module.exports = {
 
       // Создаем администратора, если его ещё нет
       const existingAdmin = await queryInterface.sequelize.query(
-        `SELECT "id" FROM "user_schema"."Users" WHERE email = 'admin@example.com';`,
+        `SELECT "id" FROM "public"."Users" WHERE email = 'admin@example.com';`,
         { type: queryInterface.sequelize.QueryTypes.SELECT, transaction }
       );
 
@@ -148,11 +148,11 @@ module.exports = {
       }
 
       // Вставляем пользователей в базу данных
-      await queryInterface.bulkInsert({ tableName: 'Users', schema: 'user_schema' }, users, { transaction });
+      await queryInterface.bulkInsert({ tableName: 'Users', schema: 'public' }, users, { transaction });
 
       // Получаем всех пользователей из базы данных
       const usersFromDb = await queryInterface.sequelize.query(
-        `SELECT "id", "firstName", "lastName", "role" FROM "user_schema"."Users";`,
+        `SELECT "id", "firstName", "lastName", "role" FROM "public"."Users";`,
         { type: queryInterface.sequelize.QueryTypes.SELECT, transaction }
       );
 
@@ -207,7 +207,7 @@ module.exports = {
       }
 
       // Вставляем уведомления в базу данных
-      await queryInterface.bulkInsert({ tableName: 'Notifications', schema: 'user_schema' }, notifications, { transaction });
+      await queryInterface.bulkInsert({ tableName: 'Notifications', schema: 'public' }, notifications, { transaction });
 
       await transaction.commit();
       console.log('Пользователи и уведомления успешно посеяны');
@@ -222,8 +222,8 @@ module.exports = {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       // Удаляем уведомления и пользователей
-      await queryInterface.bulkDelete({ tableName: 'Notifications', schema: 'user_schema' }, null, { transaction });
-      await queryInterface.bulkDelete({ tableName: 'Users', schema: 'user_schema' }, null, { transaction });
+      await queryInterface.bulkDelete({ tableName: 'Notifications', schema: 'public' }, null, { transaction });
+      await queryInterface.bulkDelete({ tableName: 'Users', schema: 'public' }, null, { transaction });
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();

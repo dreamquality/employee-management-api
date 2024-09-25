@@ -118,11 +118,11 @@ module.exports = {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') // Значение по умолчанию
       }
     }, {
-      schema: 'user_schema' // Указываем схему
+      schema: 'public' // Указываем схему
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users', { schema: 'user_schema' });
+    await queryInterface.dropTable('Users', { schema: 'public' });
   }
 };

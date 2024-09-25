@@ -100,7 +100,7 @@ router.delete('/users/:id', authenticateToken, userController.deleteEmployee);
  *         name: sortBy
  *         schema:
  *           type: string
- *           enum: [registrationDate, programmingLanguage, country, mentorName, englishLevel]
+ *           enum: [registrationDate, programmingLanguage, country, mentorName, englishLevel, position]
  *           default: registrationDate
  *         description: Поле для сортировки
  *       - in: query
@@ -160,8 +160,16 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  *     responses:
  *       200:
  *         description: Профиль обновлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Некорректные данные
  *       403:
  *         description: Доступ запрещен
+ *       404:
+ *         description: Пользователь не найден
  */
 router.put('/users/:id', authenticateToken, userUpdateValidation, validateInput, userController.updateProfile);
 
