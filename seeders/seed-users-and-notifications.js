@@ -29,7 +29,7 @@ module.exports = {
           registrationDate: '2024-09-23T15:09:51.485Z',
           lastLoginDate: '2024-09-25T11:26:32.299Z',
           salary: 600,
-          lastSalaryIncreaseDate: '2024-09-23T15:09:51.485Z',
+          lastSalaryIncreaseDate: '2024-09-23',
           position: null,
           mentorName: null,
           vacationDates: null,
@@ -66,7 +66,7 @@ module.exports = {
         lastSalaryIncreaseDate: faker.date.past(1),
         position: 'Developer',
         mentorName: null,
-        vacationDates: JSON.stringify([faker.date.future(), faker.date.future()]),
+        vacationDates: [faker.date.future(), faker.date.future()], // Исправлено здесь
         githubLink: `https://github.com/${faker.internet.userName()}`,
         linkedinLink: `https://linkedin.com/in/${faker.internet.userName()}`,
         adminNote: null,
@@ -98,7 +98,7 @@ module.exports = {
         lastSalaryIncreaseDate: new Date(new Date().setMonth(new Date().getMonth() - 5)), // Повышение через 30 дней
         position: 'Senior Developer',
         mentorName: 'Michael Brown',
-        vacationDates: JSON.stringify([faker.date.future(), faker.date.future()]),
+        vacationDates: [faker.date.future(), faker.date.future()], // Исправлено здесь
         githubLink: `https://github.com/${faker.internet.userName()}`,
         linkedinLink: `https://linkedin.com/in/${faker.internet.userName()}`,
         adminNote: 'Top performer',
@@ -132,13 +132,13 @@ module.exports = {
           lastSalaryIncreaseDate: faker.date.past(1),
           position: faker.helpers.arrayElement(['Junior Developer', 'Developer', 'Senior Developer', 'Lead Developer']),
           mentorName: faker.person.fullName(),
-          vacationDates: JSON.stringify([faker.date.future(), faker.date.future()]),
+          vacationDates: [faker.date.future(), faker.date.future()], // Исправлено здесь
           githubLink: `https://github.com/${faker.internet.userName()}`,
           linkedinLink: `https://linkedin.com/in/${faker.internet.userName()}`,
           adminNote: faker.lorem.sentence(),
           currentProject: faker.helpers.arrayElement(['Project Gamma', 'Project Delta', 'Project Epsilon']),
           englishLevel: faker.helpers.arrayElement(['Beginner', 'Intermediate', 'Advanced', 'Fluent']),
-          workingHoursPerWeek: faker.number.float({ min: 30, max: 40, precision: 0.1 }),
+          workingHoursPerWeek: faker.number.int({ min: 30, max: 40}),
           role: 'employee',
           password,
           createdAt: new Date(),
@@ -162,15 +162,15 @@ module.exports = {
       const adminUsers = usersFromDb.filter(user => user.role === 'admin');
       const employeeUsers = usersFromDb.filter(user => user.role === 'employee');
 
-      // Создаем уведомления для сотрудников (например, напоминания о дне рождения или повышении зарплаты)
+      // Создаем уведомления для сотрудников
       for (const employee of employeeUsers) {
-        const adminUser = adminUsers.find(admin => admin.role === 'admin');
+        const adminUser = adminUsers[0]; // Предполагаем, что есть хотя бы один администратор
         if (adminUser) {
           // Уведомление о дне рождения
           notifications.push({
             message: `Напоминание: У сотрудника ${employee.firstName} ${employee.lastName} скоро день рождения!`,
-            userId: adminUser.id, // Администратор — получатель уведомления
-            relatedUserId: employee.id, // Сотрудник — инициатор уведомления
+            userId: adminUser.id,
+            relatedUserId: employee.id,
             type: 'birthday_reminder',
             eventDate: new Date(new Date().setDate(new Date().getDate() + 30)),
             isRead: false,
@@ -181,8 +181,8 @@ module.exports = {
           // Уведомление о предстоящем повышении зарплаты
           notifications.push({
             message: `У сотрудника ${employee.firstName} ${employee.lastName} скоро планируется повышение зарплаты.`,
-            userId: adminUser.id, // Администратор — получатель уведомления
-            relatedUserId: employee.id, // Сотрудник — инициатор уведомления
+            userId: adminUser.id,
+            relatedUserId: employee.id,
             type: 'salary_increase_reminder',
             eventDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
             isRead: false,
@@ -196,8 +196,8 @@ module.exports = {
       for (const admin of adminUsers) {
         notifications.push({
           message: `Добро пожаловать, ${admin.firstName} ${admin.lastName}!`,
-          userId: admin.id, // Администратор — получатель уведомления
-          relatedUserId: admin.id, // Администратор — инициатор уведомления
+          userId: admin.id,
+          relatedUserId: admin.id,
           type: 'welcome',
           eventDate: new Date(),
           isRead: false,

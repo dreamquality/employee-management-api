@@ -78,7 +78,7 @@ const options = {
             adminNote: { type: 'string', nullable: true },
             currentProject: { type: 'string', nullable: true },
             englishLevel: { type: 'string', nullable: true },
-            workingHoursPerWeek: { type: 'number', format: 'float', nullable: true },
+            workingHoursPerWeek: { type: 'integer', nullable: true },
             role: { type: 'string', enum: ['employee', 'admin'] },
             password: { type: 'string', format: 'password' },
             createdAt: { type: 'string', format: 'date-time' },
@@ -113,7 +113,7 @@ const options = {
             adminNote: { type: 'string', nullable: true },
             currentProject: { type: 'string', nullable: true },
             englishLevel: { type: 'string', nullable: true },
-            workingHoursPerWeek: { type: 'number', format: 'float', nullable: true },
+            workingHoursPerWeek: { type: 'integer', nullable: true },
           },
         },
         UserCreate: {
@@ -146,7 +146,7 @@ const options = {
             adminNote: { type: 'string', nullable: true },
             currentProject: { type: 'string', nullable: true },
             englishLevel: { type: 'string', nullable: true },
-            workingHoursPerWeek: { type: 'number', format: 'float', nullable: true },
+            workingHoursPerWeek: { type: 'integer', nullable: true },
           },
         },
         Notification: {

@@ -96,7 +96,7 @@ module.exports = {
         allowNull: true
       },
       workingHoursPerWeek: {
-        type: Sequelize.FLOAT,
+        type: Sequelize.INTEGER,
         allowNull: true
       },
       role: {
