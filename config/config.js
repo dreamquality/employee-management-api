@@ -60,6 +60,7 @@ const config = {
         rejectUnauthorized: false, // В некоторых случаях это помогает устранить ошибки сертификата
       },
     },
+    logging: console.log,
   },
 };
 
