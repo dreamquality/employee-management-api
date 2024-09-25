@@ -78,13 +78,13 @@ db.sequelize.sync({ alter: true }).then(async () => {
         middleName: 'User',
         birthDate: '1970-01-01',
         phone: '+0000000000',
-        email: 'admin@example.com',
+        email: 'admin1@example.com',
         programmingLanguage: 'N/A',
         password: hashedPassword,
         role: 'admin',
         hireDate: '2020-04-04',
       });
-      console.log('Администратор по умолчанию создан: admin@example.com / adminpassword');
+      console.log('Администратор по умолчанию создан: admin1@example.com / adminpassword');
     } else {
       console.log('Администратор уже существует.');
     }

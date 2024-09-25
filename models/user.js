@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      schema: "public",
+      schema: "user_schema",
       tableName: "Users",
       timestamps: true,
     }
@@ -62,12 +62,14 @@ module.exports = (sequelize, DataTypes) => {
       as: 'notifications', 
       foreignKey: 'userId',
       onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
       hooks: true,
     });
     User.hasMany(models.Notification, { 
       as: 'relatedNotifications', 
       foreignKey: 'relatedUserId',
       onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
       hooks: true,
     });
   };

@@ -12,7 +12,7 @@ module.exports = {
       firstName: 'Admin',
       lastName: 'User',
       middleName: faker.person.middleName(),
-      email: 'admin1@example.com',
+      email: 'admin@example.com',
       phone: faker.phone.number('+1-###-###-####'),
       birthDate: faker.date.past(40, '2000-01-01'),
       programmingLanguage: 'N/A',
@@ -91,11 +91,11 @@ module.exports = {
     }
 
     // Вставляем пользователей в базу данных
-    await queryInterface.bulkInsert({ tableName: 'Users', schema: 'public' }, users, {});
+    await queryInterface.bulkInsert({ tableName: 'Users', schema: 'user_schema' }, users, {});
 
     // Получаем всех пользователей из базы данных
     const usersFromDb = await queryInterface.sequelize.query(
-      `SELECT "id", "firstName", "lastName", "role" FROM "public"."Users";`,
+      `SELECT "id", "firstName", "lastName", "role" FROM "user_schema"."Users";`,
       { type: queryInterface.sequelize.QueryTypes.SELECT }
     );
 
@@ -147,14 +147,14 @@ module.exports = {
     }
 
     // Вставляем уведомления в базу данных
-    await queryInterface.bulkInsert({ tableName: 'Notifications', schema: 'public' }, notifications, {});
+    await queryInterface.bulkInsert({ tableName: 'Notifications', schema: 'user_schema' }, notifications, {});
 
     console.log('Пользователи и уведомления успешно посеяны');
   },
 
   down: async (queryInterface, Sequelize) => {
     // Удаляем уведомления и пользователей
-    await queryInterface.bulkDelete({ tableName: 'Notifications', schema: 'public' }, null, {});
-    await queryInterface.bulkDelete({ tableName: 'Users', schema: 'public' }, null, {});
+    await queryInterface.bulkDelete({ tableName: 'Notifications', schema: 'user_schema' }, null, {});
+    await queryInterface.bulkDelete({ tableName: 'Users', schema: 'user_schema' }, null, {});
   }
 };

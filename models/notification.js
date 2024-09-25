@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      schema: "public",
+      schema: "user_schema",
       tableName: "Notifications",
       timestamps: true,
     }
