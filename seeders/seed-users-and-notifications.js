@@ -7,7 +7,27 @@ module.exports = {
     const users = [];
     const salt = await bcrypt.genSalt(10);
 
-    // Пользователь с днем рождения через 30 дней
+    // Создаем администратора
+    const adminUser = {
+      firstName: 'Admin',
+      lastName: 'User',
+      middleName: faker.person.middleName(),
+      email: 'admin@example.com',
+      phone: faker.phone.number('+1-###-###-####'),
+      birthDate: faker.date.past(40, '2000-01-01'),
+      programmingLanguage: 'N/A',
+      country: 'USA',
+      hireDate: faker.date.past(2),
+      salary: 1500,
+      lastSalaryIncreaseDate: faker.date.past(1),
+      role: 'admin',
+      password: await bcrypt.hash('adminpassword', salt),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    users.push(adminUser);
+
+    // Создаем пользователей с днем рождения через 30 дней
     const birthdayUser = {
       firstName: 'John',
       lastName: 'Doe',
@@ -27,7 +47,7 @@ module.exports = {
     };
     users.push(birthdayUser);
 
-    // Пользователь с повышением зарплаты через 30 дней
+    // Создаем пользователей с предстоящим повышением зарплаты
     const salaryIncreaseUser = {
       firstName: 'Jane',
       lastName: 'Smith',
@@ -47,7 +67,7 @@ module.exports = {
     };
     users.push(salaryIncreaseUser);
 
-    // Обычные сотрудники для других тестов
+    // Создаем остальных сотрудников для тестов
     for (let i = 0; i < 10; i++) {
       const password = await bcrypt.hash('password123', salt);
       const user = {
@@ -70,60 +90,71 @@ module.exports = {
       users.push(user);
     }
 
-    // Создаем пользователя-администратора
-    const adminUser = {
-      firstName: 'Admin',
-      lastName: 'User',
-      middleName: faker.person.middleName(),
-      email: 'admin@example.com',
-      phone: faker.phone.number('+1-###-###-####'),
-      birthDate: faker.date.past(40, '2000-01-01'),
-      programmingLanguage: 'N/A',
-      country: 'USA',
-      hireDate: faker.date.past(2),
-      salary: 1500,
-      lastSalaryIncreaseDate: faker.date.past(1),
-      role: 'admin',
-      password: await bcrypt.hash('adminpassword', salt),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    users.push(adminUser);
-
     // Вставляем пользователей в базу данных
-    await queryInterface.bulkInsert({ tableName: 'Users', schema: 'user_schema' }, users, {});
+    await queryInterface.bulkInsert({ tableName: 'Users', schema: 'public' }, users, {});
 
-    // После вставки пользователей создаем уведомления
+    // Получаем всех пользователей из базы данных
     const usersFromDb = await queryInterface.sequelize.query(
-      `SELECT "id", "firstName", "lastName" FROM "user_schema"."Users";`,
+      `SELECT "id", "firstName", "lastName", "role" FROM "public"."Users";`,
       { type: queryInterface.sequelize.QueryTypes.SELECT }
     );
 
     const notifications = [];
 
-    for (const user of usersFromDb) {
-      const notification = {
-        message: `Уведомление для ${user.firstName} ${user.lastName}: ${faker.lorem.sentence()}`,
-        userId: user.id,
-        relatedUserId: user.id, // Поле relatedUserId заполняется ID пользователя, к которому относится уведомление
-        type: faker.helpers.arrayElement(['birthday_reminder', 'salary_increase_reminder', 'general']),
-        eventDate: faker.date.future(),
-        isRead: faker.datatype.boolean(),
+    // Разделяем администраторов и сотрудников
+    const adminUsers = usersFromDb.filter(user => user.role === 'admin');
+    const employeeUsers = usersFromDb.filter(user => user.role === 'employee');
+
+    // Создаем уведомления для сотрудников (например, напоминания о дне рождения или повышении зарплаты)
+    for (const employee of employeeUsers) {
+      // Уведомление о дне рождения
+      notifications.push({
+        message: `Напоминание: У сотрудника ${employee.firstName} ${employee.lastName} скоро день рождения!`,
+        userId: adminUsers[0].id, // Администратор — получатель уведомления
+        relatedUserId: employee.id, // Сотрудник — инициатор уведомления
+        type: 'birthday_reminder',
+        eventDate: new Date(new Date().setDate(new Date().getDate() + 30)),
+        isRead: false,
         createdAt: new Date(),
         updatedAt: new Date(),
-      };
-      notifications.push(notification);
+      });
+
+      // Уведомление о предстоящем повышении зарплаты
+      notifications.push({
+        message: `У сотрудника ${employee.firstName} ${employee.lastName} скоро планируется повышение зарплаты.`,
+        userId: adminUsers[0].id, // Администратор — получатель уведомления
+        relatedUserId: employee.id, // Сотрудник — инициатор уведомления
+        type: 'salary_increase_reminder',
+        eventDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
+        isRead: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
     }
 
-    // Вставляем данные в таблицу Notifications
-    await queryInterface.bulkInsert({ tableName: 'Notifications', schema: 'user_schema' }, notifications, {});
+    // Создаем общие уведомления для администраторов
+    for (const admin of adminUsers) {
+      notifications.push({
+        message: `Добро пожаловать, ${admin.firstName} ${admin.lastName}!`,
+        userId: admin.id, // Администратор — получатель уведомления
+        relatedUserId: admin.id, // Администратор — инициатор уведомления
+        type: 'welcome',
+        eventDate: new Date(),
+        isRead: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+
+    // Вставляем уведомления в базу данных
+    await queryInterface.bulkInsert({ tableName: 'Notifications', schema: 'public' }, notifications, {});
 
     console.log('Пользователи и уведомления успешно посеяны');
   },
 
   down: async (queryInterface, Sequelize) => {
     // Удаляем уведомления и пользователей
-    await queryInterface.bulkDelete({ tableName: 'Notifications', schema: 'user_schema' }, null, {});
-    await queryInterface.bulkDelete({ tableName: 'Users', schema: 'user_schema' }, null, {});
+    await queryInterface.bulkDelete({ tableName: 'Notifications', schema: 'public' }, null, {});
+    await queryInterface.bulkDelete({ tableName: 'Users', schema: 'public' }, null, {});
   }
 };
