@@ -4,8 +4,26 @@ module.exports = (sequelize, DataTypes) => {
     "Notification",
     {
       message: { type: DataTypes.STRING, allowNull: false },
-      userId: { type: DataTypes.INTEGER, allowNull: false },
-      relatedUserId: { type: DataTypes.INTEGER, allowNull: false },
+      userId: { 
+        type: DataTypes.INTEGER, 
+        allowNull: false,
+        references: {
+          model: 'Users', // Имя таблицы Users
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      relatedUserId: { 
+        type: DataTypes.INTEGER, 
+        allowNull: false,
+        references: {
+          model: 'Users', // Имя таблицы Users
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       isRead: { type: DataTypes.BOOLEAN, defaultValue: false },
       type: {
         type: DataTypes.STRING,
@@ -19,14 +37,20 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       schema: "public",
+      tableName: "Notifications",
+      timestamps: true,
     }
   );
 
-  // Ассоциация с пользователем
+  // Ассоциации
   Notification.associate = function(models) {
     Notification.belongsTo(models.User, {
       foreignKey: 'userId',
       as: 'user'
+    });
+    Notification.belongsTo(models.User, {
+      foreignKey: 'relatedUserId',
+      as: 'relatedUser'
     });
   };
 

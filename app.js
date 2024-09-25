@@ -63,7 +63,7 @@ const publicUrl = process.env.PUBLIC_URL || `http://localhost:${process.env.PORT
 
 
 // Синхронизация базы данных и запуск сервера
-db.sequelize.sync({ force: false }).then(async () => {
+db.sequelize.sync({ alter: true }).then(async () => {
   try {
     console.log('Подключение к базе данных успешно.');
 

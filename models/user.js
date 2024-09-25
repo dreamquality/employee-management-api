@@ -51,16 +51,24 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       schema: "public",
+      tableName: "Users",
+      timestamps: true,
     }
   );
 
   // Ассоциация с моделью Notification с каскадным удалением
   User.associate = function(models) {
-    User.hasMany(models.Notification, {
-      as:'notifications',
+    User.hasMany(models.Notification, { 
+      as: 'notifications', 
       foreignKey: 'userId',
-      onDelete: 'CASCADE', // Удаление уведомлений при удалении пользователя
-      hooks: true, // Включает каскадные действия для удаления
+      onDelete: 'CASCADE',
+      hooks: true,
+    });
+    User.hasMany(models.Notification, { 
+      as: 'relatedNotifications', 
+      foreignKey: 'relatedUserId',
+      onDelete: 'CASCADE',
+      hooks: true,
     });
   };
 

@@ -36,7 +36,19 @@ db.User = require('./user')(sequelize, DataTypes);
 db.Notification = require('./notification')(sequelize, DataTypes);
 
 // Установление связей между моделями
-db.User.hasMany(db.Notification, { as: 'notifications', foreignKey: 'userId' });
-db.Notification.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
+db.User.hasMany(db.Notification, { 
+  as: 'notifications', 
+  foreignKey: 'userId',
+  onDelete: 'CASCADE', 
+  hooks: true 
+});
+db.Notification.belongsTo(db.User, { 
+  foreignKey: 'userId', 
+  as: 'user' 
+});
+db.Notification.belongsTo(db.User, { 
+  foreignKey: 'relatedUserId', 
+  as: 'relatedUser' 
+});
 
 module.exports = db;
