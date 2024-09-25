@@ -12,7 +12,7 @@ module.exports = {
       firstName: 'Admin',
       lastName: 'User',
       middleName: faker.person.middleName(),
-      email: 'admin@example.com',
+      email: 'admin1@example.com',
       phone: faker.phone.number('+1-###-###-####'),
       birthDate: faker.date.past(40, '2000-01-01'),
       programmingLanguage: 'N/A',
