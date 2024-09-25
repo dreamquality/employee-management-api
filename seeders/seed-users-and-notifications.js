@@ -66,7 +66,7 @@ module.exports = {
         lastSalaryIncreaseDate: faker.date.past(1),
         position: 'Developer',
         mentorName: null,
-        vacationDates: [faker.date.future(), faker.date.future()].map(date => date.toISOString().split('T')[0]), // Исправлено здесь
+        vacationDates: null, // Исправлено здесь
         githubLink: `https://github.com/${faker.internet.userName()}`,
         linkedinLink: `https://linkedin.com/in/${faker.internet.userName()}`,
         adminNote: null,
@@ -98,7 +98,7 @@ module.exports = {
         lastSalaryIncreaseDate: new Date(new Date().setMonth(new Date().getMonth() - 5)), // Повышение через 30 дней
         position: 'Senior Developer',
         mentorName: 'Michael Brown',
-        vacationDates: [faker.date.future(), faker.date.future()].map(date => date.toISOString().split('T')[0]), // Исправлено здесь
+        vacationDates: null, // Исправлено здесь
         githubLink: `https://github.com/${faker.internet.userName()}`,
         linkedinLink: `https://linkedin.com/in/${faker.internet.userName()}`,
         adminNote: 'Top performer',
@@ -132,7 +132,7 @@ module.exports = {
           lastSalaryIncreaseDate: faker.date.past(1),
           position: faker.helpers.arrayElement(['Junior Developer', 'Developer', 'Senior Developer', 'Lead Developer']),
           mentorName: faker.person.fullName(),
-          vacationDates: [faker.date.future(), faker.date.future()].map(date => date.toISOString().split('T')[0]), // Исправлено здесь
+          vacationDates: null, // Исправлено здесь
           githubLink: `https://github.com/${faker.internet.userName()}`,
           linkedinLink: `https://linkedin.com/in/${faker.internet.userName()}`,
           adminNote: faker.lorem.sentence(),
