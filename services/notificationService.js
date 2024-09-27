@@ -10,10 +10,30 @@ function normalizeDate(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+// Функция для удаления старых прочитанных уведомлений
+async function deleteOldReadNotifications() {
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+  try {
+    const deletedCount = await db.Notification.destroy({
+      where: {
+        isRead: true,
+        eventDate: {
+          [db.Sequelize.Op.lte]: sixMonthsAgo,
+        },
+      },
+    });
+    logger.info(`Удалено ${deletedCount} старых прочитанных уведомлений`);
+  } catch (error) {
+    logger.error('Ошибка при удалении старых прочитанных уведомлений', { error });
+  }
+}
+
 // Запланированная проверка
 exports.scheduleNotifications = () => {
   // Ежедневная проверка
-  schedule.scheduleJob('0 * * * *', async () => { //  */1 - для запуска ежеминутно
+  schedule.scheduleJob('0 * * * *', async () => { // Запуск каждый час
     const today = new Date();
     logger.info('Запуск ежедневной проверки уведомлений');
 
@@ -33,6 +53,9 @@ exports.scheduleNotifications = () => {
         // Проверка повышения зарплаты
         await checkSalaryIncreaseNotifications(user, admins, today);
       }
+
+      // Удаление старых прочитанных уведомлений
+      await deleteOldReadNotifications();
     } catch (error) {
       logger.error('Ошибка при выполнении проверки уведомлений', { error });
     }
@@ -68,7 +91,7 @@ async function checkBirthdayNotifications(user, admins, today) {
         message: `Через месяц день рождения у ${user.firstName} ${user.lastName}`,
         type: 'birthday_reminder',
         eventDate: nextBirthday,
-        userId: user.id, // Добавляем userId в данные уведомления
+        userId: user.id,
       });
     } catch (error) {
       logger.error('Ошибка при отправке уведомления о дне рождения', { error });
@@ -82,7 +105,7 @@ async function checkBirthdayNotifications(user, admins, today) {
         message: `Сегодня день рождения у ${user.firstName} ${user.lastName}`,
         type: 'birthday',
         eventDate: nextBirthday,
-        userId: user.id, // Добавляем userId в данные уведомления
+        userId: user.id,
       });
     } catch (error) {
       logger.error('Ошибка при отправке уведомления о дне рождения', { error });
@@ -115,7 +138,7 @@ async function checkSalaryIncreaseNotifications(user, admins, today) {
         message: `Через месяц запланировано повышение зарплаты для сотрудника ${user.firstName} ${user.lastName}.`,
         type: 'salary_increase_reminder',
         eventDate: nextIncreaseDate,
-        userId: user.id, // Добавляем userId в данные уведомления
+        userId: user.id,
       });
     } catch (error) {
       logger.error('Ошибка при отправке уведомления о повышении зарплаты', { error });
@@ -136,7 +159,7 @@ async function checkSalaryIncreaseNotifications(user, admins, today) {
         message: `Зарплата сотрудника ${user.firstName} ${user.lastName} была автоматически увеличена до ${newSalary} долларов.`,
         type: 'salary_increased',
         eventDate: today,
-        userId: user.id, // Добавляем userId в данные уведомления
+        userId: user.id,
       });
 
       // Уведомление о достижении порога зарплаты
@@ -145,7 +168,7 @@ async function checkSalaryIncreaseNotifications(user, admins, today) {
           message: `Сотрудник ${user.firstName} ${user.lastName} достиг порога зарплаты.`,
           type: 'salary_threshold_reached',
           eventDate: today,
-          userId: user.id, // Добавляем userId в данные уведомления
+          userId: user.id,
         });
       }
     } catch (error) {
@@ -165,7 +188,7 @@ async function sendNotificationToAdmins(admins, notificationData) {
         // Проверяем, было ли уже отправлено уведомление с тем же userId и типом
         const existingNotification = await db.Notification.findOne({
           where: {
-            userId: notificationData.userId, // Идентификатор пользователя, по которому создается уведомление
+            userId: notificationData.userId,
             type: notificationData.type,
             eventDate: notificationData.eventDate,
           },
@@ -177,7 +200,7 @@ async function sendNotificationToAdmins(admins, notificationData) {
             userId: admin.id,
             type: notificationData.type,
             eventDate: notificationData.eventDate,
-            relatedUserId: notificationData.userId, // Идентификатор пользователя, по которому создается уведомление
+            relatedUserId: notificationData.userId,
           });
           logger.info(`Уведомление для администратора ${admin.id} успешно создано`, { adminId: admin.id, type: notificationData.type });
         } else {
