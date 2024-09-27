@@ -168,18 +168,28 @@ exports.createEmployee = async (req, res, next) => {
 
     // Извлечение данных из тела запроса
     const {
-      email,
-      password,
-      firstName,
-      lastName,
-      middleName,
-      birthDate,
-      phone,
-      programmingLanguage,
-      country,
-      position,
-      workingHoursPerWeek,
-      role
+      'firstName',
+      'lastName',
+      'middleName',
+      'birthDate',
+      'phone',
+      'email',
+      'programmingLanguage',
+      'country',
+      'bankCard',
+      'linkedinLink',
+      'hireDate',
+      'adminNote',
+      'currentProject',
+      'englishLevel',
+      'githubLink',
+      'vacationDates',
+      'mentorName',
+      'position',
+      'salary',
+      'role',
+      'password',
+      'workingHoursPerWeek'
       // Добавьте другие поля по необходимости
     } = req.body;
 
