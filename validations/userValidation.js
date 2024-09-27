@@ -1,5 +1,5 @@
 // validations/userValidation.js
-const { body } = require('express-validator');
+const { body, query, validationResult } = require('express-validator');
 
 exports.userUpdateValidation = [
   body('firstName')
