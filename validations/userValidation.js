@@ -1,5 +1,5 @@
 // validations/userValidation.js
-const {  body, query, validationResult } = require('express-validator');
+const { body } = require('express-validator');
 
 exports.userUpdateValidation = [
   body('firstName')
@@ -52,8 +52,52 @@ exports.userUpdateValidation = [
       }
       return true;
     })
-    .isInt({ min: 0, max: 100 })
-    .withMessage('Параметр "workingHoursPerWeek" должен быть положительным целым числом'),
+    .isInt({ min: 0, max: 100 }).withMessage('Параметр "workingHoursPerWeek" должен быть положительным целым числом'),
+
+  // Новые поля
+  body('linkedinLink')
+    .optional()
+    .isURL().withMessage('Некорректная ссылка на LinkedIn'),
+
+  body('githubLink')
+    .optional()
+    .isURL().withMessage('Некорректная ссылка на GitHub'),
+
+  body('hireDate')
+    .optional()
+    .isDate().withMessage('Некорректная дата приёма на работу'),
+
+  body('adminNote')
+    .optional()
+    .isString().withMessage('Заметка администратора должна быть строкой'),
+
+  body('currentProject')
+    .optional()
+    .isString().withMessage('Текущий проект должен быть строкой'),
+
+  body('englishLevel')
+    .optional()
+    .isString().withMessage('Уровень английского должен быть строкой'),
+
+  body('vacationDates')
+    .optional()
+    .isArray().withMessage('Даты отпусков должны быть массивом дат'),
+
+  body('mentorName')
+    .optional()
+    .isString().withMessage('Имя ментора должно быть строкой'),
+
+  body('position')
+    .optional()
+    .isString().withMessage('Позиция должна быть строкой'),
+
+  body('salary')
+    .optional()
+    .isFloat({ min: 0 }).withMessage('Зарплата должна быть положительным числом'),
+
+  body('role')
+    .optional()
+    .isIn(['employee', 'admin']).withMessage('Роль должна быть employee или admin'),
 ];
 
 exports.userCreateValidation = [
@@ -73,8 +117,8 @@ exports.userCreateValidation = [
     .notEmpty().withMessage('Фамилия обязательна'),
 
   body('middleName')
-    .isLength({ min: 2, max: 40 }).withMessage('Отчество должно быть от 2 до 40 символов')
-    .optional(),
+    .optional()
+    .isLength({ min: 2, max: 40 }).withMessage('Отчество должно быть от 2 до 40 символов'),
 
   body('phone')
     .optional()
@@ -86,9 +130,66 @@ exports.userCreateValidation = [
 
   body('workingHoursPerWeek')
     .optional()
-    .isInt({ min: 0, max: 100 })
-    .withMessage('Параметр "workingHoursPerWeek" должен быть положительным целым числом'),
+    .isInt({ min: 0, max: 100 }).withMessage('Параметр "workingHoursPerWeek" должен быть положительным целым числом'),
+
+  // Новые поля
+  body('birthDate')
+    .optional()
+    .isDate().withMessage('Некорректная дата рождения'),
+
+  body('country')
+    .optional()
+    .isString().withMessage('Страна должна быть строкой'),
+
+  body('bankCard')
+    .optional()
+    .isString().withMessage('Банковская карта должна быть строкой'),
+
+  body('linkedinLink')
+    .optional()
+    .isURL().withMessage('Некорректная ссылка на LinkedIn'),
+
+  body('githubLink')
+    .optional()
+    .isURL().withMessage('Некорректная ссылка на GitHub'),
+
+  body('hireDate')
+    .optional()
+    .isDate().withMessage('Некорректная дата приёма на работу'),
+
+  body('adminNote')
+    .optional()
+    .isString().withMessage('Заметка администратора должна быть строкой'),
+
+  body('currentProject')
+    .optional()
+    .isString().withMessage('Текущий проект должен быть строкой'),
+
+  body('englishLevel')
+    .optional()
+    .isString().withMessage('Уровень английского должен быть строкой'),
+
+  body('vacationDates')
+    .optional()
+    .isArray().withMessage('Даты отпусков должны быть массивом дат'),
+
+  body('mentorName')
+    .optional()
+    .isString().withMessage('Имя ментора должно быть строкой'),
+
+  body('position')
+    .optional()
+    .isString().withMessage('Позиция должна быть строкой'),
+
+  body('salary')
+    .optional()
+    .isFloat({ min: 0 }).withMessage('Зарплата должна быть положительным числом'),
+
+  body('role')
+    .optional()
+    .isIn(['employee', 'admin']).withMessage('Роль должна быть employee или admin'),
 ];
+
 
 
 exports.userListValidation = [
