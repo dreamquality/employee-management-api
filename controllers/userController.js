@@ -253,15 +253,18 @@ exports.deleteEmployee = async (req, res, next) => {
     }
 
     // Удаление сотрудника
+    
+    // await db.Notification.destroy({ where: { userId: user.id } });
+    // await db.Notification.destroy({ where: { relatedUserId: user.id } });
     await user.destroy();
 
     // Создаем уведомление для администратора о удалении сотрудника
-    await db.Notification.create({
-      message: `Администратор удалил сотрудника: ${user.firstName} ${user.lastName}`,
-      userId: req.user.userId, // Администратор — инициатор уведомления
-      relatedUserId: user.id, // Удаленный сотрудник — связанный пользователь
-      type: 'employee_deleted',
-    });
+    // await db.Notification.create({
+    //   message: `Администратор удалил сотрудника: ${user.firstName} ${user.lastName}`,
+    //   userId: req.user.userId, // Администратор — инициатор уведомления
+    //   relatedUserId: user.id, // Удаленный сотрудник — связанный пользователь
+    //   type: 'employee_deleted',
+    // });
 
     res.json({ message: 'Сотрудник успешно удален' });
   } catch (err) {
