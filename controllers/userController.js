@@ -91,11 +91,20 @@ exports.updateProfile = async (req, res, next) => {
 
     // Поля, которые могут быть обновлены только администратором
     const adminOnlyFields = [
+      'firstName',
+      'lastName',
+      'middleName',
+      'birthDate',
+      'phone',
+      'email',
+      'programmingLanguage',
+      'country',
+      'bankCard',
+      'linkedinLink',
       'hireDate',
       'adminNote',
       'currentProject',
       'englishLevel',
-      'linkedinLink',
       'githubLink',
       'vacationDates',
       'mentorName',
