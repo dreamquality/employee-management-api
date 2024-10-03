@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: my_app
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=my_database
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - JWT_SECRET=your_jwt_secret
+      - SECRET_WORD=your_secret_word
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - ./:/app
+    command: sh -c "npx sequelize-cli db:migrate && npm run dev"
+
+  db:
+    image: postgres:16
+    container_name: my_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=my_database
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  # test:
+  #   build: .
+  #   container_name: my_test
+  #   environment:
+  #     - NODE_ENV=test
+  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/my_database_test
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - ./:/app
+  #   command: sh -c "npx sequelize db:migrate && npm test"
+
+volumes:
+  db_data:

@@ -8,12 +8,13 @@
     "build-dev": "npm ci && npm run migrate:dev && npm run seed:dev",
     "start": "cross-env NODE_ENV=production node app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",
-    "test": "mocha tests/**/*.test.js --exit",
+    "test": "cross-env NODE_ENV=test mocha tests/**/*.test.js --exit",
     "seed:prod": "cross-env NODE_ENV=production npx sequelize-cli db:seed:all",
     "seed:dev": "cross-env NODE_ENV=development npx sequelize-cli db:seed:all",
     "clear-db:prod": "cross-env NODE_ENV=production npx sequelize-cli db:seed:undo:all",
     "migrate:prod": "cross-env NODE_ENV=production npx sequelize-cli db:migrate",
-    "migrate:dev": "cross-env NODE_ENV=development npx sequelize-cli db:migrate"
+    "migrate:dev": "cross-env NODE_ENV=development npx sequelize-cli db:migrate",
+    "reset-db:dev": "cross-env NODE_ENV=development npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all"
   },
   "keywords": [
     "express",
