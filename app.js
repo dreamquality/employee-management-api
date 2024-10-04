@@ -44,7 +44,13 @@ app.use((err, req, res, next) => {
 app.use(morgan('combined'));
 
 // Swagger документация
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+
+// Маршрут для выдачи JSON спецификации
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
 
 // Маршруты
 app.use(authRoutes);
