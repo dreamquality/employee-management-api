@@ -1,141 +1,210 @@
+
 # Employee Management API
 
-Это приложение представляет собой систему управления сотрудниками, предназначенную для администраторов и сотрудников компании. Администраторы могут добавлять новых сотрудников, редактировать их данные, назначать должности, а также управлять уровнями зарплат и просматривать историю повышения окладов. Приложение автоматически отслеживает даты повышения зарплат сотрудников и отправляет уведомления администраторам за месяц до запланированного повышения. Кроме того, система отправляет уведомления о предстоящих днях рождения сотрудников, чтобы администраторы могли поздравить их вовремя. Сотрудники могут обновлять свои персональные данные, такие как имя, контакты и языки программирования, но некоторые поля, такие как зарплата или должность, могут редактироваться только администраторами. Все изменения в профилях сотрудников автоматически логируются, а уведомления о них направляются администраторам. Уведомления также содержат информацию о статусах сотрудников, таких как текущий проект или уровень английского языка. Приложение обеспечивает регулярные проверки данных и отправляет важные уведомления через планировщик задач.
+A RESTful API for managing employee data, including CRUD operations for employee records, designed to support organizational employee management with PostgreSQL as the database.
 
-## Оглавление
+## Application Overview
 
-- [Технологии](#технологии)
-- [Установка](#установка)
-- [Настройка](#настройка)
-- [Запуск приложения](#запуск-приложения)
-- [Тестирование](#тестирование)
-- [Документация API](#документация-api)
-- [Деплой на сервере](#деплой-на-сервере)
+This application is an employee management system designed for administrators and company employees. Administrators can add new employees, edit their data, assign positions, manage salary levels, and view salary increase histories. The application automatically tracks salary raise dates for employees and sends notifications to administrators one month before the scheduled increase. Additionally, the system sends notifications about upcoming employee birthdays to help administrators congratulate employees on time.
 
-## Технологии
+Employees can update their personal information, such as name, contact details, and programming languages, while certain fields, like salary or position, are editable only by administrators. All changes to employee profiles are automatically logged, and notifications are sent to administrators. Notifications also include employee status updates, such as current project or English language proficiency. The application ensures regular data checks and sends important notifications through a task scheduler.
 
-- **Node.js**: Серверная платформа для запуска JavaScript.
-- **Express**: Веб-фреймворк для Node.js.
-- **Sequelize**: ORM для работы с базами данных.
-- **PostgreSQL**: Реляционная база данных.
-- **JWT**: Аутентификация с использованием JSON Web Tokens.
-- **bcryptjs**: Хеширование паролей.
-- **Express Validator**: Валидация входящих данных.
-- **Winston**: Логирование.
-- **Mocha** и **Chai**: Тестирование.
-- **Swagger**: Генерация документации API.
+## Features
 
-## Установка
+- **Employee Management**: Create, read, update, and delete employee records.
+- **Data Validation**: Ensures data integrity with robust validation.
+- **Search and Filter**: Allows filtering employees by various criteria.
+- **Pagination**: Supports paginated employee listings.
+- **Error Handling**: Comprehensive error management for reliability.
 
-### Предварительные требования
+## Getting Started
 
-- **Node.js** версии 14.x или выше.
-- **npm** (устанавливается вместе с Node.js).
-- **PostgreSQL** установленный и запущенный локально или доступ к удаленной базе данных.
-- **Git** (опционально, для клонирования репозитория).
+### Prerequisites
 
-### Шаги установки
+- **Node.js**: Install [Node.js](https://nodejs.org/) (version 14 or higher recommended).
+- **npm**: Comes with Node.js but can be updated independently.
+- **PostgreSQL**: Install and configure [PostgreSQL 16](https://www.postgresql.org/) as the database for employee data.
 
-1. **Клонирование репозитория**
+### Installation
 
-```sh {"id":"01J817182EA34R9K4BTB4R4BH2"}
-   git clone https://github.com/your-username/employee-management-api.git
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/dreamquality/employee-management-api.git
+   ```
+2. Navigate to the project directory:
+   ```sh
    cd employee-management-api
-```
+   ```
+3. Install dependencies:
+   ```sh
+   npm install
+   ```
 
-```sh {"id":"01J816YFP67PV3CXQ2ZCZ1YSJP"}
-    npm install
+### Configuration
 
-```
+1. Create a `.env` file in the root of the project.
+2. Add the following environment variables:
+   ```plaintext
+   PORT=3000
+   JWT_SECRET=your_jwt_secret
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=employee_db
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
+   SECRET_WORD=your_secret_word_for_admin_registration
+   ```
+   - `PORT`: Port on which the server runs.
+   - `JWT_SECRET`: Secret key for JWT authentication.
+   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: Database connection details for PostgreSQL.
+   - `SECRET_WORD`: A secret key for admin registration.
 
-## Настройка
+Replace `your_db_user`, `your_db_password`, `your_jwt_secret`, and `your_secret_word_for_admin_registration` with your actual values.
 
-### Конфигурация базы данных
+### Running the Application
 
-Создайте базу данных PostgreSQL для приложения. Вы можете использовать psql или любой другой инструмент.
+Start the server in development mode:
+   ```sh
+   npm run dev
+   ```
+The server will be running at `http://localhost:3000`.
 
-```sh {"id":"01J817AHXQVSJRPP1S236A3JTH"}
-CREATE DATABASE employee_db;
-CREATE USER your_db_user WITH PASSWORD 'your_db_password';
-GRANT ALL PRIVILEGES ON DATABASE employee_db TO your_db_user;
-```
+### API Documentation
 
-### Переменные окружения
+Access the interactive API documentation at [http://localhost:3000/api-docs](http://localhost:3000/api-docs) if Swagger or a similar tool is set up. This documentation provides a complete view of the available endpoints and allows for interactive testing.
 
-Создайте файл .env в корневой директории проекта и добавьте следующие переменные:
+## Deployment
 
-```sh {"id":"01J817BRAVB4TA7QNM1643ZK07"}
-PORT=3000
-JWT_SECRET=your_jwt_secret
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=employee_db
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-SECRET_WORD=your_secret_word_for_admin_registration
-```
+### Deploying to Render.com
 
-## Запуск приложения
+1. **Create a Render Account**: Sign up at [Render.com](https://render.com/) and create a new Web Service.
+2. **Connect GitHub Repository**: Link your GitHub repository to Render.
+3. **Environment Variables**:
+   - Set up environment variables (`DATABASE_URL`, `JWT_SECRET`, and any others you need) in the Render dashboard.
+   - If using a PostgreSQL database on Render, you can set up a managed PostgreSQL instance and update `DATABASE_URL` accordingly.
+4. **Build Command**: Use `npm install` to install dependencies.
+5. **Start Command**: Use `npm start` to start the application in production mode.
 
-### Запуск в режиме разработки
+Render will handle the deployment automatically, and your API will be live at the URL provided by Render.
 
-Используйте nodemon для автоматического перезапуска сервера при изменениях кода.
+### Docker
 
-```sh {"id":"01J817F1YNF0FMSN2W6CNY6D0N"}
-npm run dev
-```
+This application can also be containerized using Docker. Here’s how to set it up:
 
-### Запуск в режиме производства
+1. **Create a Dockerfile**: Add a `Dockerfile` to the root of the project with the following content:
 
-```sh {"id":"01J817G166BMT11THXKGF2DNEC"}
-npm start
-```
+   ```dockerfile
+   # Use Node.js as the base image
+   FROM node:16
 
-## Тестирование
+   # Create app directory
+   WORKDIR /app
 
-### Приложение имеет набор юнит-тестов, которые находятся в папке tests.
+   # Install app dependencies
+   COPY package*.json ./
+   RUN npm install
 
-Запуск тестов:
+   # Bundle app source
+   COPY . .
 
-```sh {"id":"01J817HC69JTG88WWWEZMQJSYT"}
-npm test
-```
+   # Expose the port the app runs on
+   EXPOSE 3000
 
-## Документация API
+   # Define environment variable
+   ENV NODE_ENV=production
 
-### Документация API автоматически генерируется с помощью Swagger и доступна по адресу:
+   # Start the app
+   CMD ["npm", "start"]
+   ```
 
-```sh {"id":"01J817JB0EW4MC695KVCJD7KQG"}
-http://localhost:3000/api-docs
-```
+2. **Create a Docker Compose file** (optional): If you need to run PostgreSQL along with the API, add a `docker-compose.yml` file:
 
-## Деплой на сервере
+   ```yaml
+   version: '3'
+   services:
+     db:
+       image: postgres:16
+       environment:
+         POSTGRES_USER: your_db_user
+         POSTGRES_PASSWORD: your_db_password
+         POSTGRES_DB: employee_db
+       ports:
+         - "5432:5432"
+       volumes:
+         - pgdata:/var/lib/postgresql/data
 
-Вы можете развернуть приложение на бесплатных хостингах, таких как Render.com или Railway.app.
+     api:
+       build: .
+       environment:
+         PORT: 3000
+         JWT_SECRET: your_jwt_secret
+         DB_HOST: db
+         DB_PORT: 5432
+         DB_NAME: employee_db
+         DB_USER: your_db_user
+         DB_PASSWORD: your_db_password
+         SECRET_WORD: your_secret_word_for_admin_registration
+       ports:
+         - "3000:3000"
+       depends_on:
+         - db
 
-### Деплой на Render.com
+   volumes:
+     pgdata:
+   ```
 
-1. Создайте аккаунт на Render.com.
-2. Свяжите репозиторий с вашим проектом на GitHub.
-3. Создайте новый веб-сервис:
+3. **Build and Run the Docker Container**:
+   - To build and run the container using Docker Compose, run:
+     ```sh
+     docker-compose up --build
+     ```
+   - This command will start both the PostgreSQL database and the API server. The API will be accessible at `http://localhost:3000`.
 
-   - Выберите репозиторий.
-   - Укажите команду запуска: npm start.
-   - Настройте переменные окружения в разделе Environment.
+4. **Stopping and Removing Containers**:
+   - To stop and remove containers, along with associated volumes, run:
+     ```sh
+     docker-compose down -v
+     ```
 
-4. Добавьте базу данных PostgreSQL в разделе Databases и обновите переменные окружения для подключения к ней.
-5. Разверните приложение и дождитесь завершения деплоя.
+## API Documentation
 
-### Запуск в докере
+Access the interactive API documentation at [http://localhost:3000/api-docs](http://localhost:3000/api-docs) to view and test available endpoints.
 
-Для запуска в докере запустите следующую команду:
+### Available Scripts
 
-```sh {"id":"01J99N9W22HFRWZT0TJ2JQ92S5"}
-docker-compose up --build
-```
+- **`npm run dev`**: Runs the app in development mode with hot reloading.
+- **`npm start`**: Runs the app in production mode.
+- **`npm test`**: Runs test cases for the application.
+- **`npm run lint`**: Lints the project files to enforce consistent code style.
 
-Для остановки контейнеров:
+## API Endpoints
 
-```sh {"id":"01J99NBV3HK1XHSQDBVXSHP1YX"}
-docker-compose down -v
-```
+| Method | Endpoint               | Description                    |
+|--------|-------------------------|--------------------------------|
+| GET    | `/employees`           | List all employees             |
+| GET    | `/employees/:id`       | Get a specific employee by ID  |
+| POST   | `/employees`           | Create a new employee          |
+| PUT    | `/employees/:id`       | Update employee information    |
+| DELETE | `/employees/:id`       | Delete an employee             |
+
+### Example Requests
+
+- **Get all employees**: `GET /employees`
+- **Get employee by ID**: `GET /employees/:id`
+- **Add new employee**: `POST /employees` with JSON body containing employee data.
+- **Update employee**: `PUT /employees/:id` with JSON body of updated data.
+- **Delete employee**: `DELETE /employees/:id`
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and create a pull request with your changes.
+
+1. Fork the repository.
+2. Create a new branch for your feature: `git checkout -b feature-name`.
+3. Commit your changes: `git commit -m 'Add feature'`.
+4. Push to the branch: `git push origin feature-name`.
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
