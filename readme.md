@@ -195,7 +195,6 @@ Access the interactive API documentation at [http://localhost:3000/api-docs](htt
 | POST   | `/users`                         | Create a new user                         |
 | PUT    | `/users/:id`                     | Update user information                   |
 | DELETE | `/users/:id`                     | Delete a user                            |
-| GET    | `/users/me`                      | Get current user's profile                |
 | POST   | `/login`                         | Authenticate user                         |
 | POST   | `/register`                      | Register a new user                       |
 | GET    | `/notifications`                 | Get all notifications for the user        |
