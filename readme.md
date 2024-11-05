@@ -45,21 +45,30 @@ Employees can update their personal information, such as name, contact details, 
 1. Create a `.env` file in the root of the project.
 2. Add the following environment variables:
    ```plaintext
-   PORT=3000
-   JWT_SECRET=your_jwt_secret
-   DB_HOST=localhost
+   # Локальная база данных
+   DB_HOST=127.0.0.1
    DB_PORT=5432
    DB_NAME=employee_db
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   SECRET_WORD=your_secret_word_for_admin_registration
-   ```
-   - `PORT`: Port on which the server runs.
-   - `JWT_SECRET`: Secret key for JWT authentication.
-   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: Database connection details for PostgreSQL.
-   - `SECRET_WORD`: A secret key for admin registration.
+   DB_USER=your_local_db_user
+   DB_PASSWORD=your_local_db_password
 
-Replace `your_db_user`, `your_db_password`, `your_jwt_secret`, and `your_secret_word_for_admin_registration` with your actual values.
+   # Секреты
+   JWT_SECRET=your_jwt_secret
+   SECRET_WORD=your_secret_word_for_admin_registration
+
+   # Среда разработки
+   NODE_ENV=development
+
+   # Порт (опционально, по умолчанию 3000)
+   PORT=3000
+   ```
+   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: Данные для подключения к базе данных PostgreSQL.
+   - `JWT_SECRET`: Секретный ключ для аутентификации JWT.
+   - `SECRET_WORD`: Секретный ключ для регистрации администратора.
+   - `NODE_ENV`: Указывает среду выполнения.
+   - `PORT`: Порт, на котором будет работать сервер (по умолчанию 3000).
+
+Замените `your_local_db_user`, `your_local_db_password`, `your_jwt_secret`, и `your_secret_word_for_admin_registration` на свои реальные значения.
 
 ### Running the Application
 
@@ -179,21 +188,31 @@ Access the interactive API documentation at [http://localhost:3000/api-docs](htt
 
 ## API Endpoints
 
-| Method | Endpoint               | Description                    |
-|--------|-------------------------|--------------------------------|
-| GET    | `/employees`           | List all employees             |
-| GET    | `/employees/:id`       | Get a specific employee by ID  |
-| POST   | `/employees`           | Create a new employee          |
-| PUT    | `/employees/:id`       | Update employee information    |
-| DELETE | `/employees/:id`       | Delete an employee             |
+| Method | Endpoint                          | Description                               |
+|--------|------------------------------------|-------------------------------------------|
+| GET    | `/users`                         | List all users                            |
+| GET    | `/users/:id`                     | Get a specific user by ID                |
+| POST   | `/users`                         | Create a new user                         |
+| PUT    | `/users/:id`                     | Update user information                   |
+| DELETE | `/users/:id`                     | Delete a user                            |
+| GET    | `/users/me`                      | Get current user's profile                |
+| POST   | `/login`                         | Authenticate user                         |
+| POST   | `/register`                      | Register a new user                       |
+| GET    | `/notifications`                 | Get all notifications for the user        |
+| POST   | `/notifications/mark-as-read`    | Mark notifications as read                |
 
 ### Example Requests
 
-- **Get all employees**: `GET /employees`
-- **Get employee by ID**: `GET /employees/:id`
-- **Add new employee**: `POST /employees` with JSON body containing employee data.
-- **Update employee**: `PUT /employees/:id` with JSON body of updated data.
-- **Delete employee**: `DELETE /employees/:id`
+- **Get all users**: `GET /users`
+- **Get user by ID**: `GET /users/:id`
+- **Add new user**: `POST /users` with JSON body containing user data.
+- **Update user**: `PUT /users/:id` with JSON body of updated data.
+- **Delete user**: `DELETE /users/:id`
+- **Get current user's profile**: `GET /users/me`
+- **User login**: `POST /login` with JSON body containing credentials.
+- **User registration**: `POST /register` with JSON body containing user details.
+- **Get notifications**: `GET /notifications`
+- **Mark notifications as read**: `POST /notifications/mark-as-read` with JSON body containing notification IDs.
 
 ## Contributing
 

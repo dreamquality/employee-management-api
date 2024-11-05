@@ -7,14 +7,14 @@ const authenticateToken = require('../middleware/authenticateToken');
  * @swagger
  * tags:
  *   name: Notifications
- *   description: Маршруты уведомлений
+ *   description: Notification routes
  */
 
 /**
  * @swagger
  * /notifications:
  *   get:
- *     summary: Получить список уведомлений текущего пользователя с пагинацией
+ *     summary: Get the current user's list of notifications with pagination
  *     tags: [Notifications]
  *     security:
  *       - bearerAuth: []
@@ -23,34 +23,34 @@ const authenticateToken = require('../middleware/authenticateToken');
  *         name: type
  *         schema:
  *           type: string
- *         description: Тип уведомления для фильтрации
+ *         description: Notification type for filtering
  *       - in: query
  *         name: sortBy
  *         schema:
  *           type: string
  *           enum: [createdAt, type]
- *         description: Поле для сортировки уведомлений
+ *         description: Field to sort notifications by
  *       - in: query
  *         name: order
  *         schema:
  *           type: string
  *           enum: [ASC, DESC]
- *         description: Порядок сортировки (ASC для возрастания, DESC для убывания)
+ *         description: Sort order (ASC for ascending, DESC for descending)
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Номер страницы для пагинации
+ *         description: Page number for pagination
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           default: 10
- *         description: Количество уведомлений на странице
+ *         description: Number of notifications per page
  *     responses:
  *       200:
- *         description: Список уведомлений
+ *         description: List of notifications
  *         content:
  *           application/json:
  *             schema:
@@ -67,9 +67,9 @@ const authenticateToken = require('../middleware/authenticateToken');
  *                 totalPages:
  *                   type: integer
  *       401:
- *         description: Необходима авторизация
+ *         description: Authorization required
  *       403:
- *         description: Доступ запрещен
+ *         description: Access denied
  */
 router.get('/notifications', authenticateToken, notificationController.getNotifications);
 
@@ -77,7 +77,7 @@ router.get('/notifications', authenticateToken, notificationController.getNotifi
  * @swagger
  * /notifications/{id}/mark-as-read:
  *   patch:
- *     summary: Отметить уведомление как прочитанное
+ *     summary: Mark a notification as read
  *     tags: [Notifications]
  *     security:
  *       - bearerAuth: []
@@ -87,20 +87,20 @@ router.get('/notifications', authenticateToken, notificationController.getNotifi
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID уведомления
+ *         description: Notification ID
  *     responses:
  *       200:
- *         description: Уведомление успешно обновлено
+ *         description: Notification successfully updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Notification'
  *       401:
- *         description: Необходима авторизация
+ *         description: Authorization required
  *       403:
- *         description: Доступ запрещен
+ *         description: Access denied
  *       404:
- *         description: Уведомление не найдено
+ *         description: Notification not found
  */
 router.patch('/notifications/:id/mark-as-read', authenticateToken, notificationController.markAsRead);
 

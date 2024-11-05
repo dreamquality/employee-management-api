@@ -9,14 +9,14 @@ const { registerValidation, loginValidation } = require('../validations/authVali
  * @swagger
  * tags:
  *   name: Auth
- *   description: Маршруты аутентификации
+ *   description: Authentication routes
  */
 
 /**
  * @swagger
  * /register:
  *   post:
- *     summary: Регистрация нового пользователя
+ *     summary: Register a new user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -26,9 +26,9 @@ const { registerValidation, loginValidation } = require('../validations/authVali
  *             $ref: '#/components/schemas/Register'
  *     responses:
  *       201:
- *         description: Пользователь успешно зарегистрирован
+ *         description: User successfully registered
  *       400:
- *         description: Неверные данные
+ *         description: Invalid data
  */
 router.post('/register', registerValidation, validateInput, authController.register);
 
@@ -36,7 +36,7 @@ router.post('/register', registerValidation, validateInput, authController.regis
  * @swagger
  * /login:
  *   post:
- *     summary: Вход пользователя
+ *     summary: User login
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -46,9 +46,9 @@ router.post('/register', registerValidation, validateInput, authController.regis
  *             $ref: '#/components/schemas/Login'
  *     responses:
  *       200:
- *         description: Успешный вход
+ *         description: Successful login
  *       400:
- *         description: Неверные учетные данные
+ *         description: Invalid credentials
  */
 router.post('/login', loginValidation, validateInput, authController.login);
 

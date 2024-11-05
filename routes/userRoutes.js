@@ -1,3 +1,4 @@
+// routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
@@ -9,14 +10,14 @@ const { userUpdateValidation, userCreateValidation, userListValidation } = requi
  * @swagger
  * tags:
  *   name: Users
- *   description: Маршруты пользователей
+ *   description: User routes
  */
 
 /**
  * @swagger
  * /users:
  *   post:
- *     summary: Создать нового сотрудника (только для администратора)
+ *     summary: Create a new employee (admin only)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -28,15 +29,15 @@ const { userUpdateValidation, userCreateValidation, userListValidation } = requi
  *             $ref: '#/components/schemas/UserCreate'
  *     responses:
  *       201:
- *         description: Сотрудник успешно создан
+ *         description: Employee successfully created
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Некорректные данные или пользователь уже существует
+ *         description: Invalid data or user already exists
  *       403:
- *         description: Доступ запрещен
+ *         description: Access denied
  */
 router.post('/users', authenticateToken, userCreateValidation, validateInput, userController.createEmployee);
 
@@ -44,7 +45,7 @@ router.post('/users', authenticateToken, userCreateValidation, validateInput, us
  * @swagger
  * /users/{id}:
  *   delete:
- *     summary: Удалить сотрудника (только для администратора)
+ *     summary: Delete an employee (admin only)
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -54,14 +55,14 @@ router.post('/users', authenticateToken, userCreateValidation, validateInput, us
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID сотрудника
+ *         description: Employee ID
  *     responses:
  *       200:
- *         description: Сотрудник успешно удален
+ *         description: Employee successfully deleted
  *       403:
- *         description: Доступ запрещен
+ *         description: Access denied
  *       404:
- *         description: Сотрудник не найден
+ *         description: Employee not found
  */
 router.delete('/users/:id', authenticateToken, userController.deleteEmployee);
 
@@ -69,7 +70,7 @@ router.delete('/users/:id', authenticateToken, userController.deleteEmployee);
  * @swagger
  * /users:
  *   get:
- *     summary: Получить список пользователей с пагинацией, поиском и сортировкой
+ *     summary: Get a list of users with pagination, search, and sorting
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -79,40 +80,40 @@ router.delete('/users/:id', authenticateToken, userController.deleteEmployee);
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Номер страницы
+ *         description: Page number
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           default: 10
- *         description: Количество пользователей на странице
+ *         description: Number of users per page
  *       - in: query
  *         name: firstName
  *         schema:
  *           type: string
- *         description: Поиск по имени
+ *         description: Search by first name
  *       - in: query
  *         name: lastName
  *         schema:
  *           type: string
- *         description: Поиск по фамилии
+ *         description: Search by last name
  *       - in: query
  *         name: sortBy
  *         schema:
  *           type: string
  *           enum: [registrationDate, programmingLanguage, country, mentorName, englishLevel, position]
  *           default: registrationDate
- *         description: Поле для сортировки
+ *         description: Field to sort by
  *       - in: query
  *         name: order
  *         schema:
  *           type: string
  *           enum: [ASC, DESC]
  *           default: ASC
- *         description: Порядок сортировки
+ *         description: Sort order
  *     responses:
  *       200:
- *         description: Список пользователей с пагинацией
+ *         description: List of users with pagination
  *         content:
  *           application/json:
  *             schema:
@@ -124,15 +125,15 @@ router.delete('/users/:id', authenticateToken, userController.deleteEmployee);
  *                     $ref: '#/components/schemas/User'
  *                 total:
  *                   type: integer
- *                   description: Общее количество пользователей
+ *                   description: Total number of users
  *                 page:
  *                   type: integer
  *                 totalPages:
  *                   type: integer
  *       401:
- *         description: Необходима авторизация
+ *         description: Authorization required
  *       403:
- *         description: Доступ запрещен
+ *         description: Access denied
  */
 router.get('/users', authenticateToken, userListValidation, userController.getEmployees);
 
@@ -140,7 +141,7 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  * @swagger
  * /users/{id}:
  *   put:
- *     summary: Обновить профиль пользователя
+ *     summary: Update a user's profile
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -148,7 +149,7 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  *       - name: id
  *         in: path
  *         required: true
- *         description: ID пользователя
+ *         description: User ID
  *         schema:
  *           type: integer
  *     requestBody:
@@ -159,18 +160,45 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  *             $ref: '#/components/schemas/UserUpdate'
  *     responses:
  *       200:
- *         description: Профиль обновлен
+ *         description: Profile updated
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Некорректные данные
+ *         description: Invalid data
  *       403:
- *         description: Доступ запрещен
+ *         description: Access denied
  *       404:
- *         description: Пользователь не найден
+ *         description: User not found
  */
 router.put('/users/:id', authenticateToken, userUpdateValidation, validateInput, userController.updateProfile);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Get an employee by ID
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Employee ID
+ *     responses:
+ *       200:
+ *         description: Employee found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Employee not found
+ */
+router.get('/users/:id', authenticateToken, userController.getEmploye);
 
 module.exports = router;
