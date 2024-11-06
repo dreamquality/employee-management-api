@@ -151,6 +151,10 @@ exports.updateProfile = async (req, res, next) => {
       }
     }
 
+    if (updateData.vacationDates && !Array.isArray(updateData.vacationDates)) {
+      updateData.vacationDates = [updateData.vacationDates];
+    }
+
     // Обновление данных пользователя
     const user = await db.User.findByPk(userId);
     await user.update(updateData);

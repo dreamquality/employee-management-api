@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       position: { type: DataTypes.STRING },
       mentorName: { type: DataTypes.STRING },
       vacationDates: {
-        type: DataTypes.ARRAY(DataTypes.DATE),
+        type: DataTypes.JSONB,
         allowNull: true,
       },
       githubLink: { type: DataTypes.STRING },
