@@ -51,7 +51,7 @@ A modern, responsive React application built with Vite, Shadcn UI, and Tailwind 
 
 4. Update the `.env` file with your API URL:
    ```env
-   VITE_API_URL=http://localhost:10000
+   VITE_API_URL=http://localhost:3000
    ```
 
 ## Development

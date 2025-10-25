@@ -24,17 +24,20 @@ services:
     command: sh -c "npx sequelize-cli db:migrate && npm run dev"
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     container_name: my_frontend
     environment:
       - VITE_API_URL=http://localhost:3000
     ports:
-      - '5173:80'
+      - '5173:5173'
     depends_on:
       - app
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    command: npm run dev -- --host
 
   db:
     image: postgres:16

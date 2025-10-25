@@ -5,7 +5,9 @@ export const authService = {
     const response = await api.post('/login', { email, password });
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
-      // Decode JWT to get user info (basic decoding without verification)
+      // Note: We decode the JWT client-side only for UI purposes (role, userId).
+      // The backend verifies the signature on every API request, so this is safe.
+      // We do NOT rely on this decoded data for security decisions.
       try {
         const payload = JSON.parse(atob(response.data.token.split('.')[1]));
         const user = { id: payload.userId, role: payload.role, email };
