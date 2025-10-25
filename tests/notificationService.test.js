@@ -12,6 +12,9 @@ describe('Notification Service', () => {
   beforeEach(async () => {
     sandbox = sinon.createSandbox();
 
+    // Drop and recreate schema to ensure clean state
+    await db.sequelize.query('DROP SCHEMA IF EXISTS public CASCADE;');
+    await db.sequelize.query('CREATE SCHEMA public;');
     // Синхронизация таблицы Users
     await db.User.sync({ force: true }); // Создаем или обновляем таблицу Users
     await db.Notification.sync({ force: true }); // Создаем или обновляем таблицу Notifications
