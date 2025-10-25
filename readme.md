@@ -98,82 +98,65 @@ Render will handle the deployment automatically, and your API will be live at th
 
 ### Docker
 
-This application can also be containerized using Docker. Here’s how to set it up:
+This application can be containerized using Docker. The repository includes a `Dockerfile` and `docker-compose.yml` for easy setup.
 
-1. **Create a Dockerfile**: Add a `Dockerfile` to the root of the project with the following content:
+#### Using Docker Compose
 
-   ```dockerfile
-   # Use Node.js as the base image
-   FROM node:16
+The `docker-compose.yml` file includes three services:
+- **db**: PostgreSQL database
+- **app**: The main application in development mode
+- **test**: Test runner service
 
-   # Create app directory
-   WORKDIR /app
-
-   # Install app dependencies
-   COPY package*.json ./
-   RUN npm install
-
-   # Bundle app source
-   COPY . .
-
-   # Expose the port the app runs on
-   EXPOSE 3000
-
-   # Define environment variable
-   ENV NODE_ENV=production
-
-   # Start the app
-   CMD ["npm", "start"]
+1. **Build and Run the Application**:
+   ```sh
+   docker compose up --build app
    ```
+   This command will start the PostgreSQL database and the API server. The API will be accessible at `http://localhost:3000`.
 
-2. **Create a Docker Compose file** (optional): If you need to run PostgreSQL along with the API, add a `docker-compose.yml` file:
-
-   ```yaml
-   version: '3'
-   services:
-     db:
-       image: postgres:16
-       environment:
-         POSTGRES_USER: your_db_user
-         POSTGRES_PASSWORD: your_db_password
-         POSTGRES_DB: employee_db
-       ports:
-         - "5432:5432"
-       volumes:
-         - pgdata:/var/lib/postgresql/data
-
-     api:
-       build: .
-       environment:
-         PORT: 3000
-         JWT_SECRET: your_jwt_secret
-         DB_HOST: db
-         DB_PORT: 5432
-         DB_NAME: employee_db
-         DB_USER: your_db_user
-         DB_PASSWORD: your_db_password
-         SECRET_WORD: your_secret_word_for_admin_registration
-       ports:
-         - "3000:3000"
-       depends_on:
-         - db
-
-   volumes:
-     pgdata:
+2. **Run Tests**:
+   
+   Before running tests for the first time, create the test database:
+   ```sh
+   docker compose up -d db
+   docker exec my_db psql -U postgres -c "CREATE DATABASE my_database_test;"
    ```
+   
+   Then run the tests:
+   ```sh
+   docker compose run --rm test
+   ```
+   This command will run the test suite in a containerized environment with its own test database.
 
-3. **Build and Run the Docker Container**:
-   - To build and run the container using Docker Compose, run:
+3. **Stopping and Removing Containers**:
+   - To stop the containers:
      ```sh
-     docker-compose up --build
+     docker compose down
      ```
-   - This command will start both the PostgreSQL database and the API server. The API will be accessible at `http://localhost:3000`.
+   - To stop and remove containers along with volumes:
+     ```sh
+     docker compose down -v
+     ```
 
-4. **Stopping and Removing Containers**:
-   - To stop and remove containers, along with associated volumes, run:
-     ```sh
-     docker-compose down -v
-     ```
+#### Docker Configuration
+
+The application uses the following services defined in `docker-compose.yml`:
+
+**Database Service (db):**
+- Image: postgres:16
+- Port: 5432
+- Default credentials: postgres/postgres
+- Database: my_database
+
+**Application Service (app):**
+- Runs in development mode
+- Port: 3000
+- Automatically runs database migrations on startup
+- Uses hot-reloading via nodemon
+
+**Test Service (test):**
+- Runs the test suite using Mocha
+- Uses a separate test database (my_database_test)
+- Configured with NODE_ENV=test
 
 ## API Documentation
 
