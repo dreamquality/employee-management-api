@@ -13,6 +13,7 @@ services:
       - DB_PASSWORD=postgres
       - JWT_SECRET=your_jwt_secret
       - SECRET_WORD=your_secret_word
+      - CORS_ORIGIN=http://localhost:5173
     ports:
       - '3000:3000'
     depends_on:
@@ -21,6 +22,19 @@ services:
       - ./:/app
       - /app/node_modules
     command: sh -c "npx sequelize-cli db:migrate && npm run dev"
+
+  frontend:
+    build: ./frontend
+    container_name: my_frontend
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    ports:
+      - '5173:80'
+    depends_on:
+      - app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
   db:
     image: postgres:16
