@@ -67,52 +67,54 @@ console.log(`Используемый порт: ${process.env.PORT || 3000}`);
 // Получение публичного URL из переменной окружения или использование localhost как резервный вариант
 const publicUrl = process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || 10000}`;
 
+// Initialize database and start server (only if not in test mode)
+if (process.env.NODE_ENV !== 'test') {
+  // Синхронизация базы данных и запуск сервера
+  db.sequelize.sync().then(async () => {
+    try {
+      console.log('Подключение к базе данных успешно.');
 
-// Синхронизация базы данных и запуск сервера
-db.sequelize.sync().then(async () => {
-  try {
-    console.log('Подключение к базе данных успешно.');
+      // Создание администратора по умолчанию, если его нет
+      const existingAdmin = await db.User.findOne({ where: { role: 'admin' } });
+      if (!existingAdmin) {
+        console.log('Администратор не найден. Создаём администратора по умолчанию...');
+        const hashedPassword = await bcrypt.hash('adminpassword', 10);
+        await db.User.create({
+          firstName: 'Default',
+          lastName: 'Admin',
+          middleName: 'User',
+          birthDate: '1970-01-01',
+          phone: '+0000000000',
+          email: 'admin1@example.com',
+          programmingLanguage: 'N/A',
+          password: hashedPassword,
+          role: 'admin',
+          hireDate: '2020-04-04',
+        });
+        console.log('Администратор по умолчанию создан: admin1@example.com / adminpassword');
+      } else {
+        console.log('Администратор уже существует.');
+      }
 
-    // Создание администратора по умолчанию, если его нет
-    const existingAdmin = await db.User.findOne({ where: { role: 'admin' } });
-    if (!existingAdmin) {
-      console.log('Администратор не найден. Создаём администратора по умолчанию...');
-      const hashedPassword = await bcrypt.hash('adminpassword', 10);
-      await db.User.create({
-        firstName: 'Default',
-        lastName: 'Admin',
-        middleName: 'User',
-        birthDate: '1970-01-01',
-        phone: '+0000000000',
-        email: 'admin1@example.com',
-        programmingLanguage: 'N/A',
-        password: hashedPassword,
-        role: 'admin',
-        hireDate: '2020-04-04',
+      // Запуск планировщика уведомлений
+      console.log('Запуск планировщика уведомлений...');
+      scheduleNotifications();
+      console.log('Планировщик уведомлений успешно запущен.');
+
+      // Запуск сервера
+      const port = process.env.PORT || 10000;
+      app.listen(port, () => {
+        console.log(`Сервер запущен на порту ${port}`);
+        console.log(`OpenAPI доступна по адресу ${publicUrl}/api-docs`);
       });
-      console.log('Администратор по умолчанию создан: admin1@example.com / adminpassword');
-    } else {
-      console.log('Администратор уже существует.');
+    } catch (err) {
+      console.error('Ошибка при запуске приложения:', err);
+      logger.error('Не удалось запустить приложение:', err);
     }
-
-    // Запуск планировщика уведомлений
-    console.log('Запуск планировщика уведомлений...');
-    scheduleNotifications();
-    console.log('Планировщик уведомлений успешно запущен.');
-
-    // Запуск сервера
-    const port = process.env.PORT || 10000;
-    app.listen(port, () => {
-      console.log(`Сервер запущен на порту ${port}`);
-      console.log(`OpenAPI доступна по адресу ${publicUrl}/api-docs`);
-    });
-  } catch (err) {
-    console.error('Ошибка при запуске приложения:', err);
-    logger.error('Не удалось запустить приложение:', err);
-  }
-}).catch((err) => {
-  console.error('Ошибка синхронизации базы данных:', err);
-  logger.error('Ошибка синхронизации базы данных:', err);
-});
+  }).catch((err) => {
+    console.error('Ошибка синхронизации базы данных:', err);
+    logger.error('Ошибка синхронизации базы данных:', err);
+  });
+}
 
 module.exports = app;

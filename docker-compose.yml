@@ -39,7 +39,6 @@ services:
     container_name: my_test
     environment:
       - NODE_ENV=test
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/my_database_test
       - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME_TEST=my_database_test

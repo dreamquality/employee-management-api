@@ -11,7 +11,7 @@ const config = require('../config/config')[env]; // Получаем конфи�
 let sequelize;
 
 // Инициализация Sequelize в зависимости от среды
-if (config.use_env_variable) {
+if (config.use_env_variable && process.env[config.use_env_variable]) {
   // Для продакшн-среды используется DATABASE_URL
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
