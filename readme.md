@@ -167,11 +167,12 @@ Access the interactive API documentation at [http://localhost:3000/api-docs](htt
 - **`npm run dev`**: Runs the app in development mode with hot reloading.
 - **`npm start`**: Runs the app in production mode.
 - **`npm test`**: Runs test cases for the application.
+- **`npm run build:swagger`**: Generates static HTML Swagger documentation in the `docs/` folder.
 - **`npm run lint`**: Lints the project files to enforce consistent code style.
 
 ## Continuous Integration
 
-This project uses GitHub Actions for automated testing. Tests run automatically on:
+This project uses GitHub Actions for automated testing and documentation deployment. Tests run automatically on:
 - Push to `main` or `develop` branches
 - Pull requests to `main` or `develop` branches
 
@@ -180,6 +181,10 @@ The CI workflow:
 2. Installs dependencies
 3. Creates test database
 4. Runs the full test suite
+5. Generates Swagger documentation (only on `main` branch)
+6. Deploys documentation to GitHub Pages in the `docs/` folder (only on `main` branch)
+
+The generated documentation is automatically published to GitHub Pages at `https://<username>.github.io/<repo>/docs/` after successful test runs on the main branch.
 
 You can view the test status in the repository's Actions tab.
 
