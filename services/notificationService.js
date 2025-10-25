@@ -33,7 +33,7 @@ async function deleteOldReadNotifications() {
 // Запланированная проверка
 exports.scheduleNotifications = () => {
   // Ежедневная проверка
-  schedule.scheduleJob('0 * * * *', async () => { // Запуск каждый час
+  schedule.scheduleJob('0 0 * * *', async () => { // Запуск каждый день в полночь
     const today = new Date();
     logger.info('Запуск ежедневной проверки уведомлений');
 
