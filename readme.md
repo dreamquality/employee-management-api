@@ -169,6 +169,20 @@ Access the interactive API documentation at [http://localhost:3000/api-docs](htt
 - **`npm test`**: Runs test cases for the application.
 - **`npm run lint`**: Lints the project files to enforce consistent code style.
 
+## Continuous Integration
+
+This project uses GitHub Actions for automated testing. Tests run automatically on:
+- Push to `main` or `develop` branches
+- Pull requests to `main` or `develop` branches
+
+The CI workflow:
+1. Sets up Node.js 16 and PostgreSQL 16
+2. Installs dependencies
+3. Creates test database
+4. Runs the full test suite
+
+You can view the test status in the repository's Actions tab.
+
 ## API Endpoints
 
 | Method | Endpoint                          | Description                               |
