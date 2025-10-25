@@ -19,6 +19,7 @@ services:
       - db
     volumes:
       - ./:/app
+      - /app/node_modules
     command: sh -c "npx sequelize-cli db:migrate && npm run dev"
 
   db:
@@ -33,17 +34,25 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  # test:
-  #   build: .
-  #   container_name: my_test
-  #   environment:
-  #     - NODE_ENV=test
-  #     - DATABASE_URL=postgres://postgres:postgres@db:5432/my_database_test
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - ./:/app
-  #   command: sh -c "npx sequelize db:migrate && npm test"
+  test:
+    build: .
+    container_name: my_test
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/my_database_test
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME_TEST=my_database_test
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - JWT_SECRET=your_jwt_secret
+      - SECRET_WORD=your_secret_word
+    depends_on:
+      - db
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: sh -c "sleep 5 && npm run test"
 
 volumes:
   db_data:

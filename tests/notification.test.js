@@ -9,6 +9,9 @@ let employee;
 
 describe('Notification API', () => {
   before(async () => {
+    // Drop and recreate schema to ensure clean state
+    await db.sequelize.query('DROP SCHEMA IF EXISTS public CASCADE;');
+    await db.sequelize.query('CREATE SCHEMA public;');
     await db.sequelize.sync({ force: true });
 
     // Создаем администратора и получаем токен
