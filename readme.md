@@ -118,7 +118,7 @@ The `docker-compose.yml` file includes three services:
    Before running tests for the first time, create the test database:
    ```sh
    docker compose up -d db
-   docker exec my_db psql -U postgres -c "CREATE DATABASE my_database_test;"
+   docker compose exec db psql -U postgres -c "CREATE DATABASE my_database_test;"
    ```
    
    Then run the tests:
