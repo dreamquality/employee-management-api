@@ -6,6 +6,7 @@
   "scripts": {
     "build-prod": "npm ci && npm run clear-db:prod && npm run migrate:prod && npm run seed:prod",
     "build-dev": "npm ci && npm run migrate:dev && npm run seed:dev",
+    "build:swagger": "node generate-swagger.js && npx @redocly/cli build-docs swagger.json -o docs/index.html",
     "start": "cross-env NODE_ENV=production node app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",
     "test": "cross-env NODE_ENV=test mocha tests/**/*.test.js --exit",
@@ -28,6 +29,7 @@
   "author": "Alex",
   "license": "MIT",
   "dependencies": {
+    "@faker-js/faker": "^9.0.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
@@ -43,10 +45,10 @@
     "sequelize": "^6.37.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3",
-    "winston": "^3.9.0",
-    "@faker-js/faker": "^9.0.1"
+    "winston": "^3.9.0"
   },
   "devDependencies": {
+    "@redocly/cli": "^2.8.0",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "nodemon": "^3.0.1",

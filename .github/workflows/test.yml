@@ -53,3 +53,16 @@ jobs:
           JWT_SECRET: test_jwt_secret
           SECRET_WORD: test_secret_word
         run: npm test
+
+      - name: Build Swagger documentation
+        if: success() && github.ref == 'refs/heads/main'
+        run: npm run build:swagger
+
+      - name: Deploy to GitHub Pages
+        if: success() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          destination_dir: docs
+          commit_message: 'Deploy Swagger documentation'
