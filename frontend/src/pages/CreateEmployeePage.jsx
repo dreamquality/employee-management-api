@@ -1,33 +1,42 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { userService } from '../services/userService';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { userService } from "../services/userService";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Plus } from "lucide-react";
 
 export default function CreateEmployeePage() {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    middleName: '',
-    birthDate: '',
-    phone: '',
-    email: '',
-    password: '',
-    programmingLanguage: '',
-    country: '',
-    position: '',
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    birthDate: "",
+    phone: "",
+    email: "",
+    password: "",
+    programmingLanguage: "",
+    country: "",
+    bankCard: "",
+    position: "",
     salary: 400,
-    mentorName: '',
-    englishLevel: '',
-    currentProject: '',
-    workingHoursPerWeek: '',
-    githubLink: '',
-    linkedinLink: '',
-    adminNote: '',
+    role: "employee",
+    mentorName: "",
+    englishLevel: "",
+    currentProject: "",
+    workingHoursPerWeek: "",
+    vacationDates: [],
+    githubLink: "",
+    linkedinLink: "",
+    adminNote: "",
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -46,13 +55,31 @@ export default function CreateEmployeePage() {
         title: "Success",
         description: "Employee created successfully",
       });
-      navigate('/employees');
+      navigate("/employees");
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.response?.data?.error || "Failed to create employee",
-      });
+      // Handle validation errors array from backend
+      if (
+        error.response?.data?.errors &&
+        Array.isArray(error.response.data.errors)
+      ) {
+        const errorMessages = error.response.data.errors
+          .map((err) => `${err.param}: ${err.msg}`)
+          .join("\n");
+        toast({
+          variant: "destructive",
+          title: "Validation Errors",
+          description: errorMessages,
+          duration: 8000, // Show longer for multiple errors
+        });
+      } else {
+        // Single error message
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description:
+            error.response?.data?.error || "Failed to create employee",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -61,7 +88,7 @@ export default function CreateEmployeePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center">
-        <Button variant="ghost" onClick={() => navigate('/employees')}>
+        <Button variant="ghost" onClick={() => navigate("/employees")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Employees
         </Button>
@@ -156,7 +183,9 @@ export default function CreateEmployeePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="programmingLanguage">Programming Language *</Label>
+                <Label htmlFor="programmingLanguage">
+                  Programming Language *
+                </Label>
                 <Input
                   id="programmingLanguage"
                   name="programmingLanguage"
@@ -167,14 +196,41 @@ export default function CreateEmployeePage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
+                <Label htmlFor="country">Country *</Label>
                 <Input
                   id="country"
                   name="country"
                   value={formData.country}
                   onChange={handleChange}
+                  placeholder="e.g., USA, Canada"
+                  required
                 />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bankCard">Bank Card *</Label>
+              <Input
+                id="bankCard"
+                name="bankCard"
+                value={formData.bankCard}
+                onChange={handleChange}
+                placeholder="1234-5678-9012-3456"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="role">Role *</Label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
+                required
+              >
+                <option value="employee">Employee</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -239,6 +295,31 @@ export default function CreateEmployeePage() {
                 />
               </div>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="vacationDates">
+                Vacation Dates (comma-separated: YYYY-MM-DD)
+              </Label>
+              <Input
+                id="vacationDates"
+                name="vacationDates"
+                value={
+                  Array.isArray(formData.vacationDates)
+                    ? formData.vacationDates.join(", ")
+                    : ""
+                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const datesArray = value
+                    ? value
+                        .split(",")
+                        .map((d) => d.trim())
+                        .filter((d) => d)
+                    : [];
+                  setFormData({ ...formData, vacationDates: datesArray });
+                }}
+                placeholder="2024-12-25, 2024-12-26"
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="githubLink">GitHub Link</Label>
@@ -277,9 +358,13 @@ export default function CreateEmployeePage() {
             <div className="flex gap-2">
               <Button type="submit" disabled={loading}>
                 <Plus className="mr-2 h-4 w-4" />
-                {loading ? 'Creating...' : 'Create Employee'}
+                {loading ? "Creating..." : "Create Employee"}
               </Button>
-              <Button type="button" variant="outline" onClick={() => navigate('/employees')}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate("/employees")}
+              >
                 Cancel
               </Button>
             </div>

@@ -1,17 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { userService } from '../services/userService';
-import { useAuth } from '../context/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { Plus, Search, ChevronLeft, ChevronRight, Trash2, Eye } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { userService } from "../services/userService";
+import { useAuth } from "../context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Plus,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+  Eye,
+} from "lucide-react";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -48,8 +61,9 @@ export default function EmployeesPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this employee?')) return;
-    
+    if (!window.confirm("Are you sure you want to delete this employee?"))
+      return;
+
     try {
       await userService.deleteUser(id);
       toast({
@@ -74,7 +88,7 @@ export default function EmployeesPage() {
           <p className="text-muted-foreground">Manage your team members</p>
         </div>
         {isAdmin && (
-          <Button onClick={() => navigate('/employees/new')}>
+          <Button onClick={() => navigate("/employees/new")}>
             <Plus className="mr-2 h-4 w-4" />
             Add Employee
           </Button>
@@ -108,15 +122,29 @@ export default function EmployeesPage() {
         <>
           <div className="grid gap-4">
             {employees.map((employee) => (
-              <Card key={employee.id} className="hover:shadow-lg transition-shadow">
+              <Card
+                key={employee.id}
+                className="hover:shadow-lg transition-shadow"
+              >
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-xl">
-                        {employee.firstName} {employee.lastName}
-                      </CardTitle>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-xl">
+                          {employee.firstName} {employee.lastName}
+                        </CardTitle>
+                        <span
+                          className={`text-xs px-2 py-1 rounded-full font-medium ${
+                            employee.role === "admin"
+                              ? "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300"
+                              : "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                          }`}
+                        >
+                          {employee.role === "admin" ? "Admin" : "Employee"}
+                        </span>
+                      </div>
                       <CardDescription className="mt-1">
-                        {employee.email} • {employee.position || 'No position'}
+                        {employee.email} • {employee.position || "No position"}
                       </CardDescription>
                     </div>
                     <div className="flex gap-2">
@@ -142,8 +170,12 @@ export default function EmployeesPage() {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground">Programming Language</p>
-                      <p className="font-medium">{employee.programmingLanguage}</p>
+                      <p className="text-muted-foreground">
+                        Programming Language
+                      </p>
+                      <p className="font-medium">
+                        {employee.programmingLanguage}
+                      </p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Phone</p>
@@ -184,7 +216,9 @@ export default function EmployeesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 Next

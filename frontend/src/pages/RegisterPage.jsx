@@ -1,25 +1,32 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { Users } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { Users } from "lucide-react";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    middleName: '',
-    birthDate: '',
-    phone: '',
-    programmingLanguage: '',
-    role: 'employee',
-    secretWord: '',
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    birthDate: "",
+    phone: "",
+    programmingLanguage: "",
+    role: "employee",
+    secretWord: "",
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -35,7 +42,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const dataToSubmit = { ...formData };
-      if (formData.role !== 'admin') {
+      if (formData.role !== "admin") {
         delete dataToSubmit.secretWord;
       }
       await register(dataToSubmit);
@@ -43,13 +50,30 @@ export default function RegisterPage() {
         title: "Success",
         description: "Account created successfully!",
       });
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.response?.data?.error || "Registration failed",
-      });
+      // Handle validation errors array from backend
+      if (
+        error.response?.data?.errors &&
+        Array.isArray(error.response.data.errors)
+      ) {
+        const errorMessages = error.response.data.errors
+          .map((err) => `${err.param}: ${err.msg}`)
+          .join("\n");
+        toast({
+          variant: "destructive",
+          title: "Validation Errors",
+          description: errorMessages,
+          duration: 8000, // Show longer for multiple errors
+        });
+      } else {
+        // Single error message
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.response?.data?.error || "Registration failed",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -64,7 +88,9 @@ export default function RegisterPage() {
               <Users className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">Create an Account</CardTitle>
+          <CardTitle className="text-2xl text-center">
+            Create an Account
+          </CardTitle>
           <CardDescription className="text-center">
             Enter your information to register
           </CardDescription>
@@ -175,7 +201,7 @@ export default function RegisterPage() {
                 <option value="admin">Admin</option>
               </select>
             </div>
-            {formData.role === 'admin' && (
+            {formData.role === "admin" && (
               <div className="space-y-2">
                 <Label htmlFor="secretWord">Secret Word (Admin only)</Label>
                 <Input
@@ -191,10 +217,10 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating account...' : 'Register'}
+              {loading ? "Creating account..." : "Register"}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <Link to="/login" className="text-primary hover:underline">
                 Login
               </Link>

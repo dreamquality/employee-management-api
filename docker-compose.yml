@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -6,6 +6,7 @@ services:
     container_name: my_app
     environment:
       - NODE_ENV=development
+      - PORT=3000
       - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=my_database
@@ -15,7 +16,7 @@ services:
       - SECRET_WORD=your_secret_word
       - CORS_ORIGIN=http://localhost:5173
     ports:
-      - '3000:3000'
+      - "3000:3000"
     depends_on:
       - db
     volumes:
@@ -31,7 +32,7 @@ services:
     environment:
       - VITE_API_URL=http://localhost:3000
     ports:
-      - '5173:5173'
+      - "5173:5173"
     depends_on:
       - app
     volumes:
@@ -46,7 +47,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=my_database
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
