@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Устанавливаем зависимости
-RUN npm install
+RUN npm config set strict-ssl false && npm install
 
 # Копируем остальной код приложения
 COPY . .
