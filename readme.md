@@ -21,7 +21,7 @@ Employees can update their personal information, such as name, contact details, 
 
 ### Prerequisites
 
-- **Node.js**: Install [Node.js](https://nodejs.org/) (version 14 or higher recommended).
+- **Node.js**: Install [Node.js](https://nodejs.org/) (version 18 or higher recommended).
 - **npm**: Comes with Node.js but can be updated independently.
 - **PostgreSQL**: Install and configure [PostgreSQL 16](https://www.postgresql.org/) as the database for employee data.
 
@@ -177,7 +177,7 @@ This project uses GitHub Actions for automated testing and documentation deploym
 - Pull requests to `main` or `develop` branches
 
 The CI workflow:
-1. Sets up Node.js 16 and PostgreSQL 16
+1. Sets up Node.js 18 and PostgreSQL 16
 2. Installs dependencies
 3. Creates test database
 4. Runs the full test suite
