@@ -45,6 +45,7 @@ jobs:
       - name: Run tests
         env:
           NODE_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/my_database_test
           DB_HOST: localhost
           DB_PORT: 5432
           DB_NAME_TEST: my_database_test
