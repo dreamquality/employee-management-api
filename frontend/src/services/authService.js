@@ -5,16 +5,23 @@ export const authService = {
     const response = await api.post('/login', { email, password });
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Decode JWT to get user info (basic decoding without verification)
+      try {
+        const payload = JSON.parse(atob(response.data.token.split('.')[1]));
+        const user = { id: payload.userId, role: payload.role, email };
+        localStorage.setItem('user', JSON.stringify(user));
+      } catch (e) {
+        console.error('Failed to decode token:', e);
+      }
     }
     return response.data;
   },
 
   register: async (userData) => {
     const response = await api.post('/register', userData);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    // After registration, log the user in
+    if (response.data.userId) {
+      await authService.login(userData.email, userData.password);
     }
     return response.data;
   },
@@ -26,7 +33,14 @@ export const authService = {
 
   getCurrentUser: () => {
     const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+    if (!userStr || userStr === 'undefined' || userStr === 'null') {
+      return null;
+    }
+    try {
+      return JSON.parse(userStr);
+    } catch (e) {
+      return null;
+    }
   },
 
   isAuthenticated: () => {

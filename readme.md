@@ -1,7 +1,17 @@
 
-# Employee Management API
+# Employee Management System
 
-A RESTful API for managing employee data, including CRUD operations for employee records, designed to support organizational employee management with PostgreSQL as the database.
+A full-stack employee management system with a RESTful API backend and a modern React frontend, designed to support organizational employee management with PostgreSQL as the database.
+
+## Repository Structure
+
+```
+employee-management-api/
+├── frontend/           # React frontend application
+├── backend/           # Node.js API (root level)
+├── docker-compose.yml # Docker orchestration for full stack
+└── README.md         # This file
+```
 
 ## Application Overview
 
@@ -11,13 +21,62 @@ Employees can update their personal information, such as name, contact details, 
 
 ## Features
 
+### Backend API
 - **Employee Management**: Create, read, update, and delete employee records.
 - **Data Validation**: Ensures data integrity with robust validation.
 - **Search and Filter**: Allows filtering employees by various criteria.
 - **Pagination**: Supports paginated employee listings.
 - **Error Handling**: Comprehensive error management for reliability.
+- **Authentication**: JWT-based authentication system.
+- **Notifications**: Automated notification system for birthdays and salary reviews.
 
-## Getting Started
+### Frontend Application
+- **Modern UI**: Built with React, Vite, Shadcn UI, and Tailwind CSS.
+- **Authentication**: Secure login and registration.
+- **Employee Management**: View, create, edit, and delete employees.
+- **Responsive Design**: Works on desktop, tablet, and mobile.
+- **Real-time Updates**: Notifications and data updates.
+
+## Screenshots
+
+### Login Page
+![Login Page](https://github.com/user-attachments/assets/cc6948be-1100-46cb-93c6-e58a282e80e6)
+
+### Employee List
+![Employee List](https://github.com/user-attachments/assets/23b92ee0-2275-486a-a793-f72a701caa7a)
+
+### Employee Detail
+![Employee Detail](https://github.com/user-attachments/assets/13365042-dae5-4e5c-befe-d14b284655de)
+
+### Create Employee
+![Create Employee](https://github.com/user-attachments/assets/301ce060-378d-4b4e-9be9-edf07fd39ddb)
+
+## Quick Start with Docker
+
+The easiest way to run the full stack is using Docker Compose:
+
+```bash
+# Start all services (database, API, and frontend)
+docker compose up --build
+
+# Or start in detached mode
+docker compose up -d --build
+```
+
+This will start:
+- **PostgreSQL Database** on port 5432
+- **Backend API** on port 3000
+- **Frontend Application** on port 5173
+
+Access the application at `http://localhost:5173`
+
+**Default Admin Credentials:**
+- Email: `admin1@example.com`
+- Password: `adminpassword`
+
+## Manual Setup
+
+### Backend API Setup
 
 ### Prerequisites
 
@@ -82,6 +141,37 @@ The server will be running at `http://localhost:3000`.
 
 Access the interactive API documentation at [http://localhost:3000/api-docs](http://localhost:3000/api-docs) if Swagger or a similar tool is set up. This documentation provides a complete view of the available endpoints and allows for interactive testing.
 
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```sh
+   cd frontend
+   ```
+
+2. Install frontend dependencies:
+   ```sh
+   npm install
+   ```
+
+3. Create a `.env` file in the frontend directory:
+   ```sh
+   cp .env.example .env
+   ```
+
+4. Update the `.env` file with the API URL:
+   ```plaintext
+   VITE_API_URL=http://localhost:3000
+   ```
+
+5. Start the frontend development server:
+   ```sh
+   npm run dev
+   ```
+
+The frontend will be available at `http://localhost:5173`.
+
+For more details about the frontend, see the [frontend README](./frontend/README.md).
+
 ## Deployment
 
 ### Deploying to Render.com
@@ -98,22 +188,34 @@ Render will handle the deployment automatically, and your API will be live at th
 
 ### Docker
 
-This application can be containerized using Docker. The repository includes a `Dockerfile` and `docker-compose.yml` for easy setup.
+This application can be containerized using Docker. The repository includes Dockerfiles and a `docker-compose.yml` for easy setup.
 
 #### Using Docker Compose
 
-The `docker-compose.yml` file includes three services:
+The `docker-compose.yml` file includes four services:
 - **db**: PostgreSQL database
-- **app**: The main application in development mode
+- **app**: The backend API server in development mode
+- **frontend**: The React frontend application
 - **test**: Test runner service
 
-1. **Build and Run the Application**:
+1. **Build and Run the Full Stack**:
    ```sh
-   docker compose up --build app
+   docker compose up --build
    ```
-   This command will start the PostgreSQL database and the API server. The API will be accessible at `http://localhost:3000`.
+   This command will start:
+   - PostgreSQL database on port 5432
+   - Backend API on port 3000
+   - Frontend on port 5173
 
-2. **Run Tests**:
+   Access the application at `http://localhost:5173`
+
+2. **Run Only Backend and Database**:
+   ```sh
+   docker compose up --build app db
+   ```
+   The API will be accessible at `http://localhost:3000`.
+
+3. **Run Tests**:
    
    Before running tests for the first time, create the test database:
    ```sh
@@ -127,7 +229,7 @@ The `docker-compose.yml` file includes three services:
    ```
    This command will run the test suite in a containerized environment with its own test database.
 
-3. **Stopping and Removing Containers**:
+4. **Stopping and Removing Containers**:
    - To stop the containers:
      ```sh
      docker compose down
