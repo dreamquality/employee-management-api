@@ -18,7 +18,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./:/app
       - /app/node_modules
@@ -50,6 +51,11 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   test:
     build: .
@@ -64,11 +70,12 @@ services:
       - JWT_SECRET=your_jwt_secret
       - SECRET_WORD=your_secret_word
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./:/app
       - /app/node_modules
-    command: sh -c "sleep 5 && npm run test"
+    command: sh -c "npx sequelize-cli db:create --env test && npx sequelize-cli db:migrate --env test && npm run test"
 
 volumes:
   db_data:
