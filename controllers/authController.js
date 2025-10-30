@@ -55,7 +55,7 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await db.User.findOne({ where: { email } });
+    const user = await db.User.scope('withPassword').findOne({ where: { email } });
 
     if (!user) {
       return res.status(400).json({ error: 'Неверные учетные данные' });

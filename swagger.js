@@ -125,10 +125,10 @@ const options = {
             englishLevel: { type: 'string', nullable: true },
             workingHoursPerWeek: { type: 'integer', nullable: true },
             role: { type: 'string', enum: ['employee', 'admin'] },
-            password: { type: 'string', format: 'password' },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
           },
+          description: 'User object returned by API. Password field is never included for security reasons.'
         },
         UserUpdate: {
           type: 'object',

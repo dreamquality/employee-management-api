@@ -51,7 +51,7 @@ exports.getEmployees = async (req, res, next) => {
     // Выбор полей для отображения
     const attributes =
       req.user.role === "admin"
-        ? null
+        ? undefined
         : [
             "firstName",
             "lastName",
@@ -182,6 +182,9 @@ exports.updateProfile = async (req, res, next) => {
     
     await user.update(updateData);
 
+    // Reload user to get fresh data (password will be excluded by default scope)
+    await user.reload();
+
     // Создаем уведомление для администратора, если данные обновляет не администратор
     if (req.user.role !== "admin") {
       const admins = await db.User.findAll({ where: { role: "admin" } });
@@ -276,6 +279,9 @@ exports.createEmployee = async (req, res, next) => {
       workingHoursPerWeek,
       // Добавьте другие поля по необходимости
     });
+
+    // Reload to apply default scope (exclude password)
+    await newUser.reload();
 
     // Создаем уведомление для администратора о создании нового сотрудника
     await db.Notification.create({
