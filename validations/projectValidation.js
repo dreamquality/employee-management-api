@@ -15,7 +15,7 @@ exports.projectCreateValidation = [
 
 exports.projectUpdateValidation = [
   body('name')
-    .optional()
+    .optional({ checkFalsy: true })
     .notEmpty().withMessage('Имя проекта не может быть пустым')
     .isLength({ min: 2, max: 100 }).withMessage('Имя проекта должно быть от 2 до 100 символов')
     .trim(),
