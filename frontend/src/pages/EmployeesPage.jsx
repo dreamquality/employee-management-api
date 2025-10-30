@@ -22,6 +22,7 @@ import {
   Eye,
   ArrowUpDown,
 } from "lucide-react";
+import ProjectLink from "@/components/ProjectLink";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
@@ -244,6 +245,14 @@ export default function EmployeesPage() {
                       <div>
                         <p className="text-muted-foreground">English Level</p>
                         <p className="font-medium">{employee.englishLevel}</p>
+                      </div>
+                    )}
+                    {employee.currentProject && (
+                      <div>
+                        <p className="text-muted-foreground">Current Project</p>
+                        <div className="font-medium">
+                          <ProjectLink projectName={employee.currentProject} />
+                        </div>
                       </div>
                     )}
                     {isAdmin && employee.registrationDate && (
