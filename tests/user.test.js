@@ -88,8 +88,12 @@ describe('User API', () => {
 
     for (const userData of usersData) {
       await request(app)
-        .post('/register')
-        .send(userData);
+        .post('/users')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          ...userData,
+          role: 'employee'
+        });
     }
 
     // Получаем токен для одного из сотрудников
