@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus } from "lucide-react";
+import ProjectAutocomplete from "@/components/ProjectAutocomplete";
 
 export default function CreateEmployeePage() {
   const [formData, setFormData] = useState({
@@ -277,11 +278,11 @@ export default function CreateEmployeePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="currentProject">Current Project</Label>
-                <Input
-                  id="currentProject"
-                  name="currentProject"
+                <ProjectAutocomplete
                   value={formData.currentProject}
-                  onChange={handleChange}
+                  onChange={(value) =>
+                    setFormData({ ...formData, currentProject: value })
+                  }
                 />
               </div>
               <div className="space-y-2">

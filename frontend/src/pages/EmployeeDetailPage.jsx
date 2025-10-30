@@ -13,8 +13,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, ExternalLink, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
+import ProjectAutocomplete from "@/components/ProjectAutocomplete";
+import ProjectLink from "@/components/ProjectLink";
 
 export default function EmployeeDetailPage() {
   const { id } = useParams();
@@ -340,11 +342,11 @@ export default function EmployeeDetailPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="currentProject">Current Project</Label>
-                    <Input
-                      id="currentProject"
-                      name="currentProject"
+                    <ProjectAutocomplete
                       value={formData.currentProject || ""}
-                      onChange={handleChange}
+                      onChange={(value) =>
+                        setFormData({ ...formData, currentProject: value })
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -544,7 +546,14 @@ export default function EmployeeDetailPage() {
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">
                         Current Project
                       </h3>
-                      <p>{employee.currentProject || "N/A"}</p>
+                      {employee.currentProject ? (
+                        <ProjectLink
+                          projectName={employee.currentProject}
+                          projectUrl={null}
+                        />
+                      ) : (
+                        <p>N/A</p>
+                      )}
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">
