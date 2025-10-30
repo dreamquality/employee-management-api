@@ -93,6 +93,9 @@ exports.updateProject = async (req, res) => {
     }
 
     const { name, description } = req.body;
+    if (typeof name === "undefined" && typeof description === "undefined") {
+      return res.status(400).json({ error: "Необходимо указать хотя бы одно поле для обновления (name или description)" });
+    }
     const project = await db.Project.findByPk(req.params.id);
 
     if (!project) {
