@@ -29,17 +29,62 @@ const options = {
           type: 'object',
           required: ['email', 'password', 'firstName', 'lastName', 'middleName', 'birthDate', 'phone', 'programmingLanguage'],
           properties: {
-            email: { type: 'string', format: 'email' },
-            password: { type: 'string', format: 'password' },
-            firstName: { type: 'string' },
-            lastName: { type: 'string' },
-            middleName: { type: 'string' },
-            birthDate: { type: 'string', format: 'date' },
-            phone: { type: 'string' },
-            programmingLanguage: { type: 'string' },
-            role: { type: 'string', enum: ['employee', 'admin'] },
-            secretWord: { type: 'string', description: 'Требуется только для регистрации администратора' },
+            email: { 
+              type: 'string', 
+              format: 'email',
+              description: 'Email address (must be unique)'
+            },
+            password: { 
+              type: 'string', 
+              format: 'password',
+              minLength: 6,
+              maxLength: 20,
+              description: 'Password (6-20 characters, will be hashed)'
+            },
+            firstName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              description: 'First name (2-40 characters)'
+            },
+            lastName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              description: 'Last name (2-40 characters)'
+            },
+            middleName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              description: 'Middle name (2-40 characters)'
+            },
+            birthDate: { 
+              type: 'string', 
+              format: 'date',
+              description: 'Birth date (YYYY-MM-DD)'
+            },
+            phone: { 
+              type: 'string',
+              maxLength: 50,
+              description: 'Phone number'
+            },
+            programmingLanguage: { 
+              type: 'string',
+              maxLength: 100,
+              description: 'Primary programming language'
+            },
+            role: { 
+              type: 'string', 
+              enum: ['employee', 'admin'],
+              description: 'User role (defaults to employee if not provided)'
+            },
+            secretWord: { 
+              type: 'string', 
+              description: 'Required ONLY for admin registration - must match SECRET_WORD environment variable'
+            },
           },
+          description: 'Note: Only explicitly allowed fields are accepted. Admin-only fields (salary, position, mentorName, etc.) cannot be set during registration for security reasons.'
         },
         Login: {
           type: 'object',
@@ -88,66 +133,263 @@ const options = {
         UserUpdate: {
           type: 'object',
           properties: {
-            firstName: { type: 'string' },
-            lastName: { type: 'string' },
-            middleName: { type: 'string' },
-            birthDate: { type: 'string', format: 'date' },
-            phone: { type: 'string' },
-            email: { type: 'string', format: 'email' },
-            programmingLanguage: { type: 'string' },
-            country: { type: 'string', nullable: true },
-            bankCard: { type: 'string', nullable: true },
-            registrationDate: { type: 'string', format: 'date-time', nullable: true },
-            lastLoginDate: { type: 'string', format: 'date-time', nullable: true },
-            salary: { type: 'integer' },
-            lastSalaryIncreaseDate: { type: 'string', format: 'date-time' },
-            position: { type: 'string', nullable: true },
-            mentorName: { type: 'string', nullable: true },
+            // Employee-allowed fields (can be updated by the user themselves)
+            firstName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              description: 'First name - employees can update their own'
+            },
+            lastName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              description: 'Last name - employees can update their own'
+            },
+            middleName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              description: 'Middle name - employees can update their own'
+            },
+            birthDate: { 
+              type: 'string', 
+              format: 'date',
+              description: 'Birth date - employees can update their own'
+            },
+            phone: { 
+              type: 'string',
+              maxLength: 50,
+              description: 'Phone number - employees can update their own'
+            },
+            email: { 
+              type: 'string', 
+              format: 'email',
+              description: 'Email address (must be unique) - employees can update their own'
+            },
+            programmingLanguage: { 
+              type: 'string',
+              maxLength: 100,
+              description: 'Programming language - employees can update their own'
+            },
+            country: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Country - employees can update their own'
+            },
+            bankCard: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Bank card info - employees can update their own'
+            },
+            linkedinLink: { 
+              type: 'string', 
+              format: 'uri', 
+              nullable: true,
+              description: 'LinkedIn profile URL - employees can update their own'
+            },
+            githubLink: { 
+              type: 'string', 
+              format: 'uri', 
+              nullable: true,
+              description: 'GitHub profile URL - employees can update their own'
+            },
+            // Admin-only fields (can only be updated by administrators)
+            hireDate: { 
+              type: 'string', 
+              format: 'date',
+              nullable: true,
+              description: 'Hire date - ADMIN ONLY'
+            },
+            adminNote: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Admin notes - ADMIN ONLY'
+            },
+            currentProject: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Current project assignment - ADMIN ONLY'
+            },
+            englishLevel: { 
+              type: 'string', 
+              nullable: true,
+              description: 'English proficiency level - ADMIN ONLY'
+            },
             vacationDates: { 
               type: 'array',
               items: { type: 'string', format: 'date' },
-              nullable: true 
+              nullable: true,
+              description: 'Vacation dates - ADMIN ONLY'
             },
-            githubLink: { type: 'string', format: 'uri', nullable: true },
-            linkedinLink: { type: 'string', format: 'uri', nullable: true },
-            adminNote: { type: 'string', nullable: true },
-            currentProject: { type: 'string', nullable: true },
-            englishLevel: { type: 'string', nullable: true },
-            workingHoursPerWeek: { type: 'integer', nullable: true },
+            mentorName: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Assigned mentor - ADMIN ONLY'
+            },
+            position: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Job position - ADMIN ONLY'
+            },
+            salary: { 
+              type: 'number',
+              nullable: true,
+              description: 'Salary amount - ADMIN ONLY'
+            },
+            role: { 
+              type: 'string', 
+              enum: ['employee', 'admin'],
+              description: 'User role - ADMIN ONLY'
+            },
+            password: { 
+              type: 'string', 
+              format: 'password',
+              minLength: 6,
+              maxLength: 20,
+              description: 'New password (will be automatically hashed) - ADMIN ONLY'
+            },
+            workingHoursPerWeek: { 
+              type: 'integer', 
+              minimum: 0,
+              maximum: 100,
+              nullable: true,
+              description: 'Working hours per week - ADMIN ONLY'
+            },
           },
+          description: 'Employees can update their own basic profile fields. Admin-only fields can only be updated by administrators. Attempting to update admin-only fields as an employee will result in a 403 error.'
         },
         UserCreate: {
           type: 'object',
-          required: ['email', 'password', 'firstName', 'lastName', 'middleName', 'birthDate', 'phone', 'programmingLanguage'],
+          required: ['email', 'password', 'firstName', 'lastName'],
           properties: {
-            email: { type: 'string', format: 'email' },
-            password: { type: 'string', format: 'password' },
-            firstName: { type: 'string' },
-            lastName: { type: 'string' },
-            middleName: { type: 'string' },
-            birthDate: { type: 'string', format: 'date' },
-            phone: { type: 'string' },
-            programmingLanguage: { type: 'string' },
-            country: { type: 'string', nullable: true },
-            bankCard: { type: 'string', nullable: true },
-            registrationDate: { type: 'string', format: 'date-time', nullable: true },
-            lastLoginDate: { type: 'string', format: 'date-time', nullable: true },
-            salary: { type: 'integer' },
-            lastSalaryIncreaseDate: { type: 'string', format: 'date-time' },
-            position: { type: 'string', nullable: true },
-            mentorName: { type: 'string', nullable: true },
+            email: { 
+              type: 'string', 
+              format: 'email',
+              description: 'Email address (must be unique)'
+            },
+            password: { 
+              type: 'string', 
+              format: 'password',
+              minLength: 6,
+              maxLength: 20,
+              description: 'Password (6-20 characters, will be hashed)'
+            },
+            firstName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              description: 'First name (2-40 characters)'
+            },
+            lastName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              description: 'Last name (2-40 characters)'
+            },
+            middleName: { 
+              type: 'string',
+              minLength: 2,
+              maxLength: 40,
+              nullable: true,
+              description: 'Middle name (2-40 characters, optional)'
+            },
+            birthDate: { 
+              type: 'string', 
+              format: 'date',
+              nullable: true,
+              description: 'Birth date (YYYY-MM-DD, optional)'
+            },
+            phone: { 
+              type: 'string',
+              maxLength: 50,
+              nullable: true,
+              description: 'Phone number (optional)'
+            },
+            programmingLanguage: { 
+              type: 'string',
+              maxLength: 100,
+              nullable: true,
+              description: 'Primary programming language (optional)'
+            },
+            country: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Country (optional)'
+            },
+            bankCard: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Bank card info (optional)'
+            },
+            linkedinLink: { 
+              type: 'string', 
+              format: 'uri', 
+              nullable: true,
+              description: 'LinkedIn profile URL (optional)'
+            },
+            githubLink: { 
+              type: 'string', 
+              format: 'uri', 
+              nullable: true,
+              description: 'GitHub profile URL (optional)'
+            },
+            hireDate: { 
+              type: 'string', 
+              format: 'date',
+              nullable: true,
+              description: 'Hire date (optional)'
+            },
+            adminNote: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Admin notes (optional)'
+            },
+            currentProject: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Current project assignment (optional)'
+            },
+            englishLevel: { 
+              type: 'string', 
+              nullable: true,
+              description: 'English proficiency level (optional)'
+            },
             vacationDates: { 
               type: 'array',
               items: { type: 'string', format: 'date' },
-              nullable: true 
+              nullable: true,
+              description: 'Vacation dates (optional)'
             },
-            githubLink: { type: 'string', format: 'uri', nullable: true },
-            linkedinLink: { type: 'string', format: 'uri', nullable: true },
-            adminNote: { type: 'string', nullable: true },
-            currentProject: { type: 'string', nullable: true },
-            englishLevel: { type: 'string', nullable: true },
-            workingHoursPerWeek: { type: 'integer', nullable: true },
+            mentorName: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Assigned mentor (optional)'
+            },
+            position: { 
+              type: 'string', 
+              nullable: true,
+              description: 'Job position (optional)'
+            },
+            salary: { 
+              type: 'number',
+              nullable: true,
+              description: 'Salary amount (optional)'
+            },
+            role: { 
+              type: 'string', 
+              enum: ['employee', 'admin'],
+              description: 'User role (defaults to employee if not provided)'
+            },
+            workingHoursPerWeek: { 
+              type: 'integer', 
+              minimum: 0,
+              maximum: 100,
+              nullable: true,
+              description: 'Working hours per week (0-100, optional)'
+            },
           },
+          description: 'Admin-only endpoint to create new employees. Role defaults to "employee" if not specified. A notification is created for audit trail.'
         },
         Notification: {
           type: 'object',
@@ -170,8 +412,8 @@ const options = {
             },
             type: {
               type: 'string',
-              enum: ['birthday_reminder', 'salary_increase_reminder', 'welcome'],
-              description: 'Тип уведомления',
+              enum: ['birthday_reminder', 'salary_increase_reminder', 'welcome', 'employee_created', 'user_update'],
+              description: 'Тип уведомления: birthday_reminder, salary_increase_reminder, welcome, employee_created (admin created employee), user_update (employee updated profile)',
             },
             eventDate: {
               type: 'string',
