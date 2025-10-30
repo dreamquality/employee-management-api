@@ -4,6 +4,7 @@ import { userService } from "../services/userService";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -19,6 +20,7 @@ import {
   ChevronRight,
   Trash2,
   Eye,
+  ArrowUpDown,
 } from "lucide-react";
 
 export default function EmployeesPage() {
@@ -28,6 +30,8 @@ export default function EmployeesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const [sortBy, setSortBy] = useState("registrationDate");
+  const [order, setOrder] = useState("ASC");
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const { toast } = useToast();
@@ -35,7 +39,7 @@ export default function EmployeesPage() {
 
   useEffect(() => {
     fetchEmployees();
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, sortBy, order]);
 
   const fetchEmployees = async () => {
     setLoading(true);
@@ -43,6 +47,8 @@ export default function EmployeesPage() {
       const params = {
         page: currentPage,
         limit,
+        sortBy,
+        order,
         ...(searchTerm && { firstName: searchTerm }),
       };
       const data = await userService.getUsers(params);
@@ -80,6 +86,20 @@ export default function EmployeesPage() {
     }
   };
 
+  const sortOptions = [
+    { value: "registrationDate", label: "Registration Date" },
+    { value: "programmingLanguage", label: "Programming Language" },
+    { value: "position", label: "Position" },
+    { value: "country", label: "Country" },
+  ];
+
+  if (isAdmin) {
+    sortOptions.push(
+      { value: "mentorName", label: "Mentor Name" },
+      { value: "englishLevel", label: "English Level" }
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -95,7 +115,7 @@ export default function EmployeesPage() {
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -107,6 +127,39 @@ export default function EmployeesPage() {
             }}
             className="pl-9"
           />
+        </div>
+        <div className="flex gap-2">
+          <Select
+            value={sortBy}
+            onChange={(e) => {
+              setSortBy(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-[200px]"
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              setOrder(order === "ASC" ? "DESC" : "ASC");
+              setCurrentPage(1);
+            }}
+            title={`Sort ${order === "ASC" ? "Descending" : "Ascending"}`}
+          >
+            <ArrowUpDown className="h-4 w-4" />
+            {order === "DESC" && (
+              <span className="sr-only">Sorted descending</span>
+            )}
+            {order === "ASC" && (
+              <span className="sr-only">Sorted ascending</span>
+            )}
+          </Button>
         </div>
       </div>
 
