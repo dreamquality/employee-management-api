@@ -38,8 +38,10 @@ exports.loginValidation = [
   body('password').notEmpty().withMessage('Пароль обязателен'),
 ];
 
+// Note: adminRegisterValidation is a shallow copy of registerValidation at the time of definition.
+// Subsequent changes to exports.registerValidation will NOT be reflected in exports.adminRegisterValidation.
 exports.adminRegisterValidation = [
-  ...this.registerValidation,
+  ...exports.registerValidation,
   body('secretWord')
     .custom((value) => value === process.env.SECRET_WORD)
     .withMessage('Неверное секретное слово'),

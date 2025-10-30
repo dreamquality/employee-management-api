@@ -15,9 +15,37 @@ const { userUpdateValidation, userCreateValidation, userListValidation } = requi
 
 /**
  * @swagger
+ * /profile:
+ *   get:
+ *     summary: Get current user's profile
+ *     description: Returns the profile data of the currently authenticated user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Current user's profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Authorization required
+ *       404:
+ *         description: User not found
+ */
+router.get('/profile', authenticateToken, userController.getCurrentUserProfile);
+
+/**
+ * @swagger
  * /users:
  *   post:
  *     summary: Create a new employee (admin only)
+ *     description: |
+ *       Admin-only endpoint to create new employee accounts with all fields.
+ *       Role defaults to 'employee' if not specified.
+ *       Passwords are automatically hashed before storage.
+ *       A notification is created for audit trail.
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -33,11 +61,17 @@ const { userUpdateValidation, userCreateValidation, userListValidation } = requi
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Сотрудник успешно создан
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Invalid data or user already exists
  *       403:
- *         description: Access denied
+ *         description: Access denied (not admin)
  */
 router.post('/users', authenticateToken, userCreateValidation, validateInput, userController.createEmployee);
 
@@ -59,8 +93,10 @@ router.post('/users', authenticateToken, userCreateValidation, validateInput, us
  *     responses:
  *       200:
  *         description: Employee successfully deleted
+ *       400:
+ *         description: Bad request (e.g., admin trying to delete themselves)
  *       403:
- *         description: Access denied
+ *         description: Access denied (not admin)
  *       404:
  *         description: Employee not found
  */
@@ -142,6 +178,10 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  * /users/{id}:
  *   put:
  *     summary: Update a user's profile
+ *     description: |
+ *       Update user profile. Employees can update their own basic profile fields (firstName, lastName, middleName, birthDate, phone, email, programmingLanguage, country, bankCard, linkedinLink, githubLink).
+ *       Admins can update all fields including admin-only fields (hireDate, adminNote, currentProject, englishLevel, vacationDates, mentorName, position, salary, role, password, workingHoursPerWeek).
+ *       Passwords are automatically hashed when updated.
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -160,15 +200,15 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  *             $ref: '#/components/schemas/UserUpdate'
  *     responses:
  *       200:
- *         description: Profile updated
+ *         description: Profile updated successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Invalid data
+ *         description: Invalid data (e.g., validation errors, duplicate email)
  *       403:
- *         description: Access denied
+ *         description: Access denied (e.g., employee trying to update admin-only fields or another user's profile)
  *       404:
  *         description: User not found
  */

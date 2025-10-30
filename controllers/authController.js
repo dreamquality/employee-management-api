@@ -6,7 +6,18 @@ const config = require('../config/appConfig');
 
 exports.register = async (req, res, next) => {
   try {
-    const { email, password, role, secretWord } = req.body;
+    const { 
+      email, 
+      password, 
+      firstName, 
+      lastName, 
+      middleName, 
+      birthDate, 
+      phone, 
+      programmingLanguage,
+      role, 
+      secretWord 
+    } = req.body;
 
     if (role === 'admin') {
       // Проверка секретного слова
@@ -23,8 +34,15 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await db.User.create({
-      ...req.body,
+      email,
       password: hashedPassword,
+      firstName,
+      lastName,
+      middleName,
+      birthDate,
+      phone,
+      programmingLanguage,
+      role: role || 'employee',
     });
 
     res.status(201).json({ message: 'Пользователь успешно зарегистрирован', userId: user.id });
@@ -37,7 +55,7 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await db.User.findOne({ where: { email } });
+    const user = await db.User.scope('withPassword').findOne({ where: { email } });
 
     if (!user) {
       return res.status(400).json({ error: 'Неверные учетные данные' });

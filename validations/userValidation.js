@@ -46,12 +46,6 @@ exports.userUpdateValidation = [
 
   body('workingHoursPerWeek')
     .optional()
-    .custom((value, { req }) => {
-      if (req.user.role !== 'admin') {
-        throw new Error('Поле "workingHoursPerWeek" можно изменять только администратору');
-      }
-      return true;
-    })
     .isInt({ min: 0, max: 100 }).withMessage('Параметр "workingHoursPerWeek" должен быть положительным целым числом'),
 
   // Новые поля
@@ -197,7 +191,7 @@ exports.userListValidation = [
   query('limit').optional().isInt({ min: 1 }).withMessage('Параметр "limit" должен быть положительным целым числом'),
   query('firstName').optional().isString(),
   query('lastName').optional().isString(),
-  query('sortBy').optional().isIn(['registrationDate', 'programmingLanguage', 'country', 'mentorName', 'englishLevel']),
+  query('sortBy').optional().isIn(['registrationDate', 'programmingLanguage', 'country', 'mentorName', 'englishLevel', 'position']),
   query('order').optional().isIn(['ASC', 'DESC']),
   (req, res, next) => {
     const errors = validationResult(req);

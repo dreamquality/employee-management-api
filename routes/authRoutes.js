@@ -17,6 +17,11 @@ const { registerValidation, loginValidation } = require('../validations/authVali
  * /register:
  *   post:
  *     summary: Register a new user
+ *     description: |
+ *       Register a new employee or admin account. Only explicitly allowed fields are accepted.
+ *       Admin-only fields (salary, position, mentorName, englishLevel, etc.) cannot be set during registration for security reasons.
+ *       To create an admin, provide role='admin' and the correct secretWord from environment variable.
+ *       Passwords are automatically hashed before storage.
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -27,8 +32,21 @@ const { registerValidation, loginValidation } = require('../validations/authVali
  *     responses:
  *       201:
  *         description: User successfully registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Пользователь успешно зарегистрирован
+ *                 userId:
+ *                   type: integer
+ *                   example: 1
  *       400:
- *         description: Invalid data
+ *         description: Invalid data or user already exists
+ *       403:
+ *         description: Invalid secret word for admin registration
  */
 router.post('/register', registerValidation, validateInput, authController.register);
 

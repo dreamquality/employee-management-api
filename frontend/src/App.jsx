@@ -9,6 +9,8 @@ import EmployeesPage from './pages/EmployeesPage';
 import EmployeeDetailPage from './pages/EmployeeDetailPage';
 import CreateEmployeePage from './pages/CreateEmployeePage';
 import NotificationsPage from './pages/NotificationsPage';
+import MyProfilePage from './pages/MyProfilePage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -37,7 +39,10 @@ function App() {
               }
             />
             <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="profile" element={<MyProfilePage />} />
           </Route>
+          {/* Catch-all route for 404 */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

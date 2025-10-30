@@ -54,7 +54,15 @@ export default function EmployeeDetailPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await userService.updateUser(id, formData);
+      // Clean up data before sending
+      const dataToSend = { ...formData };
+      
+      // Remove password field if it's empty (don't update password)
+      if (!dataToSend.password || dataToSend.password.trim() === '') {
+        delete dataToSend.password;
+      }
+      
+      await userService.updateUser(id, dataToSend);
       toast({
         title: "Success",
         description: "Employee updated successfully",
@@ -128,7 +136,6 @@ export default function EmployeeDetailPage() {
                     name="firstName"
                     value={formData.firstName || ""}
                     onChange={handleChange}
-                    disabled={!isAdmin}
                   />
                 </div>
                 <div className="space-y-2">
@@ -138,7 +145,6 @@ export default function EmployeeDetailPage() {
                     name="lastName"
                     value={formData.lastName || ""}
                     onChange={handleChange}
-                    disabled={!isAdmin}
                   />
                 </div>
               </div>
@@ -149,7 +155,6 @@ export default function EmployeeDetailPage() {
                   name="middleName"
                   value={formData.middleName || ""}
                   onChange={handleChange}
-                  disabled={!isAdmin}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -175,6 +180,20 @@ export default function EmployeeDetailPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
+                  <Label htmlFor="birthDate">Birth Date</Label>
+                  <Input
+                    id="birthDate"
+                    name="birthDate"
+                    type="date"
+                    value={
+                      formData.birthDate
+                        ? formData.birthDate.split("T")[0]
+                        : ""
+                    }
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="programmingLanguage">
                     Programming Language
                   </Label>
@@ -185,6 +204,8 @@ export default function EmployeeDetailPage() {
                     onChange={handleChange}
                   />
                 </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="country">Country</Label>
                   <Input
@@ -194,8 +215,6 @@ export default function EmployeeDetailPage() {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="bankCard">Bank Card</Label>
                   <Input
@@ -206,6 +225,8 @@ export default function EmployeeDetailPage() {
                     placeholder="1234-5678-9012-3456"
                   />
                 </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="githubLink">GitHub Link</Label>
                   <Input
@@ -216,19 +237,23 @@ export default function EmployeeDetailPage() {
                     placeholder="https://github.com/username"
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="linkedinLink">LinkedIn Link</Label>
-                <Input
-                  id="linkedinLink"
-                  name="linkedinLink"
-                  value={formData.linkedinLink || ""}
-                  onChange={handleChange}
-                  placeholder="https://linkedin.com/in/username"
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="linkedinLink">LinkedIn Link</Label>
+                  <Input
+                    id="linkedinLink"
+                    name="linkedinLink"
+                    value={formData.linkedinLink || ""}
+                    onChange={handleChange}
+                    placeholder="https://linkedin.com/in/username"
+                  />
+                </div>
               </div>
               {isAdmin && (
                 <>
+                  <hr className="my-6" />
+                  <h3 className="text-lg font-semibold mb-4">
+                    Admin-Only Fields
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="position">Position</Label>
@@ -285,11 +310,16 @@ export default function EmployeeDetailPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentProject">Current Project</Label>
+                      <Label htmlFor="hireDate">Hire Date</Label>
                       <Input
-                        id="currentProject"
-                        name="currentProject"
-                        value={formData.currentProject || ""}
+                        id="hireDate"
+                        name="hireDate"
+                        type="date"
+                        value={
+                          formData.hireDate
+                            ? formData.hireDate.split("T")[0]
+                            : ""
+                        }
                         onChange={handleChange}
                       />
                     </div>
@@ -301,10 +331,37 @@ export default function EmployeeDetailPage() {
                         id="workingHoursPerWeek"
                         name="workingHoursPerWeek"
                         type="number"
+                        min="0"
+                        max="100"
                         value={formData.workingHoursPerWeek || ""}
                         onChange={handleChange}
                       />
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="currentProject">Current Project</Label>
+                    <Input
+                      id="currentProject"
+                      name="currentProject"
+                      value={formData.currentProject || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">
+                      New Password (leave empty to keep current)
+                    </Label>
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      value={formData.password || ""}
+                      onChange={handleChange}
+                      placeholder="Enter new password to change"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Password will be automatically hashed for security
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="vacationDates">
@@ -351,7 +408,10 @@ export default function EmployeeDetailPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setEditing(false)}
+                  onClick={() => {
+                    setEditing(false);
+                    setFormData(employee);
+                  }}
                 >
                   Cancel
                 </Button>

@@ -1,6 +1,11 @@
 import api from './api';
 
 export const userService = {
+  getCurrentProfile: async () => {
+    const response = await api.get('/profile');
+    return response.data;
+  },
+
   getUsers: async (params = {}) => {
     const response = await api.get('/users', { params });
     return response.data;
