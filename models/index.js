@@ -34,6 +34,7 @@ db.sequelize = sequelize;
 // Импорт моделей
 db.User = require('./user')(sequelize, DataTypes);
 db.Notification = require('./notification')(sequelize, DataTypes);
+db.Project = require('./project')(sequelize, DataTypes);
 
 // Установление связей между моделями
 db.User.hasMany(db.Notification, { 
