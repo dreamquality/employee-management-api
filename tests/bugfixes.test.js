@@ -91,16 +91,20 @@ describe('Bug Fixes Tests', () => {
   });
 
   describe('Bug Fix 1: Field Permission Logic in updateProfile', () => {
-    it('should allow employee to update only linkedinLink and githubLink', async () => {
+    it('should allow employee to update their own profile fields', async () => {
       const res = await request(app)
         .put(`/users/${employeeId}`)
         .set('Authorization', `Bearer ${employeeToken}`)
         .send({
+          firstName: 'UpdatedJohn',
+          phone: '+9999999999',
           linkedinLink: 'https://linkedin.com/in/johndoe',
           githubLink: 'https://github.com/johndoe'
         });
 
       expect(res.status).to.equal(200);
+      expect(res.body.user.firstName).to.equal('UpdatedJohn');
+      expect(res.body.user.phone).to.equal('+9999999999');
       expect(res.body.user.linkedinLink).to.equal('https://linkedin.com/in/johndoe');
       expect(res.body.user.githubLink).to.equal('https://github.com/johndoe');
     });

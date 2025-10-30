@@ -93,6 +93,21 @@ exports.updateProfile = async (req, res, next) => {
       return res.status(403).json({ error: "Доступ запрещен" });
     }
 
+    // Поля, которые могут быть обновлены обычными сотрудниками
+    const employeeAllowedFields = [
+      "firstName",
+      "lastName",
+      "middleName",
+      "birthDate",
+      "phone",
+      "email",
+      "programmingLanguage",
+      "country",
+      "bankCard",
+      "linkedinLink",
+      "githubLink",
+    ];
+
     // Поля, которые могут быть обновлены только администратором
     const adminOnlyFields = [
       "hireDate",
@@ -106,21 +121,6 @@ exports.updateProfile = async (req, res, next) => {
       "role",
       "password",
       "workingHoursPerWeek",
-      "firstName",
-      "lastName",
-      "middleName",
-      "birthDate",
-      "phone",
-      "email",
-      "programmingLanguage",
-      "country",
-      "bankCard",
-    ];
-
-    // Поля, которые могут быть обновлены обычными сотрудниками
-    const employeeAllowedFields = [
-      "linkedinLink",
-      "githubLink",
     ];
 
     const updateData = {};
