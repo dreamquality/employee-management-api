@@ -547,10 +547,7 @@ export default function EmployeeDetailPage() {
                         Current Project
                       </h3>
                       {employee.currentProject ? (
-                        <ProjectLink
-                          projectName={employee.currentProject}
-                          projectUrl={null}
-                        />
+                        <p>{employee.currentProject}</p>
                       ) : (
                         <p>N/A</p>
                       )}
