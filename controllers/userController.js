@@ -41,6 +41,7 @@ exports.getEmployees = async (req, res, next) => {
       "country",
       "mentorName",
       "englishLevel",
+      "position",
     ];
     const sortField = validSortFields.includes(sortBy)
       ? sortBy
@@ -92,44 +93,12 @@ exports.updateProfile = async (req, res, next) => {
       return res.status(403).json({ error: "Доступ запрещен" });
     }
 
-    const allowedFields = [
-      "firstName",
-      "lastName",
-      "middleName",
-      "birthDate",
-      "phone",
-      "email",
-      "programmingLanguage",
-      "country",
-      "bankCard",
-      "linkedinLink",
-      "githubLink",
-    ];
-
-    const updateData = {};
-    allowedFields.forEach((field) => {
-      if (req.body[field] !== undefined) {
-        updateData[field] = req.body[field];
-      }
-    });
-
     // Поля, которые могут быть обновлены только администратором
     const adminOnlyFields = [
-      "firstName",
-      "lastName",
-      "middleName",
-      "birthDate",
-      "phone",
-      "email",
-      "programmingLanguage",
-      "country",
-      "bankCard",
-      "linkedinLink",
       "hireDate",
       "adminNote",
       "currentProject",
       "englishLevel",
-      "githubLink",
       "vacationDates",
       "mentorName",
       "position",
@@ -137,15 +106,48 @@ exports.updateProfile = async (req, res, next) => {
       "role",
       "password",
       "workingHoursPerWeek",
+      "firstName",
+      "lastName",
+      "middleName",
+      "birthDate",
+      "phone",
+      "email",
+      "programmingLanguage",
+      "country",
+      "bankCard",
     ];
 
-    for (const field of adminOnlyFields) {
-      if (req.user.role === "admin" && req.body[field] !== undefined) {
-        updateData[field] = req.body[field];
-      } else if (req.user.role !== "admin" && req.body[field] !== undefined) {
-        return res.status(403).json({
-          error: `Только администратор может обновлять поле ${field}`,
-        });
+    // Поля, которые могут быть обновлены обычными сотрудниками
+    const employeeAllowedFields = [
+      "linkedinLink",
+      "githubLink",
+    ];
+
+    const updateData = {};
+
+    // Если пользователь - администратор, разрешаем обновление всех полей
+    if (req.user.role === "admin") {
+      const allFields = [...adminOnlyFields, ...employeeAllowedFields];
+      allFields.forEach((field) => {
+        if (req.body[field] !== undefined) {
+          updateData[field] = req.body[field];
+        }
+      });
+    } else {
+      // Для обычных сотрудников разрешаем только определенные поля
+      employeeAllowedFields.forEach((field) => {
+        if (req.body[field] !== undefined) {
+          updateData[field] = req.body[field];
+        }
+      });
+
+      // Проверяем, что сотрудник не пытается обновить запрещенные поля
+      for (const field of adminOnlyFields) {
+        if (req.body[field] !== undefined) {
+          return res.status(403).json({
+            error: `Только администратор может обновлять поле ${field}`,
+          });
+        }
       }
     }
 
@@ -166,8 +168,18 @@ exports.updateProfile = async (req, res, next) => {
       updateData.vacationDates = [updateData.vacationDates];
     }
 
+    // Хеширование пароля, если он обновляется
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
+    }
+
     // Обновление данных пользователя
     const user = await db.User.findByPk(userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: "Пользователь не найден" });
+    }
+    
     await user.update(updateData);
 
     // Создаем уведомление для администратора, если данные обновляет не администратор
@@ -227,9 +239,6 @@ exports.createEmployee = async (req, res, next) => {
       // Добавьте другие поля по необходимости
     } = req.body;
 
-    if (!role) {
-      return res.status(400).json({ error: "Поле role является обязательным" });
-    }
     // Проверка на существование пользователя с таким email
     const existingUser = await db.User.findOne({ where: { email } });
     if (existingUser) {
@@ -263,18 +272,9 @@ exports.createEmployee = async (req, res, next) => {
       mentorName,
       position,
       salary,
-      role,
+      role: role || 'employee',
       workingHoursPerWeek,
       // Добавьте другие поля по необходимости
-    });
-
-    // Создаем уведомление для администратора о создании нового сотрудника
-    await db.Notification.create({
-      message: `Администратор создал нового сотрудника: ${newUser.firstName} ${newUser.lastName}`,
-      userId: req.user.userId, // Администратор — инициатор уведомления
-      relatedUserId: newUser.id, // Новый сотрудник — связанный пользователь
-      type: "employee_created",
-      eventDate: new Date(), // Текущая дата
     });
 
     res
@@ -294,6 +294,11 @@ exports.deleteEmployee = async (req, res, next) => {
     }
 
     const userId = req.params.id;
+
+    // Предотвращение удаления самого себя
+    if (req.user.userId === parseInt(userId)) {
+      return res.status(400).json({ error: "Нельзя удалить самого себя" });
+    }
 
     // Проверка, что пользователь существует и является сотрудником
     const user = await db.User.findOne({

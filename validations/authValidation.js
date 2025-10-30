@@ -39,7 +39,7 @@ exports.loginValidation = [
 ];
 
 exports.adminRegisterValidation = [
-  ...this.registerValidation,
+  ...exports.registerValidation,
   body('secretWord')
     .custom((value) => value === process.env.SECRET_WORD)
     .withMessage('Неверное секретное слово'),
