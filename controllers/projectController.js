@@ -116,7 +116,7 @@ exports.updateProject = async (req, res) => {
       }
     }
 
-    await project.update({ name, description });
+    await project.update(Object.fromEntries(Object.entries({ name, description }).filter(([_, v]) => v !== undefined)));
 
     res.json({ message: "Проект обновлен", project });
   } catch (error) {
