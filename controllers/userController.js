@@ -53,6 +53,7 @@ exports.getEmployees = async (req, res, next) => {
       req.user.role === "admin"
         ? undefined
         : [
+            "id",
             "firstName",
             "lastName",
             "middleName",
