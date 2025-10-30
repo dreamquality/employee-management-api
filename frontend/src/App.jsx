@@ -9,6 +9,7 @@ import EmployeesPage from './pages/EmployeesPage';
 import EmployeeDetailPage from './pages/EmployeeDetailPage';
 import CreateEmployeePage from './pages/CreateEmployeePage';
 import NotificationsPage from './pages/NotificationsPage';
+import MyProfilePage from './pages/MyProfilePage';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
               }
             />
             <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="profile" element={<MyProfilePage />} />
           </Route>
         </Routes>
       </AuthProvider>

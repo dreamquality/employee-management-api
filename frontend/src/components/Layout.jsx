@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Users, Bell, LogOut, Menu, X } from 'lucide-react';
+import { Users, Bell, LogOut, Menu, X, User } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
 
 export default function Layout() {
@@ -19,6 +19,7 @@ export default function Layout() {
   const navItems = [
     { path: '/employees', label: 'Employees', icon: Users },
     { path: '/notifications', label: 'Notifications', icon: Bell },
+    { path: '/profile', label: 'My Profile', icon: User },
   ];
 
   const isActive = (path) => location.pathname.startsWith(path);

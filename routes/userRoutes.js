@@ -15,6 +15,29 @@ const { userUpdateValidation, userCreateValidation, userListValidation } = requi
 
 /**
  * @swagger
+ * /profile:
+ *   get:
+ *     summary: Get current user's profile
+ *     description: Returns the profile data of the currently authenticated user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Current user's profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Authorization required
+ *       404:
+ *         description: User not found
+ */
+router.get('/profile', authenticateToken, userController.getCurrentUserProfile);
+
+/**
+ * @swagger
  * /users:
  *   post:
  *     summary: Create a new employee (admin only)

@@ -3,6 +3,19 @@ const db = require("../models");
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 
+// Get current authenticated user's profile
+exports.getCurrentUserProfile = async (req, res) => {
+  try {
+    const user = await db.User.findByPk(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера", error });
+  }
+};
+
 // Получить пользователя по ID
 exports.getEmploye = async (req, res) => {
   try {

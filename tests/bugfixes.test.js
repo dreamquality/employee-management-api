@@ -256,7 +256,7 @@ describe('Bug Fixes Tests', () => {
       expect(updateRes.status).to.equal(200);
 
       // Verify password is hashed, not stored in plain text
-      const user = await db.User.findByPk(employeeId);
+      const user = await db.User.scope('withPassword').findByPk(employeeId);
       expect(user.password).to.not.equal(newPassword);
       
       // Verify the hashed password works for login
