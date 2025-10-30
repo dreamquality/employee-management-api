@@ -14,21 +14,8 @@ export default function ProjectLink({ projectName, projectUrl }) {
       return;
     }
 
-    // Try to check if the URL is reachable
-    try {
-      // For demonstration, we'll simulate a check
-      // In production, you might want to use a backend endpoint to check URL reachability
-      const response = await fetch(projectUrl, { 
-        mode: 'no-cors',
-        method: 'HEAD',
-      });
-      
-      // If we get here without error, open the link
-      window.open(projectUrl, '_blank', 'noopener,noreferrer');
-    } catch (error) {
-      // If unreachable, show completed modal
-      setShowModal(true);
-    }
+    // Open the link if a URL is provided
+    window.open(projectUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
