@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, ExternalLink, AlertCircle } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { format } from "date-fns";
 import ProjectAutocomplete from "@/components/ProjectAutocomplete";
 import ProjectLink from "@/components/ProjectLink";
