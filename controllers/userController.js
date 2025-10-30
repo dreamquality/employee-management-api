@@ -277,6 +277,15 @@ exports.createEmployee = async (req, res, next) => {
       // Добавьте другие поля по необходимости
     });
 
+    // Создаем уведомление для администратора о создании нового сотрудника
+    await db.Notification.create({
+      message: `Администратор создал нового сотрудника: ${newUser.firstName} ${newUser.lastName}`,
+      userId: req.user.userId, // Администратор — инициатор уведомления
+      relatedUserId: newUser.id, // Новый сотрудник — связанный пользователь
+      type: "employee_created",
+      eventDate: new Date(), // Текущая дата
+    });
+
     res
       .status(201)
       .json({ message: "Сотрудник успешно создан", user: newUser });
