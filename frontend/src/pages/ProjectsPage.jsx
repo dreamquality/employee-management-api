@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Edit2, Trash2, X, Save } from 'lucide-react';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
@@ -19,6 +20,7 @@ export default function ProjectsPage() {
   const [editingId, setEditingId] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [formData, setFormData] = useState({ name: '', description: '' });
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -84,7 +86,12 @@ export default function ProjectsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this project?')) return;
+    setDeleteConfirm(id);
+  };
+  
+  const confirmDelete = async () => {
+    const id = deleteConfirm;
+    setDeleteConfirm(null);
     
     try {
       await projectService.deleteProject(id);
@@ -279,6 +286,17 @@ export default function ProjectsPage() {
           </Card>
         )}
       </div>
+
+      {deleteConfirm && (
+        <ConfirmDialog
+          title="Delete Project"
+          description="Are you sure you want to delete this project? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteConfirm(null)}
+        />
+      )}
     </div>
   );
 }

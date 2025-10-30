@@ -12,7 +12,7 @@ exports.getAllProjects = async (req, res) => {
 
     res.json(projects);
   } catch (error) {
-    res.status(500).json({ message: "Ошибка сервера", error: error.message });
+    res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
 };
 
@@ -22,7 +22,7 @@ exports.searchProjects = async (req, res) => {
     const { query } = req.query;
 
     if (!query) {
-      return res.status(400).json({ message: "Параметр query обязателен" });
+      return res.status(400).json({ error: "Параметр query обязателен" });
     }
 
     const projects = await db.Project.findAll({
@@ -38,7 +38,7 @@ exports.searchProjects = async (req, res) => {
 
     res.json(projects);
   } catch (error) {
-    res.status(500).json({ message: "Ошибка сервера", error: error.message });
+    res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
 };
 
@@ -48,12 +48,12 @@ exports.getProjectById = async (req, res) => {
     const project = await db.Project.findByPk(req.params.id);
 
     if (!project) {
-      return res.status(404).json({ message: "Проект не найден" });
+      return res.status(404).json({ error: "Проект не найден" });
     }
 
     res.json(project);
   } catch (error) {
-    res.status(500).json({ message: "Ошибка сервера", error: error.message });
+    res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
 };
 
@@ -78,9 +78,9 @@ exports.createProject = async (req, res) => {
       description,
     });
 
-    res.status(201).json({ message: "Проект успешно создан", project: newProject });
+    res.status(201).json({ project: newProject });
   } catch (error) {
-    res.status(500).json({ message: "Ошибка сервера", error: error.message });
+    res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
 };
 
@@ -118,9 +118,9 @@ exports.updateProject = async (req, res) => {
 
     await project.update(Object.fromEntries(Object.entries({ name, description }).filter(([_, v]) => v !== undefined)));
 
-    res.json({ message: "Проект обновлен", project });
+    res.json({ project });
   } catch (error) {
-    res.status(500).json({ message: "Ошибка сервера", error: error.message });
+    res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
 };
 
@@ -140,8 +140,8 @@ exports.deleteProject = async (req, res) => {
 
     await project.destroy();
 
-    res.json({ message: "Проект успешно удален" });
+    res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ message: "Ошибка сервера", error: error.message });
+    res.status(500).json({ error: "Ошибка сервера", details: error.message });
   }
 };

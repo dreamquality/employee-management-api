@@ -190,7 +190,7 @@ describe('Project API', () => {
         });
 
       expect(res.status).to.equal(201);
-      expect(res.body).to.have.property('message');
+      expect(res.body).to.have.property('project');
       expect(res.body.project).to.have.property('id');
       expect(res.body.project.name).to.equal('Project Delta');
     });
@@ -243,7 +243,7 @@ describe('Project API', () => {
         });
 
       expect(res.status).to.equal(200);
-      expect(res.body).to.have.property('message');
+      expect(res.body).to.have.property('project');
       expect(res.body.project.name).to.equal('Project Alpha Updated');
     });
 
@@ -296,7 +296,8 @@ describe('Project API', () => {
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(res.status).to.equal(200);
-      expect(res.body).to.have.property('message');
+      expect(res.body).to.have.property('success');
+      expect(res.body.success).to.equal(true);
 
       // Verify it's deleted
       const getRes = await request(app)
