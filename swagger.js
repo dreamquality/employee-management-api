@@ -437,6 +437,37 @@ const options = {
             },
           },
         },
+        Project: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'integer',
+              description: 'Unique project identifier',
+            },
+            name: {
+              type: 'string',
+              description: 'Project name',
+              minLength: 2,
+              maxLength: 100,
+            },
+            description: {
+              type: 'string',
+              description: 'Project description',
+              maxLength: 500,
+              nullable: true,
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Project creation date and time',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Project last update date and time',
+            },
+          },
+        },
       },
     },
     security: [{ bearerAuth: [] }],

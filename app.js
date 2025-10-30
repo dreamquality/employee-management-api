@@ -5,6 +5,7 @@ const db = require("./models");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const { scheduleNotifications } = require("./services/notificationService");
 const bcrypt = require("bcryptjs");
@@ -60,6 +61,7 @@ app.get("/api-docs.json", (req, res) => {
 app.use(authRoutes);
 app.use(userRoutes);
 app.use(notificationRoutes);
+app.use(projectRoutes);
 
 // Обработчик ошибок
 app.use(errorHandler);
