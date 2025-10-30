@@ -246,6 +246,38 @@ export default function EmployeesPage() {
                         <p className="font-medium">{employee.englishLevel}</p>
                       </div>
                     )}
+                    {isAdmin && employee.registrationDate && (
+                      <div>
+                        <p className="text-muted-foreground">Registration Date</p>
+                        <p className="font-medium">
+                          {new Date(employee.registrationDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                    {isAdmin && employee.lastLoginDate && (
+                      <div>
+                        <p className="text-muted-foreground">Last Login</p>
+                        <p className="font-medium">
+                          {new Date(employee.lastLoginDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                    {isAdmin && employee.createdAt && (
+                      <div>
+                        <p className="text-muted-foreground">Created At</p>
+                        <p className="font-medium">
+                          {new Date(employee.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                    {isAdmin && employee.updatedAt && (
+                      <div>
+                        <p className="text-muted-foreground">Updated At</p>
+                        <p className="font-medium">
+                          {new Date(employee.updatedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

@@ -16,9 +16,11 @@ export default function Layout() {
     navigate('/login');
   };
 
+  const isAdmin = user?.role === 'admin';
+
   const navItems = [
     { path: '/employees', label: 'Employees', icon: Users },
-    { path: '/notifications', label: 'Notifications', icon: Bell },
+    ...(isAdmin ? [{ path: '/notifications', label: 'Notifications', icon: Bell }] : []),
     { path: '/profile', label: 'My Profile', icon: User },
   ];
 
