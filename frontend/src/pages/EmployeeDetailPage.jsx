@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { userService } from "../services/userService";
 import { userProjectService } from "../services/userProjectService";
@@ -32,11 +32,7 @@ export default function EmployeeDetailPage() {
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchEmployee();
-  }, [id]);
-
-  const fetchEmployee = async () => {
+  const fetchEmployee = useCallback(async () => {
     setLoading(true);
     try {
       const data = await userService.getUser(id);
@@ -70,7 +66,11 @@ export default function EmployeeDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, toast]);
+
+  useEffect(() => {
+    fetchEmployee();
+  }, [fetchEmployee]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
