@@ -93,10 +93,6 @@ describe('Project API', () => {
       });
   });
 
-  after(async () => {
-    await db.sequelize.close();
-  });
-
   describe('GET /projects', () => {
     it('should get all projects as authenticated user', async () => {
       const res = await request(app)
