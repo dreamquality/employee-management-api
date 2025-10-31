@@ -75,6 +75,31 @@ router.get('/notifications', authenticateToken, notificationController.getNotifi
 
 /**
  * @swagger
+ * /notifications/unread-count:
+ *   get:
+ *     summary: Get count of unread notifications
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Unread notification count
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 unreadCount:
+ *                   type: integer
+ *       401:
+ *         description: Authorization required
+ *       403:
+ *         description: Access denied
+ */
+router.get('/notifications/unread-count', authenticateToken, notificationController.getUnreadCount);
+
+/**
+ * @swagger
  * /notifications/{id}/mark-as-read:
  *   patch:
  *     summary: Mark a notification as read

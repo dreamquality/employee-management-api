@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Users, Bell, LogOut, Menu, X, User, FolderKanban } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
+import { notificationService } from '../services/notificationService';
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const handleLogout = () => {
     logout();
@@ -18,11 +20,32 @@ export default function Layout() {
 
   const isAdmin = user?.role === 'admin';
 
+  // Fetch unread notifications count
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      if (isAdmin) {
+        try {
+          const data = await notificationService.getUnreadCount();
+          setUnreadCount(data.unreadCount);
+        } catch (error) {
+          console.error('Failed to fetch unread count:', error);
+        }
+      }
+    };
+
+    fetchUnreadCount();
+
+    // Refresh unread count every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000);
+
+    return () => clearInterval(interval);
+  }, [isAdmin]);
+
   const navItems = [
     { path: '/employees', label: 'Employees', icon: Users },
     ...(isAdmin ? [
       { path: '/projects', label: 'Projects', icon: FolderKanban },
-      { path: '/notifications', label: 'Notifications', icon: Bell }
+      { path: '/notifications', label: 'Notifications', icon: Bell, badge: unreadCount > 0 ? unreadCount : null }
     ] : []),
     { path: '/profile', label: 'My Profile', icon: User },
   ];
@@ -49,10 +72,15 @@ export default function Layout() {
                 <Link key={item.path} to={item.path}>
                   <Button
                     variant={isActive(item.path) ? "default" : "ghost"}
-                    className="flex items-center"
+                    className="flex items-center relative"
                   >
                     <item.icon className="mr-2 h-4 w-4" />
                     {item.label}
+                    {item.badge && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {item.badge}
+                      </span>
+                    )}
                   </Button>
                 </Link>
               ))}
@@ -96,10 +124,15 @@ export default function Layout() {
                 >
                   <Button
                     variant={isActive(item.path) ? "default" : "ghost"}
-                    className="w-full justify-start"
+                    className="w-full justify-start relative"
                   >
                     <item.icon className="mr-2 h-4 w-4" />
                     {item.label}
+                    {item.badge && (
+                      <span className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {item.badge}
+                      </span>
+                    )}
                   </Button>
                 </Link>
               ))}
