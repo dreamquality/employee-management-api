@@ -35,6 +35,7 @@ db.sequelize = sequelize;
 db.User = require('./user')(sequelize, DataTypes);
 db.Notification = require('./notification')(sequelize, DataTypes);
 db.Project = require('./project')(sequelize, DataTypes);
+db.UserProject = require('./userProject')(sequelize, DataTypes);
 
 // Установление связей между моделями
 db.User.hasMany(db.Notification, { 
@@ -50,6 +51,30 @@ db.Notification.belongsTo(db.User, {
 db.Notification.belongsTo(db.User, { 
   foreignKey: 'relatedUserId', 
   as: 'relatedUser' 
+});
+
+// UserProject associations
+db.UserProject.belongsTo(db.User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+db.UserProject.belongsTo(db.Project, {
+  foreignKey: 'projectId',
+  as: 'project'
+});
+
+// User-Project many-to-many through UserProject
+db.User.belongsToMany(db.Project, {
+  through: db.UserProject,
+  foreignKey: 'userId',
+  otherKey: 'projectId',
+  as: 'projects'
+});
+db.Project.belongsToMany(db.User, {
+  through: db.UserProject,
+  foreignKey: 'projectId',
+  otherKey: 'userId',
+  as: 'users'
 });
 
 module.exports = db;
