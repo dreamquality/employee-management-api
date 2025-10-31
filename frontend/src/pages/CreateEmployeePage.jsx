@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userService } from "../services/userService";
+import { userProjectService } from "../services/userProjectService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus } from "lucide-react";
-import ProjectAutocomplete from "@/components/ProjectAutocomplete";
+import MultiProjectSelect from "@/components/MultiProjectSelect";
 
 export default function CreateEmployeePage() {
   const [formData, setFormData] = useState({
@@ -32,13 +33,14 @@ export default function CreateEmployeePage() {
     role: "employee",
     mentorName: "",
     englishLevel: "",
-    currentProject: "",
     workingHoursPerWeek: "",
     vacationDates: [],
     githubLink: "",
     linkedinLink: "",
     adminNote: "",
   });
+  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [primaryProjectId, setPrimaryProjectId] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -51,7 +53,16 @@ export default function CreateEmployeePage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await userService.createUser(formData);
+      // Create user first
+      const response = await userService.createUser(formData);
+      const newUserId = response.id;
+
+      // Assign projects if any selected
+      if (selectedProjects.length > 0) {
+        const projectIds = selectedProjects.map(p => p.id);
+        await userProjectService.setUserProjects(newUserId, projectIds, primaryProjectId);
+      }
+
       toast({
         title: "Success",
         description: "Employee created successfully",
@@ -277,12 +288,12 @@ export default function CreateEmployeePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="currentProject">Current Project</Label>
-                <ProjectAutocomplete
-                  value={formData.currentProject}
-                  onChange={(value) =>
-                    setFormData({ ...formData, currentProject: value })
-                  }
+                <Label>Projects</Label>
+                <MultiProjectSelect
+                  value={selectedProjects}
+                  primaryProjectId={primaryProjectId}
+                  onChange={setSelectedProjects}
+                  onPrimaryChange={setPrimaryProjectId}
                 />
               </div>
               <div className="space-y-2">
