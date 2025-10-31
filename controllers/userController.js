@@ -19,7 +19,17 @@ exports.getCurrentUserProfile = async (req, res) => {
 // Получить пользователя по ID
 exports.getEmploye = async (req, res) => {
   try {
-    const user = await db.User.findByPk(req.params.id);
+    const user = await db.User.findByPk(req.params.id, {
+      include: [{
+        model: db.Project,
+        as: 'projects',
+        through: {
+          attributes: ['isPrimary', 'assignedAt'],
+          as: 'userProject'
+        },
+        attributes: ['id', 'name', 'description']
+      }]
+    });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }

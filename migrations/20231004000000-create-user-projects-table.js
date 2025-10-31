@@ -29,6 +29,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
+      isPrimary: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       assignedAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -56,6 +61,7 @@ module.exports = {
     // Create indexes for better query performance
     await queryInterface.addIndex('UserProjects', ['userId']);
     await queryInterface.addIndex('UserProjects', ['projectId']);
+    await queryInterface.addIndex('UserProjects', ['userId', 'isPrimary']);
   },
 
   down: async (queryInterface, Sequelize) => {

@@ -62,6 +62,7 @@ app.use(authRoutes);
 app.use(userRoutes);
 app.use(notificationRoutes);
 app.use(projectRoutes);
+app.use(require("./routes/userProjectRoutes"));
 
 // Обработчик ошибок
 app.use(errorHandler);

@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
           key: 'id'
         }
       },
+      isPrimary: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       assignedAt: {
         type: DataTypes.DATE,
         allowNull: false,
