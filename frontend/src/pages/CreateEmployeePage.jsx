@@ -55,10 +55,10 @@ export default function CreateEmployeePage() {
     try {
       // Create user first
       const response = await userService.createUser(formData);
-      const newUserId = response.id;
+      const newUserId = response.user?.id || response.id;
 
       // Assign projects if any selected
-      if (selectedProjects.length > 0) {
+      if (selectedProjects.length > 0 && newUserId) {
         const projectIds = selectedProjects.map(p => p.id);
         await userProjectService.setUserProjects(newUserId, projectIds, primaryProjectId);
       }
