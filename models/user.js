@@ -83,6 +83,7 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
       hooks: true,
     });
+    // Many-to-many relationship with Projects through UserProjects
   };
 
   return User;

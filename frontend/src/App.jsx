@@ -10,6 +10,7 @@ import EmployeeDetailPage from './pages/EmployeeDetailPage';
 import CreateEmployeePage from './pages/CreateEmployeePage';
 import NotificationsPage from './pages/NotificationsPage';
 import MyProfilePage from './pages/MyProfilePage';
+import ProjectsPage from './pages/ProjectsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -39,6 +40,14 @@ function App() {
               }
             />
             <Route path="notifications" element={<NotificationsPage />} />
+            <Route
+              path="projects"
+              element={
+                <ProtectedRoute adminOnly>
+                  <ProjectsPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="profile" element={<MyProfilePage />} />
           </Route>
           {/* Catch-all route for 404 */}

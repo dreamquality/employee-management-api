@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { userService } from "../services/userService";
+import { userProjectService } from "../services/userProjectService";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,9 +23,11 @@ import {
   Eye,
   ArrowUpDown,
 } from "lucide-react";
+import MultiProjectDisplay from "@/components/MultiProjectDisplay";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
+  const [employeeProjects, setEmployeeProjects] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,9 +55,25 @@ export default function EmployeesPage() {
         ...(searchTerm && { firstName: searchTerm }),
       };
       const data = await userService.getUsers(params);
-      setEmployees(data.users || []);
+      const employeesList = data.users || [];
+      setEmployees(employeesList);
       setTotal(data.total || 0);
       setTotalPages(data.totalPages || 1);
+      
+      // Fetch projects for each employee
+      const projectsMap = {};
+      await Promise.all(
+        employeesList.map(async (employee) => {
+          try {
+            const result = await userProjectService.getUserProjects(employee.id);
+            projectsMap[employee.id] = result.projects || [];
+          } catch (error) {
+            // If error fetching projects, just set empty array
+            projectsMap[employee.id] = [];
+          }
+        })
+      );
+      setEmployeeProjects(projectsMap);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -244,6 +263,15 @@ export default function EmployeesPage() {
                       <div>
                         <p className="text-muted-foreground">English Level</p>
                         <p className="font-medium">{employee.englishLevel}</p>
+                      </div>
+                    )}
+                    {employeeProjects[employee.id] && employeeProjects[employee.id].length > 0 && (
+                      <div className="col-span-2 md:col-span-4">
+                        <p className="text-muted-foreground mb-1">Projects</p>
+                        <MultiProjectDisplay 
+                          projects={employeeProjects[employee.id]} 
+                          displayLimit={3} 
+                        />
                       </div>
                     )}
                     {isAdmin && employee.registrationDate && (

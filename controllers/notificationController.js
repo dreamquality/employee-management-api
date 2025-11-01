@@ -38,6 +38,25 @@ exports.getNotifications = async (req, res, next) => {
   }
 };
 
+exports.getUnreadCount = async (req, res, next) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Доступ запрещен' });
+    }
+
+    const count = await db.Notification.count({
+      where: { 
+        userId: req.user.userId,
+        isRead: false
+      }
+    });
+
+    res.json({ unreadCount: count });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.markAsRead = async (req, res, next) => {
   try {
     if (req.user.role !== 'admin') {

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { userService } from "../services/userService";
+import { userProjectService } from "../services/userProjectService";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 import { format } from "date-fns";
+import MultiProjectSelect from "@/components/MultiProjectSelect";
+import MultiProjectDisplay from "@/components/MultiProjectDisplay";
 
 export default function EmployeeDetailPage() {
   const { id } = useParams();
@@ -22,20 +25,38 @@ export default function EmployeeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [primaryProjectId, setPrimaryProjectId] = useState(null);
+  const [userProjects, setUserProjects] = useState([]);
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchEmployee();
-  }, [id]);
-
-  const fetchEmployee = async () => {
+  const fetchEmployee = useCallback(async () => {
     setLoading(true);
     try {
       const data = await userService.getUser(id);
       setEmployee(data);
       setFormData(data);
+      
+      // Fetch user projects
+      try {
+        const projects = await userProjectService.getUserProjects(id);
+        setUserProjects(projects.projects || []);
+        
+        // Set selected projects for editing
+        const projectsArray = (projects.projects || []).map(up => up.project);
+        setSelectedProjects(projectsArray);
+        
+        // Set primary project
+        const primary = (projects.projects || []).find(up => up.isPrimary);
+        if (primary) {
+          setPrimaryProjectId(primary.projectId);
+        }
+      } catch (projectError) {
+        // If user has no projects or error fetching, just continue
+        
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -45,7 +66,11 @@ export default function EmployeeDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, toast]);
+
+  useEffect(() => {
+    fetchEmployee();
+  }, [fetchEmployee]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -63,6 +88,16 @@ export default function EmployeeDetailPage() {
       }
       
       await userService.updateUser(id, dataToSend);
+      
+      // Update user projects if any are selected
+      if (selectedProjects.length > 0) {
+        const projectIds = selectedProjects.map(p => p.id);
+        await userProjectService.setUserProjects(id, projectIds, primaryProjectId);
+      } else {
+        // If no projects selected, clear all projects
+        await userProjectService.setUserProjects(id, [], null);
+      }
+      
       toast({
         title: "Success",
         description: "Employee updated successfully",
@@ -339,12 +374,12 @@ export default function EmployeeDetailPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="currentProject">Current Project</Label>
-                    <Input
-                      id="currentProject"
-                      name="currentProject"
-                      value={formData.currentProject || ""}
-                      onChange={handleChange}
+                    <Label htmlFor="projects">Projects</Label>
+                    <MultiProjectSelect
+                      value={selectedProjects}
+                      onChange={setSelectedProjects}
+                      primaryProjectId={primaryProjectId}
+                      onPrimaryChange={setPrimaryProjectId}
                     />
                   </div>
                   <div className="space-y-2">
@@ -540,11 +575,11 @@ export default function EmployeeDetailPage() {
                       </h3>
                       <p>{employee.englishLevel || "N/A"}</p>
                     </div>
-                    <div>
+                    <div className="md:col-span-2">
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">
-                        Current Project
+                        Projects
                       </h3>
-                      <p>{employee.currentProject || "N/A"}</p>
+                      <MultiProjectDisplay projects={userProjects} displayLimit={5} />
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">
