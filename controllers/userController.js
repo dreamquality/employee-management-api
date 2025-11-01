@@ -6,7 +6,18 @@ const { Op } = require("sequelize");
 // Get current authenticated user's profile
 exports.getCurrentUserProfile = async (req, res) => {
   try {
-    const user = await db.User.findByPk(req.user.userId);
+    const user = await db.User.findByPk(req.user.userId, {
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'name', 'description', 'wage', 'active']
+            : ['id', 'name', 'description', 'active'],
+          through: { attributes: [] },
+        },
+      ],
+    });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
@@ -19,7 +30,18 @@ exports.getCurrentUserProfile = async (req, res) => {
 // Получить пользователя по ID
 exports.getEmploye = async (req, res) => {
   try {
-    const user = await db.User.findByPk(req.params.id);
+    const user = await db.User.findByPk(req.params.id, {
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'name', 'description', 'wage', 'active']
+            : ['id', 'name', 'description', 'active'],
+          through: { attributes: [] },
+        },
+      ],
+    });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
@@ -82,6 +104,16 @@ exports.getEmployees = async (req, res, next) => {
     const { count, rows } = await db.User.findAndCountAll({
       where,
       attributes,
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'name', 'description', 'wage', 'active']
+            : ['id', 'name', 'description', 'active'],
+          through: { attributes: [] },
+        },
+      ],
       order: [[sortField, sortOrder]],
       limit,
       offset,
@@ -126,7 +158,6 @@ exports.updateProfile = async (req, res, next) => {
     const adminOnlyFields = [
       "hireDate",
       "adminNote",
-      "currentProject",
       "englishLevel",
       "vacationDates",
       "mentorName",
@@ -191,22 +222,73 @@ exports.updateProfile = async (req, res, next) => {
     const user = await db.User.findByPk(userId);
     
     if (!user) {
-      return res.status(404).json({ error: "Пользователь не найден" });
+      return res.status(404).json({ error: "User not found" });
     }
+
+    // Start transaction for project assignment
+    const transaction = await db.sequelize.transaction();
     
-    await user.update(updateData);
+    try {
+      await user.update(updateData, { transaction });
+
+      // Handle project assignments (admin only)
+      if (req.body.projectIds !== undefined && req.user.role === "admin") {
+        if (!Array.isArray(req.body.projectIds)) {
+          await transaction.rollback();
+          return res.status(400).json({ error: "projectIds must be an array" });
+        }
+
+        // Validate all project IDs are positive integers
+        const validIds = req.body.projectIds.every(id => Number.isInteger(id) && id > 0);
+        if (!validIds) {
+          await transaction.rollback();
+          return res.status(400).json({ error: "All project IDs must be positive integers" });
+        }
+
+        // Verify all projects exist
+        if (req.body.projectIds.length > 0) {
+          const projects = await db.Project.findAll({
+            where: { id: req.body.projectIds },
+            transaction
+          });
+
+          if (projects.length !== req.body.projectIds.length) {
+            await transaction.rollback();
+            return res.status(400).json({ error: "Some projects not found" });
+          }
+        }
+
+        await user.setProjects(req.body.projectIds, { transaction });
+      }
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
 
     // Reload user to get fresh data (password will be excluded by default scope)
-    await user.reload();
+    await user.reload({
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'name', 'description', 'wage', 'active']
+            : ['id', 'name', 'description', 'active'],
+          through: { attributes: [] },
+        },
+      ],
+    });
 
     // Создаем уведомление для администратора, если данные обновляет не администратор
     if (req.user.role !== "admin") {
       const admins = await db.User.findAll({ where: { role: "admin" } });
       for (const admin of admins) {
         await db.Notification.create({
-          message: `Сотрудник ${user.firstName} ${
+          message: `Employee ${user.firstName} ${
             user.lastName
-          } обновил свои данные: ${Object.keys(updateData).join(", ")}`,
+          } updated their data: ${Object.keys(updateData).join(", ")}`,
           userId: admin.id, // Администратор — получатель уведомления
           relatedUserId: user.id, // Сотрудник — инициатор уведомления
           type: "user_update",
@@ -215,7 +297,7 @@ exports.updateProfile = async (req, res, next) => {
       }
     }
 
-    res.json({ message: "Данные обновлены", user });
+    res.json({ message: "Data updated successfully", user });
   } catch (err) {
     next(err);
   }
@@ -244,7 +326,6 @@ exports.createEmployee = async (req, res, next) => {
       linkedinLink,
       hireDate,
       adminNote,
-      currentProject,
       englishLevel,
       githubLink,
       vacationDates,
@@ -253,6 +334,7 @@ exports.createEmployee = async (req, res, next) => {
       salary,
       role,
       workingHoursPerWeek,
+      projectIds,
       // Добавьте другие поля по необходимости
     } = req.body;
 
@@ -282,7 +364,6 @@ exports.createEmployee = async (req, res, next) => {
       linkedinLink,
       hireDate,
       adminNote,
-      currentProject,
       englishLevel,
       githubLink,
       vacationDates,
@@ -294,8 +375,22 @@ exports.createEmployee = async (req, res, next) => {
       // Добавьте другие поля по необходимости
     });
 
-    // Reload to apply default scope (exclude password)
-    await newUser.reload();
+    // Assign projects if provided
+    if (projectIds && Array.isArray(projectIds) && projectIds.length > 0) {
+      await newUser.setProjects(projectIds);
+    }
+
+    // Reload to apply default scope (exclude password) and include projects
+    await newUser.reload({
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: ['id', 'name', 'description', 'wage', 'active'],
+          through: { attributes: [] },
+        },
+      ],
+    });
 
     // Создаем уведомление для администратора о создании нового сотрудника
     await db.Notification.create({

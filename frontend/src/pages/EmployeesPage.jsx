@@ -279,6 +279,31 @@ export default function EmployeesPage() {
                       </div>
                     )}
                   </div>
+                  {employee.projects && employee.projects.length > 0 && (
+                    <div className="mt-4 pt-4 border-t">
+                      <p className="text-sm text-muted-foreground mb-2">Projects ({employee.projects.length})</p>
+                      <div className="flex flex-wrap gap-2">
+                        {employee.projects.slice(0, 3).map((project) => (
+                          <span
+                            key={project.id}
+                            className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/employees/${employee.id}`);
+                            }}
+                            title={project.description}
+                          >
+                            {project.name}
+                          </span>
+                        ))}
+                        {employee.projects.length > 3 && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-muted text-muted-foreground">
+                            +{employee.projects.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

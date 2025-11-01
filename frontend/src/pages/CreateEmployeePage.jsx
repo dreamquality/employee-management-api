@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { userService } from "../services/userService";
+import { projectService } from "../services/projectService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,16 +32,30 @@ export default function CreateEmployeePage() {
     role: "employee",
     mentorName: "",
     englishLevel: "",
-    currentProject: "",
     workingHoursPerWeek: "",
     vacationDates: [],
     githubLink: "",
     linkedinLink: "",
     adminNote: "",
   });
+  const [availableProjects, setAvailableProjects] = useState([]);
+  const [selectedProjects, setSelectedProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchAvailableProjects();
+  }, []);
+
+  const fetchAvailableProjects = async () => {
+    try {
+      const data = await projectService.getProjects({ active: true, limit: 100 });
+      setAvailableProjects(data.projects || []);
+    } catch (error) {
+      console.error("Failed to fetch projects", error);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -50,7 +65,8 @@ export default function CreateEmployeePage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await userService.createUser(formData);
+      const dataToSend = { ...formData, projectIds: selectedProjects };
+      await userService.createUser(dataToSend);
       toast({
         title: "Success",
         description: "Employee created successfully",
@@ -83,6 +99,14 @@ export default function CreateEmployeePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleProjectSelection = (projectId) => {
+    setSelectedProjects(prev => 
+      prev.includes(projectId) 
+        ? prev.filter(id => id !== projectId)
+        : [...prev, projectId]
+    );
   };
 
   return (
@@ -274,16 +298,30 @@ export default function CreateEmployeePage() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="currentProject">Current Project</Label>
-                <Input
-                  id="currentProject"
-                  name="currentProject"
-                  value={formData.currentProject}
-                  onChange={handleChange}
-                />
+            <div className="space-y-2">
+              <Label>Assigned Projects</Label>
+              <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                {availableProjects.length > 0 ? (
+                  availableProjects.map((project) => (
+                    <div key={project.id} className="flex items-center space-x-2 mb-2">
+                      <input
+                        type="checkbox"
+                        id={`project-${project.id}`}
+                        checked={selectedProjects.includes(project.id)}
+                        onChange={() => toggleProjectSelection(project.id)}
+                        className="rounded"
+                      />
+                      <label htmlFor={`project-${project.id}`} className="text-sm flex-1">
+                        {project.name} {!project.active && <span className="text-red-600">(Inactive)</span>}
+                      </label>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">No projects available</p>
+                )}
               </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="workingHoursPerWeek">Working Hours/Week</Label>
                 <Input
