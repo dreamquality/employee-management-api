@@ -6,7 +6,18 @@ const { Op } = require("sequelize");
 // Get current authenticated user's profile
 exports.getCurrentUserProfile = async (req, res) => {
   try {
-    const user = await db.User.findByPk(req.user.userId);
+    const user = await db.User.findByPk(req.user.userId, {
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'name', 'description', 'wage', 'active']
+            : ['id', 'name', 'description', 'active'],
+          through: { attributes: [] },
+        },
+      ],
+    });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
@@ -19,7 +30,18 @@ exports.getCurrentUserProfile = async (req, res) => {
 // Получить пользователя по ID
 exports.getEmploye = async (req, res) => {
   try {
-    const user = await db.User.findByPk(req.params.id);
+    const user = await db.User.findByPk(req.params.id, {
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'name', 'description', 'wage', 'active']
+            : ['id', 'name', 'description', 'active'],
+          through: { attributes: [] },
+        },
+      ],
+    });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
@@ -82,6 +104,16 @@ exports.getEmployees = async (req, res, next) => {
     const { count, rows } = await db.User.findAndCountAll({
       where,
       attributes,
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'name', 'description', 'wage', 'active']
+            : ['id', 'name', 'description', 'active'],
+          through: { attributes: [] },
+        },
+      ],
       order: [[sortField, sortOrder]],
       limit,
       offset,
@@ -126,7 +158,6 @@ exports.updateProfile = async (req, res, next) => {
     const adminOnlyFields = [
       "hireDate",
       "adminNote",
-      "currentProject",
       "englishLevel",
       "vacationDates",
       "mentorName",
@@ -196,8 +227,27 @@ exports.updateProfile = async (req, res, next) => {
     
     await user.update(updateData);
 
+    // Handle project assignments (admin only)
+    if (req.body.projectIds !== undefined && req.user.role === "admin") {
+      if (!Array.isArray(req.body.projectIds)) {
+        return res.status(400).json({ error: "projectIds должен быть массивом" });
+      }
+      await user.setProjects(req.body.projectIds);
+    }
+
     // Reload user to get fresh data (password will be excluded by default scope)
-    await user.reload();
+    await user.reload({
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'name', 'description', 'wage', 'active']
+            : ['id', 'name', 'description', 'active'],
+          through: { attributes: [] },
+        },
+      ],
+    });
 
     // Создаем уведомление для администратора, если данные обновляет не администратор
     if (req.user.role !== "admin") {
@@ -244,7 +294,6 @@ exports.createEmployee = async (req, res, next) => {
       linkedinLink,
       hireDate,
       adminNote,
-      currentProject,
       englishLevel,
       githubLink,
       vacationDates,
@@ -253,6 +302,7 @@ exports.createEmployee = async (req, res, next) => {
       salary,
       role,
       workingHoursPerWeek,
+      projectIds,
       // Добавьте другие поля по необходимости
     } = req.body;
 
@@ -282,7 +332,6 @@ exports.createEmployee = async (req, res, next) => {
       linkedinLink,
       hireDate,
       adminNote,
-      currentProject,
       englishLevel,
       githubLink,
       vacationDates,
@@ -294,8 +343,22 @@ exports.createEmployee = async (req, res, next) => {
       // Добавьте другие поля по необходимости
     });
 
-    // Reload to apply default scope (exclude password)
-    await newUser.reload();
+    // Assign projects if provided
+    if (projectIds && Array.isArray(projectIds) && projectIds.length > 0) {
+      await newUser.setProjects(projectIds);
+    }
+
+    // Reload to apply default scope (exclude password) and include projects
+    await newUser.reload({
+      include: [
+        {
+          model: db.Project,
+          as: 'projects',
+          attributes: ['id', 'name', 'description', 'wage', 'active'],
+          through: { attributes: [] },
+        },
+      ],
+    });
 
     // Создаем уведомление для администратора о создании нового сотрудника
     await db.Notification.create({
