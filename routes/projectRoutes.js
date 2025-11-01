@@ -229,7 +229,7 @@ router.post('/projects/:id/employees', authenticateToken, projectController.assi
 
 /**
  * @swagger
- * /projects/{id}/employees/{employeeId}:
+ * /projects/{id}/employee:
  *   post:
  *     summary: Add a single employee to a project (admin only)
  *     description: Admin-only endpoint to add one employee to a project.
