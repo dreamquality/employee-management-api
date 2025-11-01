@@ -34,14 +34,16 @@ db.sequelize = sequelize;
 // Импорт моделей
 db.User = require('./user')(sequelize, DataTypes);
 db.Notification = require('./notification')(sequelize, DataTypes);
+db.Project = require('./project')(sequelize, DataTypes);
 
-// Установление связей между моделями
-db.User.hasMany(db.Notification, { 
-  as: 'notifications', 
-  foreignKey: 'userId',
-  onDelete: 'CASCADE', 
-  hooks: true 
+// Установление связей между моделями через associate methods
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
 });
+
+// Дополнительные связи для Notification
 db.Notification.belongsTo(db.User, { 
   foreignKey: 'userId', 
   as: 'user' 
