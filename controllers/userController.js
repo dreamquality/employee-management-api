@@ -222,17 +222,49 @@ exports.updateProfile = async (req, res, next) => {
     const user = await db.User.findByPk(userId);
     
     if (!user) {
-      return res.status(404).json({ error: "Пользователь не найден" });
+      return res.status(404).json({ error: "User not found" });
     }
-    
-    await user.update(updateData);
 
-    // Handle project assignments (admin only)
-    if (req.body.projectIds !== undefined && req.user.role === "admin") {
-      if (!Array.isArray(req.body.projectIds)) {
-        return res.status(400).json({ error: "projectIds должен быть массивом" });
+    // Start transaction for project assignment
+    const transaction = await db.sequelize.transaction();
+    
+    try {
+      await user.update(updateData, { transaction });
+
+      // Handle project assignments (admin only)
+      if (req.body.projectIds !== undefined && req.user.role === "admin") {
+        if (!Array.isArray(req.body.projectIds)) {
+          await transaction.rollback();
+          return res.status(400).json({ error: "projectIds must be an array" });
+        }
+
+        // Validate all project IDs are positive integers
+        const validIds = req.body.projectIds.every(id => Number.isInteger(id) && id > 0);
+        if (!validIds) {
+          await transaction.rollback();
+          return res.status(400).json({ error: "All project IDs must be positive integers" });
+        }
+
+        // Verify all projects exist
+        if (req.body.projectIds.length > 0) {
+          const projects = await db.Project.findAll({
+            where: { id: req.body.projectIds },
+            transaction
+          });
+
+          if (projects.length !== req.body.projectIds.length) {
+            await transaction.rollback();
+            return res.status(400).json({ error: "Some projects not found" });
+          }
+        }
+
+        await user.setProjects(req.body.projectIds, { transaction });
       }
-      await user.setProjects(req.body.projectIds);
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
     }
 
     // Reload user to get fresh data (password will be excluded by default scope)
@@ -254,9 +286,9 @@ exports.updateProfile = async (req, res, next) => {
       const admins = await db.User.findAll({ where: { role: "admin" } });
       for (const admin of admins) {
         await db.Notification.create({
-          message: `Сотрудник ${user.firstName} ${
+          message: `Employee ${user.firstName} ${
             user.lastName
-          } обновил свои данные: ${Object.keys(updateData).join(", ")}`,
+          } updated their data: ${Object.keys(updateData).join(", ")}`,
           userId: admin.id, // Администратор — получатель уведомления
           relatedUserId: user.id, // Сотрудник — инициатор уведомления
           type: "user_update",
@@ -265,7 +297,7 @@ exports.updateProfile = async (req, res, next) => {
       }
     }
 
-    res.json({ message: "Данные обновлены", user });
+    res.json({ message: "Data updated successfully", user });
   } catch (err) {
     next(err);
   }

@@ -4,7 +4,14 @@ const router = express.Router();
 const projectController = require('../controllers/projectController');
 const authenticateToken = require('../middleware/authenticateToken');
 const validateInput = require('../middleware/validateInput');
-const { projectValidation, projectUpdateValidation } = require('../validations/projectValidation');
+const { 
+  projectValidation, 
+  projectUpdateValidation, 
+  projectIdValidation, 
+  employeeIdValidation,
+  projectListValidation,
+  assignEmployeesValidation
+} = require('../validations/projectValidation');
 
 /**
  * @swagger
@@ -51,7 +58,7 @@ const { projectValidation, projectUpdateValidation } = require('../validations/p
  *       401:
  *         description: Authorization required
  */
-router.get('/projects', authenticateToken, projectController.getProjects);
+router.get('/projects', authenticateToken, projectListValidation, validateInput, projectController.getProjects);
 
 /**
  * @swagger
@@ -77,7 +84,7 @@ router.get('/projects', authenticateToken, projectController.getProjects);
  *       401:
  *         description: Authorization required
  */
-router.get('/projects/:id', authenticateToken, projectController.getProject);
+router.get('/projects/:id', authenticateToken, projectIdValidation, validateInput, projectController.getProject);
 
 /**
  * @swagger
@@ -158,7 +165,7 @@ router.post('/projects', authenticateToken, projectValidation, validateInput, pr
  *       404:
  *         description: Project not found
  */
-router.put('/projects/:id', authenticateToken, projectUpdateValidation, validateInput, projectController.updateProject);
+router.put('/projects/:id', authenticateToken, projectIdValidation, projectUpdateValidation, validateInput, projectController.updateProject);
 
 /**
  * @swagger
@@ -184,7 +191,7 @@ router.put('/projects/:id', authenticateToken, projectUpdateValidation, validate
  *       404:
  *         description: Project not found
  */
-router.delete('/projects/:id', authenticateToken, projectController.deleteProject);
+router.delete('/projects/:id', authenticateToken, projectIdValidation, validateInput, projectController.deleteProject);
 
 /**
  * @swagger
@@ -225,7 +232,7 @@ router.delete('/projects/:id', authenticateToken, projectController.deleteProjec
  *       404:
  *         description: Project not found
  */
-router.post('/projects/:id/employees', authenticateToken, projectController.assignEmployees);
+router.post('/projects/:id/employees', authenticateToken, projectIdValidation, assignEmployeesValidation, validateInput, projectController.assignEmployees);
 
 /**
  * @swagger
@@ -262,7 +269,7 @@ router.post('/projects/:id/employees', authenticateToken, projectController.assi
  *       404:
  *         description: Project or employee not found
  */
-router.post('/projects/:id/employee', authenticateToken, projectController.addEmployee);
+router.post('/projects/:id/employee', authenticateToken, projectIdValidation, validateInput, projectController.addEmployee);
 
 /**
  * @swagger
@@ -294,6 +301,6 @@ router.post('/projects/:id/employee', authenticateToken, projectController.addEm
  *       404:
  *         description: Project or employee not found
  */
-router.delete('/projects/:id/employees/:employeeId', authenticateToken, projectController.removeEmployee);
+router.delete('/projects/:id/employees/:employeeId', authenticateToken, projectIdValidation, employeeIdValidation, validateInput, projectController.removeEmployee);
 
 module.exports = router;

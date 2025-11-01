@@ -227,7 +227,11 @@ export default function ProjectsPage() {
                       }
                       required
                       rows={4}
+                      maxLength={5000}
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formData.description.length}/5000 characters
+                    </p>
                   </div>
                   <div>
                     <Label htmlFor="wage">Wage</Label>
@@ -235,6 +239,7 @@ export default function ProjectsPage() {
                       id="wage"
                       type="number"
                       step="0.01"
+                      min="0"
                       value={formData.wage}
                       onChange={(e) =>
                         setFormData({ ...formData, wage: e.target.value })
@@ -417,7 +422,11 @@ export default function ProjectsPage() {
                     }
                     required
                     rows={4}
+                    maxLength={5000}
                   />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formData.description.length}/5000 characters
+                  </p>
                 </div>
                 <div>
                   <Label htmlFor="edit-wage">Wage</Label>
@@ -425,6 +434,7 @@ export default function ProjectsPage() {
                     id="edit-wage"
                     type="number"
                     step="0.01"
+                    min="0"
                     value={formData.wage}
                     onChange={(e) =>
                       setFormData({ ...formData, wage: e.target.value })
