@@ -116,7 +116,14 @@ exports.updateProject = async (req, res) => {
       }
     }
 
-    await project.update(Object.fromEntries(Object.entries({ name, description }).filter(([_, v]) => v !== undefined)));
+    const updateData = {};
+    if (typeof name !== "undefined") {
+      updateData.name = name;
+    }
+    if (typeof description !== "undefined") {
+      updateData.description = description;
+    }
+    await project.update(updateData);
 
     res.json({ project });
   } catch (error) {
