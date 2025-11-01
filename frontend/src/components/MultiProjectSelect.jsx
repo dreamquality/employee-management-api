@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Star, StarOff, Search } from 'lucide-react';
 import { projectService } from '../services/projectService';
-import { Button } from '@/components/ui/button';
 
 export default function MultiProjectSelect({ value = [], primaryProjectId, onChange, onPrimaryChange }) {
   const [searchTerm, setSearchTerm] = useState('');
