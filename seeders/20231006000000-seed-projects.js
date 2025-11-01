@@ -83,20 +83,37 @@ module.exports = {
 
       if (users.length > 0 && projectRecords.length > 0) {
         const userProjects = [];
+        const assignedCombinations = new Set();
+        
+        // Fisher-Yates shuffle algorithm
+        const shuffleArray = (array) => {
+          const shuffled = [...array];
+          for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+          return shuffled;
+        };
         
         // Assign random projects to users
         users.forEach((user, index) => {
           // Assign 1-3 projects to each user
           const numProjects = Math.floor(Math.random() * 3) + 1;
-          const shuffledProjects = [...projectRecords].sort(() => 0.5 - Math.random());
+          const shuffledProjects = shuffleArray(projectRecords);
           
           for (let i = 0; i < Math.min(numProjects, projectRecords.length); i++) {
-            userProjects.push({
-              userId: user.id,
-              projectId: shuffledProjects[i].id,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            });
+            const combinationKey = `${user.id}-${shuffledProjects[i].id}`;
+            
+            // Only add if this combination hasn't been added yet
+            if (!assignedCombinations.has(combinationKey)) {
+              assignedCombinations.add(combinationKey);
+              userProjects.push({
+                userId: user.id,
+                projectId: shuffledProjects[i].id,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              });
+            }
           }
         });
 

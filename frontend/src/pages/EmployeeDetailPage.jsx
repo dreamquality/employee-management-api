@@ -390,31 +390,29 @@ export default function EmployeeDetailPage() {
                       />
                     </div>
                   </div>
-                  {isAdmin && (
-                    <div className="space-y-2">
-                      <Label>Assigned Projects</Label>
-                      <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
-                        {availableProjects.length > 0 ? (
-                          availableProjects.map((project) => (
-                            <div key={project.id} className="flex items-center space-x-2 mb-2">
-                              <input
-                                type="checkbox"
-                                id={`project-${project.id}`}
-                                checked={selectedProjects.includes(project.id)}
-                                onChange={() => toggleProjectSelection(project.id)}
-                                className="rounded"
-                              />
-                              <label htmlFor={`project-${project.id}`} className="text-sm flex-1">
-                                {project.name} {!project.active && <span className="text-red-600">(Inactive)</span>}
-                              </label>
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-sm text-muted-foreground">No projects available</p>
-                        )}
-                      </div>
+                  <div className="space-y-2">
+                    <Label>Assigned Projects</Label>
+                    <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                      {availableProjects.length > 0 ? (
+                        availableProjects.map((project) => (
+                          <div key={project.id} className="flex items-center space-x-2 mb-2">
+                            <input
+                              type="checkbox"
+                              id={`project-${project.id}`}
+                              checked={selectedProjects.includes(project.id)}
+                              onChange={() => toggleProjectSelection(project.id)}
+                              className="rounded"
+                            />
+                            <label htmlFor={`project-${project.id}`} className="text-sm flex-1">
+                              {project.name} {!project.active && <span className="text-red-600">(Inactive)</span>}
+                            </label>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No projects available</p>
+                      )}
                     </div>
-                  )}
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="password">
                       New Password (leave empty to keep current)

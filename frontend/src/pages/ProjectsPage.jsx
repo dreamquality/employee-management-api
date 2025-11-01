@@ -49,7 +49,6 @@ export default function ProjectsPage() {
     wage: "",
     active: true,
   });
-  const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const { toast } = useToast();
   const limit = 10;
