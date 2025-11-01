@@ -55,7 +55,7 @@ export default function EmployeeDetailPage() {
         }
       } catch (projectError) {
         // If user has no projects or error fetching, just continue
-        console.log("No projects or error fetching projects", projectError);
+        
       }
     } catch (error) {
       toast({
