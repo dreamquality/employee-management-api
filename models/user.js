@@ -84,12 +84,6 @@ module.exports = (sequelize, DataTypes) => {
       hooks: true,
     });
     // Many-to-many relationship with Projects through UserProjects
-    User.belongsToMany(models.Project, {
-      through: models.UserProject,
-      as: 'projects',
-      foreignKey: 'userId',
-      otherKey: 'projectId'
-    });
   };
 
   return User;
