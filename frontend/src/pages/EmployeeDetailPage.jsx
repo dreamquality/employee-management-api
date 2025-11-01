@@ -376,8 +376,8 @@ export default function EmployeeDetailPage() {
                   <div className="space-y-2">
                     <Label htmlFor="projects">Projects</Label>
                     <MultiProjectSelect
-                      selectedProjects={selectedProjects}
-                      onProjectsChange={setSelectedProjects}
+                      value={selectedProjects}
+                      onChange={setSelectedProjects}
                       primaryProjectId={primaryProjectId}
                       onPrimaryChange={setPrimaryProjectId}
                     />
