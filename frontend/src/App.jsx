@@ -10,6 +10,7 @@ import EmployeeDetailPage from './pages/EmployeeDetailPage';
 import CreateEmployeePage from './pages/CreateEmployeePage';
 import NotificationsPage from './pages/NotificationsPage';
 import MyProfilePage from './pages/MyProfilePage';
+import ProjectsPage from './pages/ProjectsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="projects" element={<ProjectsPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="profile" element={<MyProfilePage />} />
           </Route>

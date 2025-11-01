@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { userService } from "../services/userService";
+import { projectService } from "../services/projectService";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +13,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, CheckCircle2, XCircle, Eye } from "lucide-react";
 import { format } from "date-fns";
 
 export default function EmployeeDetailPage() {
@@ -22,12 +30,19 @@ export default function EmployeeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const [availableProjects, setAvailableProjects] = useState([]);
+  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [showProjectDialog, setShowProjectDialog] = useState(false);
+  const [selectedProjectDetail, setSelectedProjectDetail] = useState(null);
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
     fetchEmployee();
+    if (isAdmin) {
+      fetchAvailableProjects();
+    }
   }, [id]);
 
   const fetchEmployee = async () => {
@@ -36,6 +51,7 @@ export default function EmployeeDetailPage() {
       const data = await userService.getUser(id);
       setEmployee(data);
       setFormData(data);
+      setSelectedProjects(data.projects?.map(p => p.id) || []);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -44,6 +60,15 @@ export default function EmployeeDetailPage() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAvailableProjects = async () => {
+    try {
+      const data = await projectService.getProjects({ active: true, limit: 100 });
+      setAvailableProjects(data.projects || []);
+    } catch (error) {
+      console.error("Failed to fetch projects", error);
     }
   };
 
@@ -60,6 +85,11 @@ export default function EmployeeDetailPage() {
       // Remove password field if it's empty (don't update password)
       if (!dataToSend.password || dataToSend.password.trim() === '') {
         delete dataToSend.password;
+      }
+
+      // Add project IDs if admin and projects were selected
+      if (isAdmin) {
+        dataToSend.projectIds = selectedProjects;
       }
       
       await userService.updateUser(id, dataToSend);
@@ -93,6 +123,28 @@ export default function EmployeeDetailPage() {
             error.response?.data?.error || "Failed to update employee",
         });
       }
+    }
+  };
+
+  const toggleProjectSelection = (projectId) => {
+    setSelectedProjects(prev => 
+      prev.includes(projectId) 
+        ? prev.filter(id => id !== projectId)
+        : [...prev, projectId]
+    );
+  };
+
+  const openProjectDialog = async (project) => {
+    try {
+      const fullProject = await projectService.getProject(project.id);
+      setSelectedProjectDetail(fullProject);
+      setShowProjectDialog(true);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch project details",
+      });
     }
   };
 
@@ -338,15 +390,31 @@ export default function EmployeeDetailPage() {
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="currentProject">Current Project</Label>
-                    <Input
-                      id="currentProject"
-                      name="currentProject"
-                      value={formData.currentProject || ""}
-                      onChange={handleChange}
-                    />
-                  </div>
+                  {isAdmin && (
+                    <div className="space-y-2">
+                      <Label>Assigned Projects</Label>
+                      <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                        {availableProjects.length > 0 ? (
+                          availableProjects.map((project) => (
+                            <div key={project.id} className="flex items-center space-x-2 mb-2">
+                              <input
+                                type="checkbox"
+                                id={`project-${project.id}`}
+                                checked={selectedProjects.includes(project.id)}
+                                onChange={() => toggleProjectSelection(project.id)}
+                                className="rounded"
+                              />
+                              <label htmlFor={`project-${project.id}`} className="text-sm flex-1">
+                                {project.name} {!project.active && <span className="text-red-600">(Inactive)</span>}
+                              </label>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-muted-foreground">No projects available</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="password">
                       New Password (leave empty to keep current)
@@ -542,12 +610,6 @@ export default function EmployeeDetailPage() {
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">
-                        Current Project
-                      </h3>
-                      <p>{employee.currentProject || "N/A"}</p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground mb-1">
                         Working Hours/Week
                       </h3>
                       <p>{employee.workingHoursPerWeek || "N/A"}</p>
@@ -589,10 +651,120 @@ export default function EmployeeDetailPage() {
                   </p>
                 </div>
               )}
+              
+              {/* Projects Section */}
+              {employee.projects && employee.projects.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Projects</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {employee.projects.map((project) => (
+                      <Card
+                        key={project.id}
+                        className="cursor-pointer hover:shadow-md transition-shadow"
+                        onClick={() => openProjectDialog(project)}
+                      >
+                        <CardHeader className="pb-3">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-base">{project.name}</CardTitle>
+                            {project.active ? (
+                              <span className="inline-flex items-center text-xs text-green-600">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Active
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center text-xs text-red-600">
+                                <XCircle className="h-3 w-3 mr-1" />
+                                Inactive
+                              </span>
+                            )}
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {project.description}
+                          </p>
+                          {isAdmin && project.wage !== undefined && (
+                            <p className="text-sm font-medium mt-2">
+                              Wage: ${project.wage}
+                            </p>
+                          )}
+                          <div className="mt-3 flex items-center text-primary text-sm">
+                            <Eye className="h-4 w-4 mr-1" />
+                            Click to view details
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Project Detail Dialog */}
+      <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{selectedProjectDetail?.name}</DialogTitle>
+            <DialogDescription>
+              <div className="flex items-center gap-2 mt-2">
+                {selectedProjectDetail?.active ? (
+                  <span className="inline-flex items-center text-xs text-green-600">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Active
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center text-xs text-red-600">
+                    <XCircle className="h-3 w-3 mr-1" />
+                    Inactive
+                  </span>
+                )}
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold mb-2">Description</h4>
+              <p className="text-sm text-muted-foreground">
+                {selectedProjectDetail?.description}
+              </p>
+            </div>
+            {isAdmin && selectedProjectDetail?.wage !== undefined && (
+              <div>
+                <h4 className="font-semibold mb-2">Wage</h4>
+                <p className="text-sm">${selectedProjectDetail.wage}</p>
+              </div>
+            )}
+            {selectedProjectDetail?.employees && selectedProjectDetail.employees.length > 0 && (
+              <div>
+                <h4 className="font-semibold mb-2">Assigned Employees</h4>
+                <div className="grid grid-cols-1 gap-2">
+                  {selectedProjectDetail.employees.map((emp) => (
+                    <div
+                      key={emp.id}
+                      className="flex items-center justify-between p-2 border rounded"
+                    >
+                      <span className="text-sm">
+                        {emp.firstName} {emp.lastName}
+                      </span>
+                      {emp.position && (
+                        <span className="text-xs text-muted-foreground">
+                          {emp.position}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="mt-4">
+            <Button onClick={() => setShowProjectDialog(false)}>Close</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
