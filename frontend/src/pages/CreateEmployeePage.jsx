@@ -290,9 +290,9 @@ export default function CreateEmployeePage() {
               <div className="space-y-2">
                 <Label>Projects</Label>
                 <MultiProjectSelect
-                  value={selectedProjects}
+                  selectedProjects={selectedProjects}
                   primaryProjectId={primaryProjectId}
-                  onChange={setSelectedProjects}
+                  onProjectsChange={setSelectedProjects}
                   onPrimaryChange={setPrimaryProjectId}
                 />
               </div>
