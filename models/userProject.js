@@ -43,16 +43,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  UserProject.associate = function(models) {
-    UserProject.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'user'
-    });
-    UserProject.belongsTo(models.Project, {
-      foreignKey: 'projectId',
-      as: 'project'
-    });
-  };
 
   return UserProject;
 };
