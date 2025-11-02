@@ -30,7 +30,6 @@ coverage/
 
 # Generated documentation
 swagger.json
-docs/index.html
 
 # Frontend build artifacts (if built in development)
 frontend/dist/
