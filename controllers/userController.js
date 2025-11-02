@@ -2,6 +2,7 @@
 const db = require("../models");
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
+const { sendPasswordChangeEmail } = require("../services/emailService");
 
 // Get current authenticated user's profile
 exports.getCurrentUserProfile = async (req, res) => {
@@ -231,6 +232,9 @@ exports.updateProfile = async (req, res, next) => {
       updateData.vacationDates = [updateData.vacationDates];
     }
 
+    // Track if password is being changed to send email later
+    const isPasswordChange = !!updateData.password;
+
     // Хеширование пароля, если он обновляется
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
@@ -306,6 +310,11 @@ exports.updateProfile = async (req, res, next) => {
     await user.reload({
       include: includeOptions,
     });
+
+    // Send email notification if password was changed
+    if (isPasswordChange) {
+      await sendPasswordChangeEmail(user.email, user.firstName, user.lastName);
+    }
 
     // Создаем уведомление для администратора, если данные обновляет не администратор
     if (req.user.role !== "admin") {
