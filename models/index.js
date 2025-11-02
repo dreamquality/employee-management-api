@@ -43,14 +43,4 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-// Дополнительные связи для Notification
-db.Notification.belongsTo(db.User, { 
-  foreignKey: 'userId', 
-  as: 'user' 
-});
-db.Notification.belongsTo(db.User, { 
-  foreignKey: 'relatedUserId', 
-  as: 'relatedUser' 
-});
-
 module.exports = db;
