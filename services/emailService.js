@@ -85,5 +85,3 @@ exports.verifyConnection = async () => {
     return false;
   }
 };
-
-module.exports = exports;

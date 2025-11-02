@@ -151,15 +151,15 @@ describe('Email Service API', () => {
 
     it('should handle email sending errors gracefully', async () => {
       // This tests that the email service doesn't throw errors that break the app
+      // The function should complete without throwing, even if email fails
       const result = await emailService.sendPasswordChangeEmail(
         'test@example.com',
         'Test',
         'User'
       );
       
-      // Should complete without throwing, even if email fails
-      // Result might be undefined or error object depending on SMTP availability
-      expect(result !== undefined || result === undefined).to.be.true;
+      // Function should not throw - result may be undefined or an info object
+      // No specific assertion needed; test passes if no exception is thrown
     });
   });
 });
