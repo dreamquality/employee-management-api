@@ -180,7 +180,7 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  *     summary: Update a user's profile
  *     description: |
  *       Update user profile. Employees can update their own basic profile fields (firstName, lastName, middleName, birthDate, phone, email, programmingLanguage, country, bankCard, linkedinLink, githubLink).
- *       Admins can update all fields including admin-only fields (hireDate, adminNote, currentProject, englishLevel, vacationDates, mentorName, position, salary, role, password, workingHoursPerWeek).
+ *       Admins can update all fields including admin-only fields (hireDate, adminNote, projectIds, englishLevel, vacationDates, mentorName, position, salary, role, password, workingHoursPerWeek).
  *       Passwords are automatically hashed when updated.
  *     tags: [Users]
  *     security:

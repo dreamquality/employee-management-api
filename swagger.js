@@ -121,8 +121,12 @@ const options = {
             githubLink: { type: 'string', format: 'uri', nullable: true },
             linkedinLink: { type: 'string', format: 'uri', nullable: true },
             adminNote: { type: 'string', nullable: true },
-            currentProject: { type: 'string', nullable: true },
             englishLevel: { type: 'string', nullable: true },
+            projects: {
+              type: 'array',
+              items: { $ref: '#/components/schemas/Project' },
+              description: 'List of projects assigned to the user'
+            },
             workingHoursPerWeek: { type: 'integer', nullable: true },
             role: { type: 'string', enum: ['employee', 'admin'] },
             createdAt: { type: 'string', format: 'date-time' },
@@ -206,10 +210,11 @@ const options = {
               nullable: true,
               description: 'Admin notes - ADMIN ONLY'
             },
-            currentProject: { 
-              type: 'string', 
+            projectIds: { 
+              type: 'array',
+              items: { type: 'integer' },
               nullable: true,
-              description: 'Current project assignment - ADMIN ONLY'
+              description: 'Array of project IDs to assign to the user - ADMIN ONLY'
             },
             englishLevel: { 
               type: 'string', 
@@ -345,10 +350,11 @@ const options = {
               nullable: true,
               description: 'Admin notes (optional)'
             },
-            currentProject: { 
-              type: 'string', 
+            projectIds: { 
+              type: 'array',
+              items: { type: 'integer' },
               nullable: true,
-              description: 'Current project assignment (optional)'
+              description: 'Array of project IDs to assign to the user (optional)'
             },
             englishLevel: { 
               type: 'string', 
@@ -434,6 +440,43 @@ const options = {
               type: 'string',
               format: 'date-time',
               description: 'Дата и время последнего обновления уведомления',
+            },
+          },
+        },
+        Project: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'integer',
+              description: 'Unique project identifier',
+            },
+            name: {
+              type: 'string',
+              description: 'Project name',
+            },
+            description: {
+              type: 'string',
+              description: 'Project description',
+            },
+            wage: {
+              type: 'number',
+              description: 'Project wage/rate (visible to admins only)',
+              nullable: true,
+            },
+            active: {
+              type: 'boolean',
+              description: 'Whether the project is currently active',
+              default: true,
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Project creation date',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Project last update date',
             },
           },
         },
