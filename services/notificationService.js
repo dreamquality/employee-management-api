@@ -184,14 +184,19 @@ async function sendNotificationToAdmins(admins, notificationData) {
     let success = false;
 
     while (attempt < RETRIES && !success) {
+      const transaction = await db.sequelize.transaction();
+      
       try {
         // Проверяем, было ли уже отправлено уведомление с тем же userId и типом
+        // Use transaction lock to prevent race conditions
         const existingNotification = await db.Notification.findOne({
           where: {
             userId: notificationData.userId,
             type: notificationData.type,
             eventDate: notificationData.eventDate,
           },
+          lock: transaction.LOCK.UPDATE,
+          transaction,
         });
 
         if (!existingNotification) {
@@ -201,14 +206,16 @@ async function sendNotificationToAdmins(admins, notificationData) {
             type: notificationData.type,
             eventDate: notificationData.eventDate,
             relatedUserId: notificationData.userId,
-          });
+          }, { transaction });
           logger.info(`Уведомление для администратора ${admin.id} успешно создано`, { adminId: admin.id, type: notificationData.type });
         } else {
           logger.info(`Уведомление уже существует для пользователя ${notificationData.userId} с типом ${notificationData.type}`);
         }
 
+        await transaction.commit();
         success = true; // Уведомление успешно создано, выходим из цикла
       } catch (error) {
+        await transaction.rollback();
         attempt++;
         logger.error(`Ошибка при создании уведомления для администратора ${admin.id}. Попытка ${attempt} из ${RETRIES}`, { error });
 

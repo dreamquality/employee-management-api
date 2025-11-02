@@ -235,8 +235,10 @@ exports.updateProfile = async (req, res, next) => {
       }
     }
 
-    if (updateData.vacationDates && !Array.isArray(updateData.vacationDates)) {
-      updateData.vacationDates = [updateData.vacationDates];
+    if (updateData.vacationDates) {
+      if (!Array.isArray(updateData.vacationDates)) {
+        updateData.vacationDates = [updateData.vacationDates];
+      }
     }
 
     // Хеширование пароля, если он обновляется
@@ -386,6 +388,12 @@ exports.createEmployee = async (req, res, next) => {
     // Хеширование пароля
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Ensure vacationDates is always an array if provided
+    let processedVacationDates = vacationDates;
+    if (vacationDates && !Array.isArray(vacationDates)) {
+      processedVacationDates = [vacationDates];
+    }
+
     // Создание нового сотрудника
     const newUser = await db.User.create({
       email: normalizedEmail,
@@ -403,7 +411,7 @@ exports.createEmployee = async (req, res, next) => {
       adminNote,
       englishLevel,
       githubLink,
-      vacationDates,
+      vacationDates: processedVacationDates,
       mentorName,
       position,
       salary,
