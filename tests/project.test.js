@@ -51,7 +51,10 @@ describe('Project API', () => {
         middleName: 'Middle',
         birthDate: '1990-01-01',
         phone: '+123456789',
-        programmingLanguage: 'JavaScript'
+        programmingLanguage: 'JavaScript',
+        country: 'USA',
+        englishLevel: 'Intermediate',
+        registrationDate: '2021-01-01'
       });
 
     const employeeRes = await request(app)
@@ -274,7 +277,11 @@ describe('Project API', () => {
         .get('/users')
         .set('Authorization', `Bearer ${adminToken}`);
       
-      employeeId = userRes.body.users.find(u => u.role === 'employee').id;
+      const employee = userRes.body.users.find(u => u.role === 'employee');
+      if (!employee) {
+        throw new Error('No employee found for project assignment tests');
+      }
+      employeeId = employee.id;
     });
 
     it('should assign employees to project as admin', async () => {
