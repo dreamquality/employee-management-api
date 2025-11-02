@@ -289,10 +289,6 @@ exports.updateProfile = async (req, res, next) => {
       throw error;
     }
 
-    // Check if password was actually updated in the transaction
-    // This ensures we only send email if password change succeeded
-    const isPasswordChange = updateData.password !== undefined;
-
     // Reload user to get fresh data (password will be excluded by default scope)
     const includeOptions = [];
     
@@ -313,7 +309,8 @@ exports.updateProfile = async (req, res, next) => {
     });
     
     // Send email notification if password was changed (after transaction completes and reload)
-    if (isPasswordChange) {
+    // Check if password was in the request body (before hashing)
+    if (req.body.password !== undefined) {
       await sendPasswordChangeEmail(user.email, user.firstName, user.lastName);
     }
 
