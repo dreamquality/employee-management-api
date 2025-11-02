@@ -332,11 +332,6 @@ exports.addEmployee = async (req, res, next) => {
 exports.getProjectEmployees = async (req, res, next) => {
   try {
     const projectId = parseInt(req.params.id);
-    
-    // Validate project ID
-    if (!Number.isInteger(projectId) || projectId < 1) {
-      return res.status(400).json({ error: "Invalid project ID" });
-    }
 
     const project = await db.Project.findByPk(projectId, {
       include: [
