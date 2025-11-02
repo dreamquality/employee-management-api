@@ -184,15 +184,147 @@ For more details about the frontend, see the [frontend README](./frontend/README
 
 ### Deploying to Render.com
 
-1. **Create a Render Account**: Sign up at [Render.com](https://render.com/) and create a new Web Service.
-2. **Connect GitHub Repository**: Link your GitHub repository to Render.
-3. **Environment Variables**:
-   - Set up environment variables (`DATABASE_URL`, `JWT_SECRET`, and any others you need) in the Render dashboard.
-   - If using a PostgreSQL database on Render, you can set up a managed PostgreSQL instance and update `DATABASE_URL` accordingly.
-4. **Build Command**: Use `npm install` to install dependencies.
-5. **Start Command**: Use `npm start` to start the application in production mode.
+This application consists of two parts that need to be deployed: the backend API and the frontend application. Follow these comprehensive steps to deploy both to Render.
 
-Render will handle the deployment automatically, and your API will be live at the URL provided by Render.
+#### Prerequisites
+
+1. **Create a Render Account**: Sign up at [Render.com](https://render.com/)
+2. **GitHub Repository**: Ensure your code is pushed to a GitHub repository
+3. **Prepare Environment Variables**: Have your JWT secret and other configuration values ready
+
+#### Step 1: Deploy PostgreSQL Database
+
+1. From your Render dashboard, click **New +** and select **PostgreSQL**
+2. Configure your database:
+   - **Name**: `employee-management-db` (or your preferred name)
+   - **Database**: `employee_db`
+   - **User**: Will be auto-generated
+   - **Region**: Choose the closest region to your users
+   - **Instance Type**: Select based on your needs (Free tier available)
+3. Click **Create Database**
+4. Once created, copy the **Internal Database URL** (it starts with `postgres://`)
+5. Save this URL - you'll need it for the backend configuration
+
+#### Step 2: Deploy Backend API
+
+1. From your Render dashboard, click **New +** and select **Web Service**
+2. Connect your GitHub repository
+3. Configure the web service:
+   - **Name**: `employee-management-api` (or your preferred name)
+   - **Region**: Same as your database for better performance
+   - **Branch**: `main` (or your production branch)
+   - **Root Directory**: Leave empty (backend is at root level)
+   - **Runtime**: `Node`
+   - **Build Command**: 
+     ```bash
+     npm install && npm run build-prod
+     ```
+   - **Start Command**:
+     ```bash
+     npm start
+     ```
+   - **Instance Type**: Select based on your needs (Free tier available)
+
+4. **Add Environment Variables** (click "Advanced" or go to Environment tab):
+   ```plaintext
+   NODE_ENV=production
+   DATABASE_URL=<your-internal-database-url-from-step-1>
+   JWT_SECRET=<your-secure-jwt-secret>
+   SECRET_WORD=<your-admin-registration-secret>
+   PORT=3000
+   ```
+
+   **Important Notes**:
+   - Replace `<your-internal-database-url-from-step-1>` with the Internal Database URL from Step 1
+   - Generate a strong random string for `JWT_SECRET` (e.g., use `openssl rand -base64 32`)
+   - Set a secure `SECRET_WORD` for admin registration
+   - If using `DATABASE_URL`, the app will automatically parse it (no need for individual DB_HOST, DB_PORT, etc.)
+
+5. Click **Create Web Service**
+6. Render will automatically deploy your backend. Wait for the deployment to complete
+7. Once deployed, copy your backend URL (e.g., `https://employee-management-api.onrender.com`)
+
+#### Step 3: Deploy Frontend Application
+
+1. From your Render dashboard, click **New +** and select **Static Site**
+2. Connect the same GitHub repository
+3. Configure the static site:
+   - **Name**: `employee-management-frontend` (or your preferred name)
+   - **Branch**: `main` (or your production branch)
+   - **Root Directory**: `frontend`
+   - **Build Command**:
+     ```bash
+     npm install && npm run build
+     ```
+   - **Publish Directory**: `frontend/dist`
+
+4. **Add Environment Variables**:
+   ```plaintext
+   VITE_API_URL=<your-backend-url-from-step-2>
+   ```
+   - Replace `<your-backend-url-from-step-2>` with your backend URL (e.g., `https://employee-management-api.onrender.com`)
+   - **Do not include a trailing slash** in the API URL
+
+5. Click **Create Static Site**
+6. Render will build and deploy your frontend
+7. Once deployed, you'll receive a URL for your frontend (e.g., `https://employee-management-frontend.onrender.com`)
+
+#### Step 4: Update CORS Settings (if needed)
+
+If your frontend and backend are on different domains, you may need to update CORS settings in your backend:
+
+1. Go to your backend service in Render
+2. Update the environment variables to include your frontend URL in any CORS configuration
+3. Redeploy if necessary
+
+#### Post-Deployment
+
+1. **Test the Application**:
+   - Visit your frontend URL
+   - Try logging in with default credentials:
+     - Email: `admin1@example.com`
+     - Password: `adminpassword`
+   - Verify all features work correctly
+
+2. **Monitor Logs**:
+   - Check the logs in Render dashboard for any errors
+   - Both backend and database logs are available in their respective service dashboards
+
+3. **Set up Auto-Deploy** (Optional):
+   - In service settings, enable auto-deploy from your main branch
+   - Every push to the branch will trigger a new deployment
+
+#### Important Notes
+
+- **Free Tier Limitations**: Free instances on Render spin down after 15 minutes of inactivity. The first request after inactivity may take 30-50 seconds to respond.
+- **Database Backups**: Free PostgreSQL databases are not backed up. Consider upgrading to a paid plan for automatic backups.
+- **Environment Variables**: Never commit `.env` files to your repository. Always use Render's environment variable settings.
+- **Custom Domains**: You can add custom domains to both your backend and frontend services in the service settings.
+- **HTTPS**: Render automatically provides free SSL certificates for all services.
+
+#### Troubleshooting
+
+**Database Connection Issues**:
+- Verify the `DATABASE_URL` is correctly set in backend environment variables
+- Ensure you're using the **Internal Database URL** (not External)
+- Check database logs in Render dashboard
+
+**Frontend Not Connecting to Backend**:
+- Verify `VITE_API_URL` is set correctly (without trailing slash)
+- Check CORS settings in backend
+- Verify backend is running and accessible
+
+**Build Failures**:
+- Check the build logs in Render dashboard
+- Ensure all dependencies are in `package.json` (not just in `devDependencies` if they're needed for build)
+- Verify Node.js version compatibility
+
+**Database Migration Issues**:
+- The `build-prod` command runs migrations automatically
+- If migrations fail, check the build logs
+- Ensure database is accessible from the backend service
+
+For more help, refer to [Render's documentation](https://render.com/docs) or check the service logs in your Render dashboard.
 
 ### Docker
 
