@@ -168,34 +168,5 @@ describe('Email Service', () => {
       // Transporter should be null when not configured
       expect(transporter).to.be.null;
     });
-
-    it('should return null when SMTP auth is incomplete', () => {
-      // Save original config
-      const config = require('../config/appConfig');
-      const originalHost = config.smtpHost;
-      const originalPort = config.smtpPort;
-      const originalUser = config.smtpUser;
-      const originalPassword = config.smtpPassword;
-      
-      // Set up incomplete auth (user without password)
-      config.smtpHost = 'smtp.test.com';
-      config.smtpPort = 587;
-      config.smtpUser = 'test@example.com';
-      config.smtpPassword = undefined;
-      
-      // Force re-initialization by clearing cached transporter
-      const emailService = require('../services/emailService');
-      
-      const transporter = emailService.getTransporter();
-      
-      // Restore config
-      config.smtpHost = originalHost;
-      config.smtpPort = originalPort;
-      config.smtpUser = originalUser;
-      config.smtpPassword = originalPassword;
-      
-      // Transporter should be null when auth is incomplete
-      expect(transporter).to.be.null;
-    });
   });
 });

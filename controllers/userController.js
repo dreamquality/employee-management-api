@@ -3,6 +3,7 @@ const db = require("../models");
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 const emailService = require("../services/emailService");
+const logger = require("../utils/logger");
 
 // Get current authenticated user's profile
 exports.getCurrentUserProfile = async (req, res) => {
@@ -307,7 +308,6 @@ exports.updateProfile = async (req, res, next) => {
       } catch (emailError) {
         // Log error but don't fail the request
         // The password was already updated successfully
-        const logger = require('../utils/logger');
         logger.error('Failed to send password change email', { 
           userId: user.id, 
           error: emailError.message 
