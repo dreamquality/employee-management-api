@@ -177,7 +177,7 @@ export default function EmployeesPage() {
             {employees.map((employee) => (
               <Card
                 key={employee.id}
-                className="hover:shadow-lg transition-shadow"
+                className="hover:shadow-md hover:border-[#0969da]/30 transition-all"
               >
                 <CardHeader>
                   <div className="flex justify-between items-start">

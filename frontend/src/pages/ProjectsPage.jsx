@@ -304,19 +304,19 @@ export default function ProjectsPage() {
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map((project) => (
-          <Card key={project.id} className="hover:shadow-lg transition-shadow">
+          <Card key={project.id} className="hover:shadow-md hover:border-[#0969da]/30 transition-all">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <CardTitle className="text-lg">{project.name}</CardTitle>
                   <div className="flex items-center gap-2 mt-2">
                     {project.active ? (
-                      <span className="inline-flex items-center text-xs text-green-600">
+                      <span className="inline-flex items-center text-xs text-[#1a7f37] bg-[#dafbe1] px-2 py-0.5 rounded-full border border-[#1a7f37]/20">
                         <CheckCircle2 className="h-3 w-3 mr-1" />
                         Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-xs text-red-600">
+                      <span className="inline-flex items-center text-xs text-[#cf222e] bg-[#ffebe9] px-2 py-0.5 rounded-full border border-[#cf222e]/20">
                         <XCircle className="h-3 w-3 mr-1" />
                         Inactive
                       </span>
@@ -485,12 +485,12 @@ export default function ProjectsPage() {
             <DialogTitle>{selectedProject?.name}</DialogTitle>
             <div className="flex items-center gap-2 mt-2">
               {selectedProject?.active ? (
-                <span className="inline-flex items-center text-xs text-green-600">
+                <span className="inline-flex items-center text-xs text-[#1a7f37] bg-[#dafbe1] px-2 py-0.5 rounded-full border border-[#1a7f37]/20">
                   <CheckCircle2 className="h-3 w-3 mr-1" />
                   Active
                 </span>
               ) : (
-                <span className="inline-flex items-center text-xs text-red-600">
+                <span className="inline-flex items-center text-xs text-[#cf222e] bg-[#ffebe9] px-2 py-0.5 rounded-full border border-[#cf222e]/20">
                   <XCircle className="h-3 w-3 mr-1" />
                   Inactive
                 </span>
