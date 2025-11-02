@@ -23,17 +23,13 @@ async function main() {
     
     // Try sending a test email
     console.log('Sending test email...');
-    try {
-      await emailService.sendPasswordChangeEmail(
-        'test@example.com',
-        'Test',
-        'User'
-      );
-      console.log('✓ Test email sent successfully!');
-      console.log('\nIf using MailHog, view the email at: http://localhost:8025');
-    } catch (error) {
-      console.log('✗ Failed to send test email:', error.message);
-    }
+    await emailService.sendPasswordChangeEmail(
+      'test@example.com',
+      'Test',
+      'User'
+    );
+    console.log('✓ Test email sent successfully!');
+    console.log('\nIf using MailHog, view the email at: http://localhost:8025');
   } else {
     console.log('✗ SMTP connection failed!');
     console.log('\nPlease ensure:');

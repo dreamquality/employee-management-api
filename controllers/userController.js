@@ -232,9 +232,6 @@ exports.updateProfile = async (req, res, next) => {
       updateData.vacationDates = [updateData.vacationDates];
     }
 
-    // Track if password is being changed to send email later
-    const isPasswordChange = !!updateData.password;
-
     // Хеширование пароля, если он обновляется
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
@@ -287,6 +284,15 @@ exports.updateProfile = async (req, res, next) => {
       }
 
       await transaction.commit();
+      
+      // Check if password was actually updated in the transaction
+      // This ensures we only send email if password change succeeded
+      const isPasswordChange = updateData.password !== undefined;
+      
+      // Send email notification if password was changed
+      if (isPasswordChange) {
+        await sendPasswordChangeEmail(user.email, user.firstName, user.lastName);
+      }
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -310,11 +316,6 @@ exports.updateProfile = async (req, res, next) => {
     await user.reload({
       include: includeOptions,
     });
-
-    // Send email notification if password was changed
-    if (isPasswordChange) {
-      await sendPasswordChangeEmail(user.email, user.firstName, user.lastName);
-    }
 
     // Создаем уведомление для администратора, если данные обновляет не администратор
     if (req.user.role !== "admin") {

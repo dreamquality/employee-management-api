@@ -3,6 +3,22 @@ const nodemailer = require('nodemailer');
 const logger = require('../utils/logger');
 
 /**
+ * Escape HTML special characters to prevent XSS
+ * @param {string} text - Text to escape
+ * @returns {string} - Escaped text
+ */
+const escapeHtml = (text) => {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, (m) => map[m]);
+};
+
+/**
  * Create SMTP transporter
  */
 const createTransporter = () => {
@@ -41,16 +57,21 @@ exports.sendPasswordChangeEmail = async (email, firstName, lastName) => {
     const transporter = createTransporter();
     const fromEmail = process.env.SMTP_FROM || 'noreply@employee-crm.com';
 
+    // Escape user input to prevent XSS
+    const escapedFirstName = escapeHtml(firstName);
+    const escapedLastName = escapeHtml(lastName);
+    const fullName = `${escapedFirstName} ${escapedLastName}`;
+
     const mailOptions = {
       from: fromEmail,
       to: email,
       subject: 'Password Changed - Employee Management CRM',
-      text: `Hello ${firstName} ${lastName},\n\nYour password has been successfully changed.\n\nIf you did not make this change, please contact your administrator immediately.\n\nBest regards,\nEmployee Management CRM Team`,
+      text: `Hello ${fullName},\n\nYour password has been successfully changed.\n\nIf you did not make this change, please contact your administrator immediately.\n\nBest regards,\nEmployee Management CRM Team`,
       html: `
         <html>
           <body>
             <h2>Password Changed</h2>
-            <p>Hello ${firstName} ${lastName},</p>
+            <p>Hello ${fullName},</p>
             <p>Your password has been successfully changed.</p>
             <p><strong>If you did not make this change, please contact your administrator immediately.</strong></p>
             <br>

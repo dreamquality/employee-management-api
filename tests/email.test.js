@@ -152,7 +152,7 @@ describe('Email Service API', () => {
     it('should handle email sending errors gracefully', async () => {
       // This tests that the email service doesn't throw errors that break the app
       // The function should complete without throwing, even if email fails
-      const result = await emailService.sendPasswordChangeEmail(
+      await emailService.sendPasswordChangeEmail(
         'test@example.com',
         'Test',
         'User'
