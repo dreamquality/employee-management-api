@@ -360,6 +360,9 @@ exports.getProjectEmployees = async (req, res, next) => {
     next(err);
   }
 };
+
+// Remove an employee from a project (admin only)
+exports.removeEmployee = async (req, res, next) => {
   try {
     if (req.user.role !== "admin") {
       return res.status(403).json({ error: "Access denied" });
