@@ -107,6 +107,10 @@ exports.getEmployees = async (req, res, next) => {
             "email",
             "programmingLanguage",
             "position",
+            "registrationDate",
+            "country",
+            "mentorName",
+            "englishLevel",
             // Добавьте другие поля, которые сотрудник может видеть
           ];
 
