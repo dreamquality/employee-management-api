@@ -165,31 +165,31 @@ describe('Edge Cases Tests', () => {
   });
 
   describe('Edge Case 3: Pagination Edge Cases', () => {
-    it('should handle negative page number by defaulting to 1', async () => {
+    it('should reject negative page number with validation error', async () => {
       const res = await request(app)
         .get('/users?page=-5')
         .set('Authorization', `Bearer ${adminToken}`);
 
-      expect(res.status).to.equal(200);
-      expect(res.body.page).to.equal(1);
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
     });
 
-    it('should handle zero page number by defaulting to 1', async () => {
+    it('should reject zero page number with validation error', async () => {
       const res = await request(app)
         .get('/users?page=0')
         .set('Authorization', `Bearer ${adminToken}`);
 
-      expect(res.status).to.equal(200);
-      expect(res.body.page).to.equal(1);
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
     });
 
-    it('should handle negative limit by defaulting to positive', async () => {
+    it('should reject negative limit with validation error', async () => {
       const res = await request(app)
         .get('/users?limit=-10')
         .set('Authorization', `Bearer ${adminToken}`);
 
-      expect(res.status).to.equal(200);
-      expect(res.body.users).to.be.an('array');
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
     });
 
     it('should cap limit at maximum value (100)', async () => {
@@ -197,17 +197,17 @@ describe('Edge Cases Tests', () => {
         .get('/projects?limit=1000')
         .set('Authorization', `Bearer ${adminToken}`);
 
-      expect(res.status).to.equal(200);
-      expect(res.body.projects).to.be.an('array');
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
     });
 
-    it('should handle non-integer page values', async () => {
+    it('should reject non-integer page values with validation error', async () => {
       const res = await request(app)
         .get('/users?page=abc')
         .set('Authorization', `Bearer ${adminToken}`);
 
-      expect(res.status).to.equal(200);
-      expect(res.body.page).to.equal(1); // Should default to 1
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
     });
   });
 

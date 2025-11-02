@@ -81,7 +81,7 @@ exports.userUpdateValidation = [
 
   body('vacationDates')
     .optional()
-    .isArray().withMessage('Даты отпусков должны быть массивом дат'),
+    .custom((value) => { return Array.isArray(value) || typeof value === 'string'; }).withMessage('Даты отпусков должны быть массивом дат или одной датой'),
 
   body('mentorName')
     .optional()
@@ -171,7 +171,7 @@ exports.userCreateValidation = [
 
   body('vacationDates')
     .optional()
-    .isArray().withMessage('Даты отпусков должны быть массивом дат'),
+    .custom((value) => { return Array.isArray(value) || typeof value === 'string'; }).withMessage('Даты отпусков должны быть массивом дат или одной датой'),
 
   body('mentorName')
     .optional()
