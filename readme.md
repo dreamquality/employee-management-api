@@ -272,6 +272,19 @@ The application uses the following services defined in `docker-compose.yml`:
 
 Access the interactive API documentation at [http://localhost:3000/api-docs](http://localhost:3000/api-docs) to view and test available endpoints.
 
+### Postman Collection
+
+A comprehensive Postman collection is available for testing all API endpoints. The collection includes:
+- 32+ pre-configured requests covering all API endpoints
+- Automated test scripts for response validation
+- Environment variables for easy configuration
+- Authentication flow with JWT tokens
+- Error handling test scenarios
+
+**Location:** `/postman/Employee-Management-CRM.postman_collection.json`
+
+See the [Postman Collection README](/postman/README.md) for detailed setup and usage instructions.
+
 ### Available Scripts
 
 - **`npm run dev`**: Runs the app in development mode with hot reloading.
