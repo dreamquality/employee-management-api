@@ -50,6 +50,93 @@ SMTP_PASSWORD=your-mailgun-smtp-password
 SMTP_FROM=noreply@yourdomain.com
 ```
 
+### Using Internal/Self-Hosted SMTP Server
+
+You can use your own internal SMTP server without relying on external services:
+
+#### Option 1: Local SMTP Server (Development/Testing)
+For development or testing, you can run a simple SMTP server using Docker:
+
+```bash
+# Run a local SMTP server (MailHog - captures emails for testing)
+docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
+
+# Or use MailDev
+docker run -d -p 1025:1025 -p 1080:1080 maildev/maildev
+```
+
+Then configure:
+```env
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_SECURE=false
+# No authentication needed for local testing
+SMTP_FROM=noreply@yourcompany.local
+```
+
+**MailHog Web UI:** http://localhost:8025 (to view captured emails)  
+**MailDev Web UI:** http://localhost:1080 (to view captured emails)
+
+#### Option 2: Self-Hosted SMTP Server (Production)
+For production, you can set up your own SMTP server:
+
+**Using Postfix on Linux:**
+```env
+SMTP_HOST=mail.yourcompany.com  # Your internal mail server
+SMTP_PORT=587                    # or 25 for internal networks
+SMTP_SECURE=false
+# May not need authentication if on internal network
+SMTP_FROM=noreply@yourcompany.com
+```
+
+**Using Microsoft Exchange Server:**
+```env
+SMTP_HOST=exchange.yourcompany.local
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=smtp-service-account@yourcompany.com
+SMTP_PASSWORD=service-account-password
+SMTP_FROM=noreply@yourcompany.com
+```
+
+**Important Notes for Internal SMTP:**
+- Ensure your SMTP server allows relay from your application server's IP
+- Configure proper DNS (MX records) and SPF/DKIM if sending to external recipients
+- Use authentication even on internal networks for security
+- Test email delivery to both internal and external addresses
+- Configure firewall rules to allow SMTP traffic (port 25/587/465)
+
+#### Option 3: Docker Compose with Internal SMTP
+Add to your `docker-compose.yml`:
+
+```yaml
+services:
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - app-network
+
+  app:
+    # ... your app configuration
+    environment:
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      SMTP_SECURE: "false"
+      SMTP_FROM: noreply@yourcompany.local
+    depends_on:
+      - mailhog
+    networks:
+      - app-network
+
+networks:
+  app-network:
+```
+
+This setup allows you to use only your internal resources without external dependencies.
+
 ## How It Works
 
 1. An administrator updates a user's password via `PUT /users/:id` with a `password` field in the request body.
