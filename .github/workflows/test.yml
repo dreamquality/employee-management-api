@@ -52,6 +52,9 @@ jobs:
           DB_PASSWORD: postgres
           JWT_SECRET: test_jwt_secret
           SECRET_WORD: test_secret_word
+          SMTP_HOST: localhost
+          SMTP_PORT: 1025
+          SMTP_FROM: noreply@employee-crm.com
         run: npm test
 
       - name: Build Swagger documentation
