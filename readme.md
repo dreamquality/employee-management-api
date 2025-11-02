@@ -15,27 +15,32 @@ employee-management-api/
 
 ## Application Overview
 
-This application is an employee management system designed for administrators and company employees. Administrators can add new employees, edit their data, assign positions, manage salary levels, and view salary increase histories. The application automatically tracks salary raise dates for employees and sends notifications to administrators one month before the scheduled increase. Additionally, the system sends notifications about upcoming employee birthdays to help administrators congratulate employees on time.
+This application is an employee management system designed for administrators and company employees. Administrators can add new employees, edit their data, assign positions, manage salary levels, and view salary increase histories. The system now includes comprehensive project management capabilities, allowing administrators to create and manage projects, assign multiple projects to employees, and track project status. The application automatically tracks salary raise dates for employees and sends notifications to administrators one month before the scheduled increase. Additionally, the system sends notifications about upcoming employee birthdays to help administrators congratulate employees on time.
 
-Employees can update their personal information, such as name, contact details, and programming languages, while certain fields, like salary or position, are editable only by administrators. All changes to employee profiles are automatically logged, and notifications are sent to administrators. Notifications also include employee status updates, such as current project or English language proficiency. The application ensures regular data checks and sends important notifications through a task scheduler.
+Employees can update their personal information, such as name, contact details, and programming languages, while certain fields, like salary or position, are editable only by administrators. Employees can be assigned to multiple projects simultaneously, with project information visible on their profiles. All changes to employee profiles are automatically logged, and notifications are sent to administrators. Notifications also include employee status updates, such as assigned projects or English language proficiency. The application ensures regular data checks and sends important notifications through a task scheduler.
 
 ## Features
 
 ### Backend API
 - **Employee Management**: Create, read, update, and delete employee records.
-- **Data Validation**: Ensures data integrity with robust validation.
-- **Search and Filter**: Allows filtering employees by various criteria.
-- **Pagination**: Supports paginated employee listings.
+- **Project Management**: Full CRUD operations for projects with many-to-many employee-project relationships.
+- **Data Validation**: Ensures data integrity with robust validation and input sanitization.
+- **Search and Filter**: Allows filtering employees and projects by various criteria.
+- **Pagination**: Supports paginated employee and project listings.
 - **Error Handling**: Comprehensive error management for reliability.
-- **Authentication**: JWT-based authentication system.
+- **Authentication**: JWT-based authentication system with role-based access control.
 - **Notifications**: Automated notification system for birthdays and salary reviews.
+- **Transaction Support**: Database transactions for data consistency.
 
 ### Frontend Application
 - **Modern UI**: Built with React, Vite, Shadcn UI, and Tailwind CSS.
 - **Authentication**: Secure login and registration.
 - **Employee Management**: View, create, edit, and delete employees.
+- **Project Management**: Full CRUD interface for projects with role-based access control.
+- **Employee-Project Assignment**: Assign multiple projects to employees with visual indicators.
 - **Responsive Design**: Works on desktop, tablet, and mobile.
 - **Real-time Updates**: Notifications and data updates.
+- **Interactive Components**: Clickable project cards, modals, and dynamic forms.
 
 ## Screenshots
 
@@ -50,6 +55,12 @@ Employees can update their personal information, such as name, contact details, 
 
 ### Create Employee
 ![Create Employee](https://github.com/user-attachments/assets/301ce060-378d-4b4e-9be9-edf07fd39ddb)
+
+### Projects Management
+![Projects Page](https://github.com/user-attachments/assets/project-management-page)
+
+### Employee Projects
+![Employee Projects](https://github.com/user-attachments/assets/employee-projects-view)
 
 ## Quick Start with Docker
 
@@ -292,30 +303,87 @@ You can view the test status in the repository's Actions tab.
 
 ## API Endpoints
 
+### Authentication
 | Method | Endpoint                          | Description                               |
-|--------|------------------------------------|-------------------------------------------|
-| GET    | `/users`                         | List all users                            |
-| GET    | `/users/:id`                     | Get a specific user by ID                |
-| POST   | `/users`                         | Create a new user                         |
-| PUT    | `/users/:id`                     | Update user information                   |
-| DELETE | `/users/:id`                     | Delete a user                            |
+|--------|-----------------------------------|-------------------------------------------|
 | POST   | `/login`                         | Authenticate user                         |
 | POST   | `/register`                      | Register a new user                       |
+
+### Users
+| Method | Endpoint                          | Description                               |
+|--------|-----------------------------------|-------------------------------------------|
+| GET    | `/users`                         | List all users (with pagination, filtering, sorting) |
+| GET    | `/users/:id`                     | Get a specific user by ID                |
+| POST   | `/users`                         | Create a new user (admin only)            |
+| PUT    | `/users/:id`                     | Update user information                   |
+| DELETE | `/users/:id`                     | Delete a user (admin only)               |
+| GET    | `/users/me`                      | Get current user's profile                |
+
+### Projects
+| Method | Endpoint                                    | Description                               |
+|--------|---------------------------------------------|-------------------------------------------|
+| GET    | `/projects`                                | List all projects (with pagination, filtering, search) |
+| GET    | `/projects/:id`                            | Get a specific project by ID              |
+| POST   | `/projects`                                | Create a new project (admin only)         |
+| PUT    | `/projects/:id`                            | Update project information (admin only)   |
+| DELETE | `/projects/:id`                            | Delete a project (admin only)            |
+| POST   | `/projects/:id/employees`                  | Assign multiple employees to project (admin only) |
+| POST   | `/projects/:id/employee`                   | Add single employee to project (admin only) |
+| DELETE | `/projects/:id/employees/:employeeId`      | Remove employee from project (admin only) |
+| GET    | `/projects/:id/employees`                  | Get all employees assigned to a project   |
+
+### Notifications
+| Method | Endpoint                          | Description                               |
+|--------|-----------------------------------|-------------------------------------------|
 | GET    | `/notifications`                 | Get all notifications for the user        |
 | POST   | `/notifications/mark-as-read`    | Mark notifications as read                |
 
 ### Example Requests
 
-- **Get all users**: `GET /users`
+#### User Management
+- **Get all users**: `GET /users?page=1&limit=10&sortBy=registrationDate&order=DESC`
 - **Get user by ID**: `GET /users/:id`
-- **Add new user**: `POST /users` with JSON body containing user data.
-- **Update user**: `PUT /users/:id` with JSON body of updated data.
+- **Add new user**: `POST /users` with JSON body containing user data
+- **Update user**: `PUT /users/:id` with JSON body of updated data (includes `projectIds` array for project assignment)
 - **Delete user**: `DELETE /users/:id`
 - **Get current user's profile**: `GET /users/me`
-- **User login**: `POST /login` with JSON body containing credentials.
-- **User registration**: `POST /register` with JSON body containing user details.
+
+#### Authentication
+- **User login**: `POST /login` with JSON body containing credentials
+- **User registration**: `POST /register` with JSON body containing user details
+
+#### Project Management
+- **Get all projects**: `GET /projects?page=1&limit=10&active=true&search=project name`
+- **Get project by ID**: `GET /projects/:id`
+- **Create project**: `POST /projects` with JSON body:
+  ```json
+  {
+    "name": "Project Name",
+    "description": "Project description",
+    "wage": 5000,
+    "active": true
+  }
+  ```
+- **Update project**: `PUT /projects/:id` with JSON body of updated data
+- **Delete project**: `DELETE /projects/:id`
+- **Assign employees to project**: `POST /projects/:id/employees` with JSON body:
+  ```json
+  {
+    "employeeIds": [1, 2, 3]
+  }
+  ```
+- **Add single employee**: `POST /projects/:id/employee` with JSON body:
+  ```json
+  {
+    "employeeId": 1
+  }
+  ```
+- **Remove employee from project**: `DELETE /projects/:id/employees/:employeeId`
+- **Get project employees**: `GET /projects/:id/employees`
+
+#### Notifications
 - **Get notifications**: `GET /notifications`
-- **Mark notifications as read**: `POST /notifications/mark-as-read` with JSON body containing notification IDs.
+- **Mark notifications as read**: `POST /notifications/mark-as-read` with JSON body containing notification IDs
 
 ## Contributing
 
