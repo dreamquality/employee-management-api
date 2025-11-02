@@ -10,6 +10,7 @@
     "start": "cross-env NODE_ENV=production node app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",
     "test": "cross-env NODE_ENV=test mocha tests/**/*.test.js --exit",
+    "check-api-usage": "node check-api-usage.js",
     "seed:prod": "cross-env NODE_ENV=production npx sequelize-cli db:seed:all",
     "seed:dev": "cross-env NODE_ENV=development npx sequelize-cli db:seed:all",
     "clear-db:prod": "cross-env NODE_ENV=production npx sequelize-cli db:seed:undo:all",
