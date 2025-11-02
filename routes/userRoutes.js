@@ -4,7 +4,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const authenticateToken = require('../middleware/authenticateToken');
 const validateInput = require('../middleware/validateInput');
-const { userUpdateValidation, userCreateValidation, userListValidation } = require('../validations/userValidation');
+const { userUpdateValidation, userCreateValidation, userListValidation, userIdValidation } = require('../validations/userValidation');
 
 /**
  * @swagger
@@ -100,7 +100,7 @@ router.post('/users', authenticateToken, userCreateValidation, validateInput, us
  *       404:
  *         description: Employee not found
  */
-router.delete('/users/:id', authenticateToken, userController.deleteEmployee);
+router.delete('/users/:id', authenticateToken, userIdValidation, validateInput, userController.deleteEmployee);
 
 /**
  * @swagger
@@ -212,7 +212,7 @@ router.get('/users', authenticateToken, userListValidation, userController.getEm
  *       404:
  *         description: User not found
  */
-router.put('/users/:id', authenticateToken, userUpdateValidation, validateInput, userController.updateProfile);
+router.put('/users/:id', authenticateToken, userIdValidation, userUpdateValidation, validateInput, userController.updateProfile);
 
 /**
  * @swagger
@@ -239,6 +239,6 @@ router.put('/users/:id', authenticateToken, userUpdateValidation, validateInput,
  *       404:
  *         description: Employee not found
  */
-router.get('/users/:id', authenticateToken, userController.getEmploye);
+router.get('/users/:id', authenticateToken, userIdValidation, validateInput, userController.getEmploye);
 
 module.exports = router;

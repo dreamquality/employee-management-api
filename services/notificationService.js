@@ -148,30 +148,49 @@ async function checkSalaryIncreaseNotifications(user, admins, today) {
   // Время для повышения зарплаты
   if (daysUntilNextIncrease <= 0 && user.salary < 1500) {
     const newSalary = Math.min(user.salary + 200, 1500);
+    const transaction = await db.sequelize.transaction();
+    
     try {
-      await user.update({
-        salary: newSalary,
-        lastSalaryIncreaseDate: today,
+      // Lock the user row to prevent race conditions
+      await user.reload({ 
+        lock: transaction.LOCK.UPDATE, 
+        transaction 
       });
+      
+      // Check salary again after lock to prevent double increments
+      if (user.salary < 1500) {
+        const recalculatedSalary = Math.min(user.salary + 200, 1500);
+        
+        await user.update({
+          salary: recalculatedSalary,
+          lastSalaryIncreaseDate: today,
+        }, { transaction });
 
-      // Уведомление об автоматическом повышении зарплаты
-      await sendNotificationToAdmins(admins, {
-        message: `Зарплата сотрудника ${user.firstName} ${user.lastName} была автоматически увеличена до ${newSalary} долларов.`,
-        type: 'salary_increased',
-        eventDate: today,
-        userId: user.id,
-      });
+        await transaction.commit();
 
-      // Уведомление о достижении порога зарплаты
-      if (newSalary >= 1400) {
+        // Уведомление об автоматическом повышении зарплаты
         await sendNotificationToAdmins(admins, {
-          message: `Сотрудник ${user.firstName} ${user.lastName} достиг порога зарплаты.`,
-          type: 'salary_threshold_reached',
+          message: `Зарплата сотрудника ${user.firstName} ${user.lastName} была автоматически увеличена до ${recalculatedSalary} долларов.`,
+          type: 'salary_increased',
           eventDate: today,
           userId: user.id,
         });
+
+        // Уведомление о достижении порога зарплаты
+        if (recalculatedSalary >= 1400) {
+          await sendNotificationToAdmins(admins, {
+            message: `Сотрудник ${user.firstName} ${user.lastName} достиг порога зарплаты.`,
+            type: 'salary_threshold_reached',
+            eventDate: today,
+            userId: user.id,
+          });
+        }
+      } else {
+        await transaction.rollback();
+        logger.info(`Зарплата сотрудника ${user.firstName} ${user.lastName} уже на максимуме`);
       }
     } catch (error) {
+      await transaction.rollback();
       logger.error('Ошибка при обновлении зарплаты или отправке уведомления о зарплате', { error });
     }
   }

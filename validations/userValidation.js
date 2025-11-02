@@ -1,5 +1,11 @@
 // validations/userValidation.js
-const { body, query, validationResult } = require('express-validator');
+const { body, query, param, validationResult } = require('express-validator');
+
+exports.userIdValidation = [
+  param('id')
+    .isInt({ min: 1 })
+    .withMessage('User ID must be a positive integer'),
+];
 
 exports.userUpdateValidation = [
   body('firstName')

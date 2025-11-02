@@ -403,4 +403,66 @@ describe('Edge Cases Tests', () => {
       expect(res.body.projects).to.be.an('array');
     });
   });
+
+  describe('Edge Case 11: User ID Validation', () => {
+    it('should validate user ID in delete endpoint', async () => {
+      const res = await request(app)
+        .delete('/users/invalid')
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
+    });
+
+    it('should validate user ID in update endpoint', async () => {
+      const res = await request(app)
+        .put('/users/abc')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          firstName: 'Updated'
+        });
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
+    });
+
+    it('should validate user ID in get endpoint', async () => {
+      const res = await request(app)
+        .get('/users/xyz')
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
+    });
+
+    it('should reject negative user ID', async () => {
+      const res = await request(app)
+        .get('/users/-1')
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
+    });
+
+    it('should reject zero user ID', async () => {
+      const res = await request(app)
+        .delete('/users/0')
+        .set('Authorization', `Bearer ${adminToken}`);
+
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('errors');
+    });
+  });
+
+  describe('Edge Case 12: Configuration Security', () => {
+    it('should have JWT_SECRET configured', () => {
+      expect(config.jwtSecret).to.exist;
+      expect(config.jwtSecret).to.not.equal('');
+    });
+
+    it('should have SECRET_WORD configured', () => {
+      expect(config.secretWord).to.exist;
+      expect(config.secretWord).to.not.equal('');
+    });
+  });
 });
