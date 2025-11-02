@@ -13,14 +13,25 @@ function initializeTransporter() {
     return null;
   }
 
+  // Validate authentication credentials
+  const hasUser = !!config.smtpUser;
+  const hasPassword = !!config.smtpPassword;
+  
+  if (hasUser !== hasPassword) {
+    logger.warn('SMTP authentication incomplete: both SMTP_USER and SMTP_PASSWORD must be provided. Email service will not be available.');
+    return null;
+  }
+
+  const smtpAuth = hasUser && hasPassword ? {
+    user: config.smtpUser,
+    pass: config.smtpPassword,
+  } : undefined;
+
   const smtpConfig = {
     host: config.smtpHost,
     port: config.smtpPort,
     secure: config.smtpSecure, // true for 465, false for other ports
-    auth: config.smtpUser && config.smtpPassword ? {
-      user: config.smtpUser,
-      pass: config.smtpPassword,
-    } : undefined,
+    auth: smtpAuth,
   };
 
   return nodemailer.createTransport(smtpConfig);

@@ -296,13 +296,23 @@ exports.updateProfile = async (req, res, next) => {
       throw error;
     }
 
-    // Send email notification if admin changed password
-    if (isPasswordChange && req.user.role === "admin" && adminUser) {
-      await emailService.sendPasswordChangeEmail({
-        to: user.email,
-        userName: `${user.firstName} ${user.lastName}`,
-        changedBy: `${adminUser.firstName} ${adminUser.lastName}`,
-      });
+    // Send email notification if admin changed another user's password
+    if (isPasswordChange && req.user.role === "admin" && adminUser && req.user.userId !== parseInt(userId)) {
+      try {
+        await emailService.sendPasswordChangeEmail({
+          to: user.email,
+          userName: `${user.firstName} ${user.lastName}`,
+          changedBy: `${adminUser.firstName} ${adminUser.lastName}`,
+        });
+      } catch (emailError) {
+        // Log error but don't fail the request
+        // The password was already updated successfully
+        const logger = require('../utils/logger');
+        logger.error('Failed to send password change email', { 
+          userId: user.id, 
+          error: emailError.message 
+        });
+      }
     }
 
     // Reload user to get fresh data (password will be excluded by default scope)

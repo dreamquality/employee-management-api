@@ -111,13 +111,29 @@ describe('Email Service', () => {
       expect(emailStub.called).to.be.false;
     });
 
+    it('should not send email when admin changes their own password', async () => {
+      // Get the admin's ID from the token
+      const adminUser = await db.User.findOne({ where: { email: 'admin@example.com' } });
+      
+      const res = await request(app)
+        .put(`/users/${adminUser.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({
+          password: 'newAdminPassword123'
+        });
+
+      expect(res.status).to.equal(200);
+      
+      // Verify email was NOT sent (admin changing own password)
+      expect(emailStub.called).to.be.false;
+    });
+
     it('should handle email sending errors gracefully', async () => {
       // Stub to simulate email failure
       emailStub.restore();
-      emailStub = sinon.stub(emailService, 'sendPasswordChangeEmail').resolves({
-        success: false,
-        error: 'SMTP connection failed'
-      });
+      emailStub = sinon.stub(emailService, 'sendPasswordChangeEmail').rejects(
+        new Error('SMTP connection failed')
+      );
 
       const res = await request(app)
         .put(`/users/${employeeId}`)
@@ -136,7 +152,7 @@ describe('Email Service', () => {
   });
 
   describe('Email Service Configuration', () => {
-    it('should return false when SMTP is not configured', () => {
+    it('should return null when SMTP is not configured', () => {
       // Save original config
       const config = require('../config/appConfig');
       const originalHost = config.smtpHost;
@@ -150,6 +166,35 @@ describe('Email Service', () => {
       config.smtpHost = originalHost;
       
       // Transporter should be null when not configured
+      expect(transporter).to.be.null;
+    });
+
+    it('should return null when SMTP auth is incomplete', () => {
+      // Save original config
+      const config = require('../config/appConfig');
+      const originalHost = config.smtpHost;
+      const originalPort = config.smtpPort;
+      const originalUser = config.smtpUser;
+      const originalPassword = config.smtpPassword;
+      
+      // Set up incomplete auth (user without password)
+      config.smtpHost = 'smtp.test.com';
+      config.smtpPort = 587;
+      config.smtpUser = 'test@example.com';
+      config.smtpPassword = undefined;
+      
+      // Force re-initialization by clearing cached transporter
+      const emailService = require('../services/emailService');
+      
+      const transporter = emailService.getTransporter();
+      
+      // Restore config
+      config.smtpHost = originalHost;
+      config.smtpPort = originalPort;
+      config.smtpUser = originalUser;
+      config.smtpPassword = originalPassword;
+      
+      // Transporter should be null when auth is incomplete
       expect(transporter).to.be.null;
     });
   });
