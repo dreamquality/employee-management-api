@@ -275,8 +275,8 @@ Access the interactive API documentation at [http://localhost:3000/api-docs](htt
 ### Postman Collection
 
 A comprehensive Postman collection is available for testing all API endpoints. The collection includes:
-- 32+ pre-configured requests covering all API endpoints
-- Automated test scripts for response validation
+- 30 pre-configured requests covering all API endpoints
+- Automated test scripts for response validation (90+ test assertions)
 - Environment variables for easy configuration
 - Authentication flow with JWT tokens
 - Error handling test scenarios

@@ -39,7 +39,7 @@ else
         # Extract and display collection info
         COLLECTION_NAME=$(jq -r '.info.name' "$COLLECTION_FILE")
         FOLDER_COUNT=$(jq '.item | length' "$COLLECTION_FILE")
-        TOTAL_REQUESTS=$(jq '[.item[].item | length] | add' "$COLLECTION_FILE")
+        TOTAL_REQUESTS=$(jq '[.item[]?.item? | length // 0] | add // 0' "$COLLECTION_FILE")
         
         echo -e "${GREEN}✅ Collection Name: $COLLECTION_NAME${NC}"
         echo -e "${GREEN}✅ Folders: $FOLDER_COUNT${NC}"
@@ -71,7 +71,7 @@ else
         # Check if all requests have tests
         echo ""
         echo "🧪 Checking Test Scripts..."
-        REQUESTS_WITH_TESTS=$(jq '[.item[].item[] | select(.event != null) | select(.event[].listen == "test")] | length' "$COLLECTION_FILE")
+        REQUESTS_WITH_TESTS=$(jq '[.item[]?.item[]? | select(.event != null and .event != []) | select(any(.event[]?; .listen == "test"))] | length // 0' "$COLLECTION_FILE")
         echo -e "${GREEN}✅ Requests with test scripts: $REQUESTS_WITH_TESTS / $TOTAL_REQUESTS${NC}"
         
     else
