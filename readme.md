@@ -45,22 +45,19 @@ Employees can update their personal information, such as name, contact details, 
 ## Screenshots
 
 ### Login Page
-![Login Page](https://github.com/user-attachments/assets/cc6948be-1100-46cb-93c6-e58a282e80e6)
+![Login Page](https://github.com/user-attachments/assets/046458d7-3936-4c7c-a801-488b5d69f4af)
 
 ### Employee List
-![Employee List](https://github.com/user-attachments/assets/23b92ee0-2275-486a-a793-f72a701caa7a)
+![Employee List](https://github.com/user-attachments/assets/f2553621-77ed-4e27-9a87-f04ec92ca16b)
 
 ### Employee Detail
-![Employee Detail](https://github.com/user-attachments/assets/13365042-dae5-4e5c-befe-d14b284655de)
+![Employee Detail](https://github.com/user-attachments/assets/515743b6-aa17-4a1f-84bd-5b1bb90bb4dd)
 
 ### Create Employee
-![Create Employee](https://github.com/user-attachments/assets/301ce060-378d-4b4e-9be9-edf07fd39ddb)
+![Create Employee](https://github.com/user-attachments/assets/9af9eb9a-8a4f-462a-a158-e2b9c15a5c96)
 
 ### Projects Management
-![Projects Page](https://github.com/user-attachments/assets/project-management-page)
-
-### Employee Projects
-![Employee Projects](https://github.com/user-attachments/assets/employee-projects-view)
+![Projects Page](https://github.com/user-attachments/assets/5ea42fa4-60f5-4b35-9cc2-afbd8e833120)
 
 ## Quick Start with Docker
 
