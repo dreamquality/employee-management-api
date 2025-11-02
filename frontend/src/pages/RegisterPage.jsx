@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -80,18 +81,18 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#f6f8fa] p-4">
       <Card className="w-full max-w-2xl">
-        <CardHeader className="space-y-1">
+        <CardHeader className="space-y-1 text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="p-3 bg-primary rounded-full">
-              <Users className="h-8 w-8 text-primary-foreground" />
+            <div className="p-3 bg-[#0969da] rounded-full">
+              <Users className="h-8 w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl text-center">
-            Create an Account
+          <CardTitle className="text-2xl">
+            Create your account
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription>
             Enter your information to register
           </CardDescription>
         </CardHeader>
@@ -190,16 +191,15 @@ export default function RegisterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <select
+              <Select
                 id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
               >
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
-              </select>
+              </Select>
             </div>
             {formData.role === "admin" && (
               <div className="space-y-2">
@@ -217,12 +217,12 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Register"}
+              {loading ? "Creating account..." : "Create account"}
             </Button>
-            <p className="text-sm text-center text-muted-foreground">
+            <p className="text-sm text-center text-[#57606a]">
               Already have an account?{" "}
-              <Link to="/login" className="text-primary hover:underline">
-                Login
+              <Link to="/login" className="text-[#0969da] hover:underline font-medium">
+                Sign in
               </Link>
             </p>
           </CardFooter>
