@@ -40,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
       githubLink: { type: DataTypes.STRING },
       linkedinLink: { type: DataTypes.STRING },
       adminNote: { type: DataTypes.TEXT },
-      currentProject: { type: DataTypes.STRING },
       englishLevel: { type: DataTypes.STRING },
       workingHoursPerWeek: {
         type: DataTypes.INTEGER,
@@ -82,6 +81,14 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       hooks: true,
+    });
+    User.belongsToMany(models.Project, { 
+      through: 'UserProjects',
+      as: 'projects',
+      foreignKey: 'userId',
+      otherKey: 'projectId',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
     });
   };
 
