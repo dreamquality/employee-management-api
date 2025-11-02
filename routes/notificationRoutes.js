@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const notificationController = require('../controllers/notificationController');
 const authenticateToken = require('../middleware/authenticateToken');
+const validateInput = require('../middleware/validateInput');
+const { notificationListValidation, notificationIdValidation } = require('../validations/notificationValidation');
 
 /**
  * @swagger
@@ -71,7 +73,7 @@ const authenticateToken = require('../middleware/authenticateToken');
  *       403:
  *         description: Access denied
  */
-router.get('/notifications', authenticateToken, notificationController.getNotifications);
+router.get('/notifications', authenticateToken, notificationListValidation, validateInput, notificationController.getNotifications);
 
 /**
  * @swagger
@@ -102,6 +104,6 @@ router.get('/notifications', authenticateToken, notificationController.getNotifi
  *       404:
  *         description: Notification not found
  */
-router.patch('/notifications/:id/mark-as-read', authenticateToken, notificationController.markAsRead);
+router.patch('/notifications/:id/mark-as-read', authenticateToken, notificationIdValidation, validateInput, notificationController.markAsRead);
 
 module.exports = router;

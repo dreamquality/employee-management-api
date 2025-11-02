@@ -10,7 +10,8 @@ const {
   projectIdValidation, 
   employeeIdValidation,
   projectListValidation,
-  assignEmployeesValidation
+  assignEmployeesValidation,
+  addEmployeeValidation
 } = require('../validations/projectValidation');
 
 /**
@@ -269,7 +270,7 @@ router.post('/projects/:id/employees', authenticateToken, projectIdValidation, a
  *       404:
  *         description: Project or employee not found
  */
-router.post('/projects/:id/employee', authenticateToken, projectIdValidation, validateInput, projectController.addEmployee);
+router.post('/projects/:id/employee', authenticateToken, projectIdValidation, addEmployeeValidation, validateInput, projectController.addEmployee);
 
 /**
  * @swagger
@@ -302,5 +303,31 @@ router.post('/projects/:id/employee', authenticateToken, projectIdValidation, va
  *         description: Project or employee not found
  */
 router.delete('/projects/:id/employees/:employeeId', authenticateToken, projectIdValidation, employeeIdValidation, validateInput, projectController.removeEmployee);
+
+/**
+ * @swagger
+ * /projects/{id}/employees:
+ *   get:
+ *     summary: Get all employees assigned to a project
+ *     description: Returns the list of employees assigned to a specific project. Non-admin users cannot see salary field.
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Project ID
+ *     responses:
+ *       200:
+ *         description: List of employees
+ *       400:
+ *         description: Invalid project ID
+ *       404:
+ *         description: Project not found
+ */
+router.get('/projects/:id/employees', authenticateToken, projectIdValidation, validateInput, projectController.getProjectEmployees);
 
 module.exports = router;

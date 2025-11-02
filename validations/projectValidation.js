@@ -89,3 +89,9 @@ exports.assignEmployeesValidation = [
     .isInt({ min: 1 })
     .withMessage('Each employee ID must be a positive integer'),
 ];
+
+exports.addEmployeeValidation = [
+  body('employeeId')
+    .isInt({ min: 1 })
+    .withMessage('employeeId must be a positive integer'),
+];

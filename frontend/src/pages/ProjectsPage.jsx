@@ -161,8 +161,17 @@ export default function ProjectsPage() {
 
   const openViewDialog = async (project) => {
     try {
-      const fullProject = await projectService.getProject(project.id);
-      setSelectedProject(fullProject);
+      // Fetch project details and employees separately using the new endpoint
+      const [fullProject, employeesData] = await Promise.all([
+        projectService.getProject(project.id),
+        projectService.getProjectEmployees(project.id)
+      ]);
+      
+      // Merge employees data into the project object
+      setSelectedProject({
+        ...fullProject,
+        employees: employeesData.employees || []
+      });
       setShowViewDialog(true);
     } catch (error) {
       toast({

@@ -64,8 +64,14 @@ exports.getEmploye = async (req, res) => {
 exports.getEmployees = async (req, res, next) => {
   try {
     // Получение параметров запроса
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    // Validate and sanitize pagination parameters
+    let page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    
+    // Ensure positive values and reasonable limits
+    page = Math.max(1, page);
+    limit = Math.max(1, Math.min(100, limit));
+    
     const { firstName, lastName, sortBy, order } = req.query;
 
     const offset = (page - 1) * limit;
@@ -216,6 +222,8 @@ exports.updateProfile = async (req, res, next) => {
 
     // Проверка на наличие другого пользователя с таким же email
     if (updateData.email) {
+      // Normalize email to lowercase
+      updateData.email = updateData.email.toLowerCase();
       const existingUser = await db.User.findOne({
         where: { email: updateData.email, id: { [Op.ne]: userId } },
       });
@@ -227,8 +235,10 @@ exports.updateProfile = async (req, res, next) => {
       }
     }
 
-    if (updateData.vacationDates && !Array.isArray(updateData.vacationDates)) {
-      updateData.vacationDates = [updateData.vacationDates];
+    if (updateData.vacationDates) {
+      if (!Array.isArray(updateData.vacationDates)) {
+        updateData.vacationDates = [updateData.vacationDates];
+      }
     }
 
     // Хеширование пароля, если он обновляется
@@ -364,8 +374,11 @@ exports.createEmployee = async (req, res, next) => {
       // Добавьте другие поля по необходимости
     } = req.body;
 
+    // Normalize email to lowercase
+    const normalizedEmail = email.toLowerCase();
+
     // Проверка на существование пользователя с таким email
-    const existingUser = await db.User.findOne({ where: { email } });
+    const existingUser = await db.User.findOne({ where: { email: normalizedEmail } });
     if (existingUser) {
       return res
         .status(400)
@@ -375,9 +388,15 @@ exports.createEmployee = async (req, res, next) => {
     // Хеширование пароля
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Ensure vacationDates is always an array if provided
+    let processedVacationDates = vacationDates;
+    if (vacationDates && !Array.isArray(vacationDates)) {
+      processedVacationDates = [vacationDates];
+    }
+
     // Создание нового сотрудника
     const newUser = await db.User.create({
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       firstName,
       lastName,
@@ -392,7 +411,7 @@ exports.createEmployee = async (req, res, next) => {
       adminNote,
       englishLevel,
       githubLink,
-      vacationDates,
+      vacationDates: processedVacationDates,
       mentorName,
       position,
       salary,

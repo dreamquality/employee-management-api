@@ -1,5 +1,11 @@
 // validations/userValidation.js
-const { body, query, validationResult } = require('express-validator');
+const { body, query, param, validationResult } = require('express-validator');
+
+exports.userIdValidation = [
+  param('id')
+    .isInt({ min: 1 })
+    .withMessage('User ID must be a positive integer'),
+];
 
 exports.userUpdateValidation = [
   body('firstName')
@@ -71,7 +77,7 @@ exports.userUpdateValidation = [
 
   body('vacationDates')
     .optional()
-    .isArray().withMessage('Даты отпусков должны быть массивом дат'),
+    .custom((value) => { return Array.isArray(value) || typeof value === 'string'; }).withMessage('Даты отпусков должны быть массивом дат или одной датой'),
 
   body('mentorName')
     .optional()
@@ -157,7 +163,7 @@ exports.userCreateValidation = [
 
   body('vacationDates')
     .optional()
-    .isArray().withMessage('Даты отпусков должны быть массивом дат'),
+    .custom((value) => { return Array.isArray(value) || typeof value === 'string'; }).withMessage('Даты отпусков должны быть массивом дат или одной датой'),
 
   body('mentorName')
     .optional()

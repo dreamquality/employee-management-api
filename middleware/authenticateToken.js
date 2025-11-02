@@ -22,6 +22,16 @@ module.exports = async function authenticateToken(req, res, next) {
         next();
     } catch (err) {
         console.error('JWT verification error:', err); // Отладка: выводим ошибку
+        
+        // Handle specific JWT errors
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Токен истек', expiredAt: err.expiredAt });
+        } else if (err.name === 'JsonWebTokenError') {
+            return res.status(403).json({ error: 'Недействительный токен' });
+        } else if (err.name === 'NotBeforeError') {
+            return res.status(403).json({ error: 'Токен еще не активен' });
+        }
+        
         return res.status(403).json({ error: 'Недействительный токен' });
     }
 };
