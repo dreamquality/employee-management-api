@@ -28,49 +28,58 @@ export default function Layout() {
   const isActive = (path) => location.pathname.startsWith(path);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-[#f6f8fa]">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-[#24292f] text-white border-b border-[#d0d7de]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <div className="flex items-center">
-              <div className="p-2 bg-primary rounded-lg">
-                <Users className="h-6 w-6 text-primary-foreground" />
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <Users className="h-6 w-6 text-white mr-2" />
+                <span className="text-lg font-semibold text-white">Employee Management</span>
               </div>
-              <span className="ml-3 text-xl font-bold">Employee Management</span>
+
+              {/* Desktop Navigation - GitHub style tabs */}
+              <nav className="hidden md:flex items-center space-x-2 ml-6">
+                {navItems.map((item) => (
+                  <Link key={item.path} to={item.path} className="relative">
+                    <button
+                      className={`flex items-center px-4 py-2 text-sm font-medium transition-colors ${
+                        isActive(item.path)
+                          ? 'text-white'
+                          : 'text-gray-300 hover:text-white'
+                      }`}
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {item.label}
+                    </button>
+                    {isActive(item.path) && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f78166]" />
+                    )}
+                  </Link>
+                ))}
+              </nav>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-4">
-              {navItems.map((item) => (
-                <Link key={item.path} to={item.path}>
-                  <Button
-                    variant={isActive(item.path) ? "default" : "ghost"}
-                    className="flex items-center"
-                  >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    {item.label}
-                  </Button>
-                </Link>
-              ))}
-            </nav>
-
             {/* User Menu */}
-            <div className="hidden md:flex items-center space-x-4">
-              <div className="text-sm">
-                <p className="font-medium">{user?.firstName} {user?.lastName}</p>
-                <p className="text-muted-foreground">{user?.role}</p>
+            <div className="hidden md:flex items-center space-x-3">
+              <div className="text-sm text-right">
+                <p className="font-medium text-white">{user?.firstName} {user?.lastName}</p>
+                <p className="text-gray-300 text-xs">{user?.role}</p>
               </div>
-              <Button variant="outline" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
+              <button 
+                onClick={handleLogout}
+                className="px-3 py-1.5 text-sm font-medium text-white border border-gray-500 rounded-md hover:bg-gray-700 transition-colors"
+              >
+                <LogOut className="inline h-4 w-4 mr-1" />
                 Logout
-              </Button>
+              </button>
             </div>
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden p-2"
+              className="md:hidden p-2 text-white"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
@@ -84,7 +93,7 @@ export default function Layout() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t">
+          <div className="md:hidden border-t border-gray-600">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -92,28 +101,30 @@ export default function Layout() {
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Button
-                    variant={isActive(item.path) ? "default" : "ghost"}
-                    className="w-full justify-start"
+                  <button
+                    className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                      isActive(item.path)
+                        ? 'bg-gray-700 text-white'
+                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    }`}
                   >
                     <item.icon className="mr-2 h-4 w-4" />
                     {item.label}
-                  </Button>
+                  </button>
                 </Link>
               ))}
-              <div className="pt-4 pb-2 border-t">
-                <div className="px-4 mb-2">
-                  <p className="font-medium">{user?.firstName} {user?.lastName}</p>
-                  <p className="text-sm text-muted-foreground">{user?.role}</p>
+              <div className="pt-4 pb-2 border-t border-gray-600">
+                <div className="px-3 mb-2">
+                  <p className="font-medium text-white">{user?.firstName} {user?.lastName}</p>
+                  <p className="text-sm text-gray-300">{user?.role}</p>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start"
+                <button
+                  className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md"
                   onClick={handleLogout}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
-                </Button>
+                </button>
               </div>
             </div>
           </div>

@@ -189,8 +189,8 @@ export default function EmployeesPage() {
                         <span
                           className={`text-xs px-2 py-1 rounded-full font-medium ${
                             employee.role === "admin"
-                              ? "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300"
-                              : "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                              ? "bg-[#ddf4ff] text-[#0969da] border border-[#54aeff]/30"
+                              : "bg-[#ddf4ff] text-[#0969da] border border-[#54aeff]/30"
                           }`}
                         >
                           {employee.role === "admin" ? "Admin" : "Employee"}
@@ -286,7 +286,7 @@ export default function EmployeesPage() {
                         {employee.projects.slice(0, 3).map((project) => (
                           <span
                             key={project.id}
-                            className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors"
+                            className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-[#ddf4ff] text-[#0969da] cursor-pointer hover:bg-[#b6e3ff] transition-colors border border-[#54aeff]/30"
                             onClick={(e) => {
                               e.stopPropagation();
                               navigate(`/employees/${employee.id}`);
@@ -297,7 +297,7 @@ export default function EmployeesPage() {
                           </span>
                         ))}
                         {employee.projects.length > 3 && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-muted text-muted-foreground">
+                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-[#f6f8fa] text-[#57606a] border border-[#d0d7de]">
                             +{employee.projects.length - 3} more
                           </span>
                         )}
