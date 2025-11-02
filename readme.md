@@ -281,7 +281,26 @@ Access the interactive API documentation at [http://localhost:3000/api-docs](htt
 - **`npm start`**: Runs the app in production mode.
 - **`npm test`**: Runs test cases for the application.
 - **`npm run build:swagger`**: Generates static HTML Swagger documentation in the `docs/` folder.
+- **`npm run check-api-usage`**: Analyzes API endpoint usage between backend and frontend, generates detailed reports.
 - **`npm run lint`**: Lints the project files to enforce consistent code style.
+
+### API Endpoint Usage Analysis
+
+The project includes an automated tool to analyze which API endpoints are used by the frontend. This helps identify unused endpoints and maintain code quality.
+
+**Running the analysis:**
+```bash
+npm run check-api-usage
+```
+
+**Output:**
+- Console summary showing used and unused endpoints
+- `api-usage-report.md` - Detailed technical report
+- `API-USAGE-SUMMARY.md` - Quick executive summary
+
+See `docs/api-endpoint-analysis.md` for comprehensive documentation.
+
+**Current Status:** ✅ All 18 backend endpoints are actively used by the frontend (100% utilization)
 
 ## Continuous Integration
 
