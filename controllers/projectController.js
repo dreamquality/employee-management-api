@@ -328,8 +328,38 @@ exports.addEmployee = async (req, res, next) => {
   }
 };
 
-// Remove an employee from a project (admin only)
-exports.removeEmployee = async (req, res, next) => {
+// Get employees assigned to a project
+exports.getProjectEmployees = async (req, res, next) => {
+  try {
+    const projectId = parseInt(req.params.id);
+    
+    // Validate project ID
+    if (!Number.isInteger(projectId) || projectId < 1) {
+      return res.status(400).json({ error: "Invalid project ID" });
+    }
+
+    const project = await db.Project.findByPk(projectId, {
+      include: [
+        {
+          model: db.User,
+          as: 'employees',
+          attributes: req.user.role === 'admin' 
+            ? ['id', 'firstName', 'lastName', 'email', 'position', 'salary', 'programmingLanguage']
+            : ['id', 'firstName', 'lastName', 'email', 'position', 'programmingLanguage'],
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    res.json({ employees: project.employees });
+  } catch (err) {
+    next(err);
+  }
+};
   try {
     if (req.user.role !== "admin") {
       return res.status(403).json({ error: "Access denied" });

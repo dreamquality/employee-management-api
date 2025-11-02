@@ -6,8 +6,14 @@ exports.getNotifications = async (req, res, next) => {
       return res.status(403).json({ error: 'Доступ запрещен' });
     }
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    // Validate and sanitize pagination parameters
+    let page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    
+    // Ensure positive values and reasonable limits
+    page = Math.max(1, page);
+    limit = Math.max(1, Math.min(100, limit));
+    
     const offset = (page - 1) * limit;
 
     const { type, sortBy, order } = req.query;

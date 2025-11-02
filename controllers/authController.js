@@ -19,6 +19,9 @@ exports.register = async (req, res, next) => {
       secretWord 
     } = req.body;
 
+    // Normalize email to lowercase
+    const normalizedEmail = email.toLowerCase();
+
     if (role === 'admin') {
       // Проверка секретного слова
       if (secretWord !== config.secretWord) {
@@ -26,7 +29,7 @@ exports.register = async (req, res, next) => {
       }
     }
 
-    const existingUser = await db.User.findOne({ where: { email } });
+    const existingUser = await db.User.findOne({ where: { email: normalizedEmail } });
     if (existingUser) {
       return res.status(400).json({ error: 'Пользователь с таким email уже существует' });
     }
@@ -34,7 +37,7 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await db.User.create({
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       firstName,
       lastName,
@@ -55,7 +58,10 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await db.User.scope('withPassword').findOne({ where: { email } });
+    // Normalize email to lowercase
+    const normalizedEmail = email.toLowerCase();
+
+    const user = await db.User.scope('withPassword').findOne({ where: { email: normalizedEmail } });
 
     if (!user) {
       return res.status(400).json({ error: 'Неверные учетные данные' });
