@@ -152,6 +152,7 @@ describe('Project API', () => {
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('projects');
       expect(res.body.projects).to.be.an('array');
+      expect(res.body.projects.length).to.be.greaterThan(0);
       expect(res.body.projects[0]).to.not.have.property('wage'); // Employee cannot see wage
     });
 
@@ -161,7 +162,10 @@ describe('Project API', () => {
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(res.status).to.equal(200);
-      expect(res.body.projects.every(p => p.active === true)).to.be.true;
+      expect(res.body.projects).to.be.an('array');
+      if (res.body.projects.length > 0) {
+        expect(res.body.projects.every(p => p.active === true)).to.be.true;
+      }
     });
 
     it('should search projects by name', async () => {
@@ -353,9 +357,5 @@ describe('Project API', () => {
 
       expect(res.status).to.equal(403);
     });
-  });
-
-  after(async () => {
-    await db.sequelize.close();
   });
 });
