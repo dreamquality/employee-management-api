@@ -2,6 +2,7 @@
 const db = require("../models");
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
+const emailService = require("../services/emailService");
 
 // Get current authenticated user's profile
 exports.getCurrentUserProfile = async (req, res) => {
@@ -232,6 +233,7 @@ exports.updateProfile = async (req, res, next) => {
     }
 
     // Хеширование пароля, если он обновляется
+    const isPasswordChange = !!updateData.password;
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
     }
@@ -241,6 +243,12 @@ exports.updateProfile = async (req, res, next) => {
     
     if (!user) {
       return res.status(404).json({ error: "User not found" });
+    }
+
+    // Get admin info for email notification (if admin is changing password)
+    let adminUser = null;
+    if (isPasswordChange && req.user.role === "admin") {
+      adminUser = await db.User.findByPk(req.user.userId);
     }
 
     // Start transaction for project assignment
@@ -286,6 +294,15 @@ exports.updateProfile = async (req, res, next) => {
     } catch (error) {
       await transaction.rollback();
       throw error;
+    }
+
+    // Send email notification if admin changed password
+    if (isPasswordChange && req.user.role === "admin" && adminUser) {
+      await emailService.sendPasswordChangeEmail({
+        to: user.email,
+        userName: `${user.firstName} ${user.lastName}`,
+        changedBy: `${adminUser.firstName} ${adminUser.lastName}`,
+      });
     }
 
     // Reload user to get fresh data (password will be excluded by default scope)
