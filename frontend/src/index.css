@@ -32,6 +32,8 @@
   --color-border: #d0d7de;
   --color-input: #d0d7de;
   --color-ring: #0969da;
+  --color-button-border: #1b1f2426;
+  --color-active-tab: #f78166;
   --radius: 0.375rem;
 }
 

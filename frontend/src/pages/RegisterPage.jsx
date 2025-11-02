@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -190,16 +191,15 @@ export default function RegisterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <select
+              <Select
                 id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="flex h-8 w-full rounded-md border border-[#d0d7de] bg-[#f6f8fa] px-3 py-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0969da] focus-visible:border-[#0969da] focus-visible:bg-white"
               >
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
-              </select>
+              </Select>
             </div>
             {formData.role === "admin" && (
               <div className="space-y-2">

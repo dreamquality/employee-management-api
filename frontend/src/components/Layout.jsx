@@ -55,7 +55,7 @@ export default function Layout() {
                       {item.label}
                     </button>
                     {isActive(item.path) && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f78166]" />
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--color-active-tab)]" />
                     )}
                   </Link>
                 ))}
