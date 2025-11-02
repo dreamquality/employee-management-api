@@ -30,6 +30,7 @@ Employees can update their personal information, such as name, contact details, 
 - **Error Handling**: Comprehensive error management for reliability.
 - **Authentication**: JWT-based authentication system with role-based access control.
 - **Notifications**: Automated notification system for birthdays and salary reviews.
+- **Email Notifications**: SMTP integration for sending email notifications when administrators change user passwords.
 - **Transaction Support**: Database transactions for data consistency.
 
 ### Frontend Application
@@ -128,12 +129,21 @@ Access the application at `http://localhost:5173`
 
    # Порт (опционально, по умолчанию 3000)
    PORT=3000
+
+   # SMTP Configuration (optional, for email notifications)
+   SMTP_HOST=smtp.example.com
+   SMTP_PORT=587
+   SMTP_SECURE=false
+   SMTP_USER=your_smtp_username
+   SMTP_PASSWORD=your_smtp_password
+   SMTP_FROM=noreply@example.com
    ```
    - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: Данные для подключения к базе данных PostgreSQL.
    - `JWT_SECRET`: Секретный ключ для аутентификации JWT.
    - `SECRET_WORD`: Секретный ключ для регистрации администратора.
    - `NODE_ENV`: Указывает среду выполнения.
    - `PORT`: Порт, на котором будет работать сервер (по умолчанию 3000).
+   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`: (Optional) SMTP server configuration for sending email notifications when administrators change user passwords.
 
 Замените `your_local_db_user`, `your_local_db_password`, `your_jwt_secret`, и `your_secret_word_for_admin_registration` на свои реальные значения.
 
