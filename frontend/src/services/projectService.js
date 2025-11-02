@@ -11,6 +11,11 @@ export const projectService = {
     return response.data;
   },
 
+  getProjectEmployees: async (id) => {
+    const response = await api.get(`/projects/${id}/employees`);
+    return response.data;
+  },
+
   createProject: async (projectData) => {
     const response = await api.post('/projects', projectData);
     return response.data;
