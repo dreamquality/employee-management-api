@@ -20,6 +20,7 @@ const escapeHtml = (text) => {
 
 /**
  * Create SMTP transporter
+ * Supports both MailHog (development) and real SMTP services (production)
  */
 const createTransporter = () => {
   const smtpHost = process.env.SMTP_HOST || 'localhost';
@@ -27,6 +28,15 @@ const createTransporter = () => {
   const smtpUser = process.env.SMTP_USER || '';
   const smtpPass = process.env.SMTP_PASS || '';
   const smtpSecure = process.env.SMTP_SECURE === 'true';
+
+  // Determine if using MailHog (development) or real SMTP (production)
+  const isMailHog = smtpHost === 'mailhog' || smtpHost === 'localhost' && smtpPort === 1025;
+  
+  if (isMailHog) {
+    logger.info('Using MailHog for email testing (development mode)');
+  } else {
+    logger.info(`Using SMTP server: ${smtpHost}:${smtpPort} (production mode)`);
+  }
 
   const config = {
     host: smtpHost,
@@ -40,6 +50,9 @@ const createTransporter = () => {
       user: smtpUser,
       pass: smtpPass,
     };
+    logger.info('SMTP authentication enabled');
+  } else {
+    logger.info('SMTP authentication disabled (no username provided)');
   }
 
   return nodemailer.createTransport(config);

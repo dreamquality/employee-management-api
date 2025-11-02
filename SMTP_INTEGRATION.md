@@ -3,6 +3,10 @@
 ## Overview
 This implementation adds SMTP email integration to the Employee Management CRM system. When an administrator changes a user's password, an email notification is automatically sent to the user's email address.
 
+The system is designed to work flexibly with both:
+- **MailHog** (development/testing) - captures emails locally without sending
+- **Real SMTP services** (production) - sends actual emails via Gmail, SendGrid, AWS SES, etc.
+
 ## What Was Added
 
 ### 1. MailHog SMTP Service (Docker)
@@ -13,8 +17,10 @@ This implementation adds SMTP email integration to the Employee Management CRM s
 
 ### 2. Email Service (`services/emailService.js`)
 - Handles sending password change notification emails
+- Automatically detects MailHog vs production mode
 - Configurable via environment variables
 - Graceful error handling (won't break password updates if email fails)
+- Provides helpful logging to show which mode is active
 
 ### 3. Password Change Hook
 - Automatically triggers when password is updated in `userController.js`
@@ -26,9 +32,9 @@ This implementation adds SMTP email integration to the Employee Management CRM s
 - Verifies email is NOT sent on other updates
 - Tests error handling
 
-## How to Use
+## Quick Start
 
-### Development with Docker
+### For Development (MailHog)
 
 1. **Start the services** (including MailHog):
    ```bash
@@ -49,7 +55,63 @@ This implementation adds SMTP email integration to the Employee Management CRM s
 
 4. **Check MailHog UI** - you should see the password change email appear
 
-### Testing the Email Service
+### For Production (Real Email)
+
+1. **Choose your email service** (Gmail, SendGrid, AWS SES, etc.)
+
+2. **Update environment variables** in your `.env` file or deployment configuration:
+   ```bash
+   # Example for Gmail
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_FROM=your-email@gmail.com
+   SMTP_USER=your-email@gmail.com
+   SMTP_PASS=your-app-password
+   SMTP_SECURE=true
+   ```
+
+3. **Deploy your application** - emails will now be sent via your configured service
+
+## Configuration Guide
+
+### Environment Variables
+
+The system uses these environment variables for SMTP configuration:
+
+| Variable | Description | MailHog Value | Production Example |
+|----------|-------------|---------------|-------------------|
+| `SMTP_HOST` | SMTP server hostname | `mailhog` or `localhost` | `smtp.gmail.com` |
+| `SMTP_PORT` | SMTP server port | `1025` | `587` or `465` |
+| `SMTP_FROM` | From email address | Any (e.g., `noreply@test.com`) | Your verified email |
+| `SMTP_USER` | SMTP username | Empty (optional) | Your email/API key |
+| `SMTP_PASS` | SMTP password | Empty (optional) | Your password/API key |
+| `SMTP_SECURE` | Use TLS/SSL | `false` | `true` for port 465, `false` for 587 |
+
+### Switching Between MailHog and Production
+
+The system automatically detects which mode to use based on the `SMTP_HOST` value:
+- If `SMTP_HOST` is `mailhog` or `localhost:1025` → **Development mode** (MailHog)
+- Otherwise → **Production mode** (Real SMTP)
+
+You'll see log messages indicating which mode is active:
+```
+Using MailHog for email testing (development mode)
+```
+or
+```
+Using SMTP server: smtp.gmail.com:587 (production mode)
+```
+
+### Example Configurations
+
+See `.env.example` for detailed configuration examples for:
+1. MailHog (Development)
+2. Gmail
+3. SendGrid
+4. AWS SES
+5. Custom SMTP services
+
+## Testing the Email Service
 
 Run the verification script:
 ```bash
@@ -60,24 +122,9 @@ This will:
 - Display current SMTP configuration
 - Test the SMTP connection
 - Send a test email
-- Show the MailHog UI URL
+- Show the MailHog UI URL (if using MailHog)
 
-### Environment Variables
-
-Configure SMTP in your `.env` file or docker-compose.yml:
-
-```plaintext
-SMTP_HOST=mailhog           # SMTP server (use 'mailhog' in Docker, 'localhost' locally)
-SMTP_PORT=1025              # SMTP port (1025 for MailHog)
-SMTP_FROM=noreply@employee-crm.com  # From address
-SMTP_USER=                  # Username (optional, leave empty for MailHog)
-SMTP_PASS=                  # Password (optional, leave empty for MailHog)
-SMTP_SECURE=false           # Use TLS (false for MailHog)
-```
-
-### Production Setup
-
-For production, replace MailHog with a real SMTP service:
+## Production Setup Details
 
 **Example with Gmail:**
 ```plaintext
