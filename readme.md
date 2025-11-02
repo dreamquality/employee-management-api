@@ -44,20 +44,45 @@ Employees can update their personal information, such as name, contact details, 
 
 ## Screenshots
 
+*Updated with GitHub Design System styling*
+
 ### Login Page
-![Login Page](https://github.com/user-attachments/assets/046458d7-3936-4c7c-a801-488b5d69f4af)
+![Login Page](./screenshots/login-page.png)
+
+*Clean, centered login form with GitHub's blue accent colors and professional styling*
+
+### Register Page
+![Register Page](./screenshots/register-page.png)
+
+*Registration form with GitHub-style inputs and consistent design language*
 
 ### Employee List
 ![Employee List](https://github.com/user-attachments/assets/f2553621-77ed-4e27-9a87-f04ec92ca16b)
 
+*Note: This screenshot shows the previous design. The new version features GitHub-style cards with subtle borders, status badges with proper color coding, and improved hover states.*
+
 ### Employee Detail
 ![Employee Detail](https://github.com/user-attachments/assets/515743b6-aa17-4a1f-84bd-5b1bb90bb4dd)
+
+*Note: This screenshot shows the previous design. The new version features consistent GitHub styling throughout.*
 
 ### Create Employee
 ![Create Employee](https://github.com/user-attachments/assets/9af9eb9a-8a4f-462a-a158-e2b9c15a5c96)
 
+*Note: This screenshot shows the previous design. The new version features GitHub-style form inputs with focus states.*
+
 ### Projects Management
 ![Projects Page](https://github.com/user-attachments/assets/5ea42fa4-60f5-4b35-9cc2-afbd8e833120)
+
+*Note: This screenshot shows the previous design. The new version features GitHub-style project cards with active/inactive status badges.*
+
+### Design System
+The application now uses GitHub's design system:
+- **Navigation**: Dark header (#24292f) with horizontal tabs and orange underline for active states
+- **Colors**: GitHub blue (#0969da), success green (#2da44e), error red (#cf222e)
+- **Buttons**: Green primary buttons with subtle borders matching GitHub's style
+- **Forms**: Light gray inputs (#f6f8fa) that turn white on focus
+- **Cards**: Clean borders (#d0d7de) with subtle shadows and hover effects
 
 ## Quick Start with Docker
 
