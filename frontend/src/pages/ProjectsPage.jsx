@@ -474,21 +474,19 @@ export default function ProjectsPage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{selectedProject?.name}</DialogTitle>
-            <DialogDescription>
-              <div className="flex items-center gap-2 mt-2">
-                {selectedProject?.active ? (
-                  <span className="inline-flex items-center text-xs text-green-600">
-                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                    Active
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center text-xs text-red-600">
-                    <XCircle className="h-3 w-3 mr-1" />
-                    Inactive
-                  </span>
-                )}
-              </div>
-            </DialogDescription>
+            <div className="flex items-center gap-2 mt-2">
+              {selectedProject?.active ? (
+                <span className="inline-flex items-center text-xs text-green-600">
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                  Active
+                </span>
+              ) : (
+                <span className="inline-flex items-center text-xs text-red-600">
+                  <XCircle className="h-3 w-3 mr-1" />
+                  Inactive
+                </span>
+              )}
+            </div>
           </DialogHeader>
           <div className="space-y-4">
             <div>
