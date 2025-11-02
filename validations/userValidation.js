@@ -65,10 +65,6 @@ exports.userUpdateValidation = [
     .optional()
     .isString().withMessage('Заметка администратора должна быть строкой'),
 
-  body('currentProject')
-    .optional()
-    .isString().withMessage('Текущий проект должен быть строкой'),
-
   body('englishLevel')
     .optional()
     .isString().withMessage('Уровень английского должен быть строкой'),
@@ -154,10 +150,6 @@ exports.userCreateValidation = [
   body('adminNote')
     .optional()
     .isString().withMessage('Заметка администратора должна быть строкой'),
-
-  body('currentProject')
-    .optional()
-    .isString().withMessage('Текущий проект должен быть строкой'),
 
   body('englishLevel')
     .optional()
