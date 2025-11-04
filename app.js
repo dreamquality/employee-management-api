@@ -130,8 +130,9 @@ if (process.env.NODE_ENV !== "test") {
 
         // Запуск сервера
         const port = process.env.PORT || 10000;
-        app.listen(port, () => {
-          console.log(`Сервер запущен на порту ${port}`);
+        const host = process.env.HOST || '0.0.0.0';
+        app.listen(port, host, () => {
+          console.log(`Сервер запущен на ${host}:${port}`);
           console.log(`OpenAPI доступна по адресу ${publicUrl}/api-docs`);
         });
       } catch (err) {
