@@ -45,19 +45,19 @@ Employees can update their personal information, such as name, contact details, 
 ## Screenshots
 
 ### Login Page
-![Login Page](https://github.com/user-attachments/assets/046458d7-3936-4c7c-a801-488b5d69f4af)
+![Login Page](screenshots/login-page.png)
 
 ### Employee List
-![Employee List](https://github.com/user-attachments/assets/f2553621-77ed-4e27-9a87-f04ec92ca16b)
+![Employee List](screenshots/employee-list.png)
 
 ### Employee Detail
-![Employee Detail](https://github.com/user-attachments/assets/515743b6-aa17-4a1f-84bd-5b1bb90bb4dd)
+![Employee Detail](screenshots/employee-detail.png)
 
 ### Create Employee
-![Create Employee](https://github.com/user-attachments/assets/9af9eb9a-8a4f-462a-a158-e2b9c15a5c96)
+![Create Employee](screenshots/create-employee.png)
 
 ### Projects Management
-![Projects Page](https://github.com/user-attachments/assets/5ea42fa4-60f5-4b35-9cc2-afbd8e833120)
+![Projects Page](screenshots/projects-page.png)
 
 ## Quick Start with Docker
 
