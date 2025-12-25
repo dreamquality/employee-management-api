@@ -30,6 +30,7 @@ Employees can update their personal information, such as name, contact details, 
 - **Error Handling**: Comprehensive error management for reliability.
 - **Authentication**: JWT-based authentication system with role-based access control.
 - **Notifications**: Automated notification system for birthdays and salary reviews.
+- **Email Notifications**: SMTP integration for password change notifications.
 - **Transaction Support**: Database transactions for data consistency.
 
 ### Frontend Application
@@ -136,6 +137,26 @@ Access the application at `http://localhost:5173`
    - `PORT`: Порт, на котором будет работать сервер (по умолчанию 3000).
 
 Замените `your_local_db_user`, `your_local_db_password`, `your_jwt_secret`, и `your_secret_word_for_admin_registration` на свои реальные значения.
+
+#### SMTP Configuration (Optional)
+
+For email notifications (e.g., password change notifications), configure SMTP settings:
+
+```plaintext
+# SMTP Configuration
+SMTP_HOST=localhost         # SMTP server hostname (use 'mailhog' in Docker)
+SMTP_PORT=1025             # SMTP server port (1025 for MailHog)
+SMTP_USER=                 # SMTP username (optional)
+SMTP_PASS=                 # SMTP password (optional)
+SMTP_SECURE=false          # Use TLS/SSL (true/false)
+SMTP_FROM=noreply@employee-crm.com  # From email address
+```
+
+**For Development**: Use MailHog (included in docker-compose.yml) to test emails without sending real ones:
+- SMTP Server: `mailhog:1025` (in Docker) or `localhost:1025` (locally)
+- Web UI: `http://localhost:8025` to view captured emails
+
+**For Production**: Configure with your actual SMTP service (Gmail, SendGrid, AWS SES, etc.).
 
 ### Running the Application
 
@@ -332,11 +353,12 @@ This application can be containerized using Docker. The repository includes Dock
 
 #### Using Docker Compose
 
-The `docker-compose.yml` file includes four services:
+The `docker-compose.yml` file includes five services:
 - **db**: PostgreSQL database
 - **app**: The backend API server in development mode
 - **frontend**: The React frontend application
 - **test**: Test runner service
+- **mailhog**: SMTP server for email testing (MailHog)
 
 1. **Build and Run the Full Stack**:
    ```sh
@@ -346,14 +368,17 @@ The `docker-compose.yml` file includes four services:
    - PostgreSQL database on port 5432
    - Backend API on port 3000
    - Frontend on port 5173
+   - MailHog SMTP server on port 1025 (SMTP) and 8025 (Web UI)
 
    Access the application at `http://localhost:5173`
+   Access MailHog Web UI at `http://localhost:8025` to view test emails
 
 2. **Run Only Backend and Database**:
    ```sh
-   docker compose up --build app db
+   docker compose up --build app db mailhog
    ```
    The API will be accessible at `http://localhost:3000`.
+   MailHog Web UI at `http://localhost:8025`.
 
 3. **Run Tests**:
    
